@@ -1,0 +1,122 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../things-ajax/things-ajax.html">
+<link rel="import" href="../things-button/things-button.html">
+<link rel="import" href="../things-full-dialog/things-full-dialog.html">
+<link rel="import" href="../things-grid/things-resource-grid.html">
+<link rel="import" href="../things-meta/things-resource-meta-behavior.html">
+
+<link rel="import" href="things-selector-form.html">
+<!--
+하나의 리소스에 대한 기본 액션 (List, Create, Find, Upate, Delete) 및 Import, Export 등의 기능을 제공하는 화면 셋 
+
+Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그리드에서 레코드 하나를 선택할 경우 해당 레코드에 대한 Detail Form이 출력된다.
+
+	Example:
+
+	<things-selector-content 
+	  title="Terminology"
+	  resource-type="Terminology"
+	  resource-url="terminologies"
+	  layout="fullbleed layout vertical">
+	</things-selector-content>
+
+@demo demo/index.html
+-->
+
+<dom-module id="things-selector-content">
+	<template>
+		<style>
+			:host {
+				display: block;
+				height: 100%;
+			}
+		</style>
+
+		<div class="[[layout]]">
+			<things-ajax 
+				id="resource-meta"
+				method="GET"
+				resource-url="[[resourceMetaUrl]]"
+				last-response="{{metaData}}">
+			</things-ajax>
+
+			<things-selector-form 
+				id="search-form"
+				class="flex"
+				active="[[active]]"
+				title="[[title]]"
+				form-fields="[[searchFormFields]]" 
+				select-fields="[[selectFields]]"
+				sort-fields="[[sortFields]]"
+				action-url="[[resourceUrl]]" 
+				page="{{page}}"
+				per-page="[[perPage]]"
+				last-response="{{lastResponse}}">
+			</things-selector-form>
+
+			<things-resource-grid 
+				id="grid"
+				model="[[gridModel]]" 
+				columns="[[gridColumns]]"
+				config="[[gridConfig]]"
+				current-page="{{page}}"
+				per-page="{{perPage}}"
+				data="[[lastResponse.items]]"
+				total-count="[[lastResponse.total]]"
+				grid-save-action="[[gridSaveUrl]]"
+				export-file-name="[[title]]"
+				export-sheet-name="[[title]]"
+				enable-detail-column="[[enableDetailColumn]]"
+				paginatable>
+			</things-resource-grid>
+		</div>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'things-selector-content',
+
+			behaviors: [ 
+				Things.ResourceMetaBehavior
+			],
+			
+			properties: {
+				/**
+				 * Screen layout
+				 */
+				layout: {
+					type: String
+				},
+
+				/**
+				 * 화면 타이틀 
+				 */
+				title: {
+					type: String
+				}
+			},
+
+
+			/**
+			 * 화면 초기화 함수 
+			 * 메타 데이터를 서버로 요청하여 화면을 구성한다.
+			 */
+			initializeContent: function() {
+				this.$['resource-meta'].generateRequest();
+			},
+
+			/**
+			 * reload grid data
+			 * 결국 서치 폼에서 다시 검색한다.
+			 */
+			refreshGridData: function(grid) {
+				this.$['search-form'].submitMyForm();
+			}
+
+		});
+	</script>
+</dom-module>

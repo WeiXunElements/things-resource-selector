@@ -1,0 +1,126 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<!--
+ResourceSelector를 위한 다이얼로그.
+애플리케이션에 단 하나만 존재하고 다이얼로그가 오픈 될 때 마다 화면 구성을 다시하여 오픈한다. 
+
+  Example:
+
+  <things-resource-dialog></things-resource-dialog>
+
+@demo demo/demo-resource-dialog.html
+-->
+
+<dom-module id="things-resource-dialog">
+  <style>
+		:host {
+			display: inline-block;
+			margin: 1em;
+		}
+
+		paper-dialog {
+			position: fixed;
+			top: 10%;
+			bottom:10%;
+			left: 15%;
+			right: 15%;
+			margin: 0px;
+		}
+
+		paper-dialog-scrollable {
+			position: fixed;
+			top: 10%;
+			bottom:10%;
+			left: 15%;
+			right: 15%;
+			margin: 0px;
+		}
+  </style>
+
+	<template>
+		<paper-dialog
+			id='dialog' 
+			entry-animation="scale-up-animation"
+			exit-animation="fade-out-animation">
+			<paper-dialog-scrollable id="scrollroot"></paper-dialog-scrollable>
+			<div class="buttons">
+				<paper-button dialog-dismiss>Close</paper-button>
+			</div>
+		</paper-dialog>
+	</template>
+
+  <script>
+	Polymer({
+
+		is: 'things-resource-dialog',
+
+		properties: {
+			
+			/**
+			* Dialog 내에 포함될 뷰 
+			*/
+			detailView: {
+				type: Object
+			},
+
+			/**
+			 * Dialog가 오픈된 후 콜백 
+			 */
+			openCallback: {
+				type: Object
+			}
+		},
+
+		listeners: {
+			'dialog.iron-overlay-opened' : '_openHandler'
+		},
+
+		/**
+		 * 전역 ResourceDialog를 찾아서 view를 내용으로 추가하여 오픈한다.
+		 *
+		 * @param {Object} view 오픈할 view
+		 * @param {Boolean} modal modal로 오픈할 지 여부
+		 * @param {Object} openCallback
+		 */
+		showResourceDialog: function(view, modal, openCallback) {
+			var dialog = this.$.dialog;
+			dialog.modal = modal;
+			dialog.noCancelOnEscKey = false;
+			var scrollable = this.$.scrollroot.$.scrollable;
+
+			if(this.detailView) {
+				scrollable.removeChild(this.detailView);
+			} 
+
+			if(this.openCallback) {
+				this.openCallback = null;
+			}
+
+			this.detailView = view;
+			this.openCallback = openCallback;
+			scrollable.appendChild(this.detailView);
+			dialog.open();		
+		},
+
+		/**
+		 * 전역 ResourceDialog를 찾아서 닫는다.
+		 */
+		closeResourceDialog: function() {
+			this.$.dialog.close();
+		},
+
+		/**
+		 * 다이얼로그가 오픈된 경우 핸들러 
+		 */
+		_openHandler: function(e) {
+			if(this.openCallback) {
+				this.openCallback.apply(this.detailView);
+			}
+		}
+
+	});
+  </script>
+
+</dom-module>

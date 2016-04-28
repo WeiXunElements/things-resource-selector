@@ -1,0 +1,306 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../iron-input/iron-input.html">
+
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-input/paper-textarea.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import" href="../paper-material/paper-material.html">
+<link rel="import" href="../paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="../things-button/things-button.html">
+<link rel="import" href="../things-date-picker/things-date-picker.html">
+<link rel="import" href="../things-date-picker/things-date-from-to.html">
+<link rel="import" href="../things-date-picker/things-time-picker.html">
+<link rel="import" href="../things-input-field/things-input-field.html">
+<link rel="import" href="../things-resource-combo/things-code-combo.html">
+<link rel="import" href="../things-tristate-checkbox/things-tristate-checkbox.html">
+
+<link rel="import" href="../things-global-behavior/things-global-behavior.html">
+
+<script>
+
+window.Things = window.Things || {};
+
+/**
+ * 기본 Form Behavior
+ * Things.FormBehavior를 사용하고자 한다면 반드시 reconfigureMyForm() 함수를 구현해야 한다.
+ * 구현 내용 - Things.FormBehavior를 이용하여 Form을 구성한다.
+ *
+ * @polymerBehavior Things.FormBehavior
+ */
+Things.SelectorFormBehaviorImpl = {
+
+	properties: {
+		/**
+     * Meta-Data of the form elements of the form.
+     * Custom Form element can configure child elements of the form dynamically.
+     * StdFormBehavior create form element by each of this attributes
+     */
+		formFields: {
+			type: Array,
+			observer: '_formFieldsChanged'
+		},
+
+		/**
+		 * Url for submit. global setting의 baseUrl이 제거된 불완전한 URL.
+		 * 이 정보로는 form submit을 할 수 없고 이 url이 설정되는 순간 _computeAction이 작동하여 완전한 action url을 생성하여 action 값에 설정한다.
+		 */
+		actionUrl: {
+			type: String,
+			notify: true
+		},
+
+		/**
+		 * Action url for submit. 
+		 * This attribute is configured by base url of the global setting.
+		 */
+		action: {
+			type: String,
+			computed: '_computeAction(globals.baseUrl,actionUrl)'
+		},
+		
+		/**
+		 * HTTP Method for submit.
+		 */
+		method: {
+			type: String
+		},
+
+		/**
+		 * HTTP Content Type for submit.
+		 */
+		contentType: {
+			type: String,
+			value: 'application/json'
+		},
+
+		/**
+		 * HTTP 전송시 withCredentials 값 설정 
+		 */
+		withCredentials: {
+			type: Boolean,
+			value: true
+		},
+
+		/**
+		 * HTTP 전송시 Header 값 설정
+		 */
+		headers: {
+		 type: Object
+		},
+
+		/**
+		 * 검색 결과 데이터 
+		 */
+		lastResponse: {
+			type: Object,
+			notify: true
+		}
+
+	},
+
+  /**
+   * Handler after Form element changed.
+   * Child elements of the form is reconfigured by this function.
+   * The form that extends StdFormBehavior must implement 'reconfigureMyForm' function.
+   * Logic of'reconfigureMyForm' function is creation form child elements by formFields attributes and configuration layout.
+   *
+   * @param {Array} formFields attribute
+   */
+	_formFieldsChanged: function(formFields) {
+		this.reconfigureMyForm();
+	},
+
+	/**
+	 * compute action url by base url of the global settings
+	 * @param {string} baseUrl base url of the global settings
+	 * @param {string} url url attribute
+	 */
+	_computeAction: function(baseUrl, actionUrl) {
+		return baseUrl + '/' + actionUrl;
+	},
+
+	/**
+	 * Bind element's attribute values by formField informations.
+	 * @param {Object} child element of the form
+	 * @param {Object} element information object from formFields
+	 */
+	_bindAttributes: function(element, attrs) {
+		for(attr in attrs) {
+			element.setAttribute(attr, attrs[attr]);
+		}
+
+		return element;
+	},
+
+	/**
+	 * create list box
+	 *
+	 * @param {Array} items Listbox values
+	 * @return {Object} paper-listbox element 
+	 */
+	_makeListBox: function(items) {
+		var listbox = document.createElement('paper-listbox');
+		listbox.setAttribute('selected','0');
+		
+		for(index in items) {
+			option = items[index];
+			item = document.createElement('paper-item');
+			item.innerHTML = option;
+			listbox.appendChild(item);
+		}
+
+		return listbox;
+	},
+
+  /**
+   * Create child element of the form by one of the formFields object
+   *
+   * @param {Object} one of the formFields attribute
+   * @return {Object} created child element for the form
+   */	 
+	_createFormElement: function(element) {
+		var newElement = null;
+
+		switch(element.type) {
+			case 'checkbox':
+				newElement = document.createElement('things-tristate-checkbox');
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+				break;
+
+			case 'button':
+				newElement = document.createElement('things-button');
+				newElement = this._bindAttributes(newElement, element);
+				newElement.label = element.label;
+				break;
+
+			case 'listbox':
+				newElement = this._makeListBox(element.options);
+				newElement = this._bindAttributes(newElement, element);
+				break;
+
+			case 'dropdown':
+				newElement = document.createElement('paper-dropdown-menu');
+				newElement = this._bindAttributes(newElement, element);
+				newChild = this._makeListBox(element.options);
+				newChild.setAttribute('class','dropdown-content');
+				newElement.appendChild(newChild);
+				break;
+
+			case 'radio':
+				newElement = document.createElement('paper-radio-group');
+				newElement = this._bindAttributes(newElement, element);
+				for(index in element.child) {
+					child = element[index];
+					newChild = document.createElement('paper-radio-button');
+					newChild = this._bindAttributes(newChild, child);
+					newElement.appendChild(newChild);
+				}
+				break;
+
+			case 'textarea':
+				newElement = document.createElement('paper-textarea');
+				newElement = this._bindAttributes(newElement, element)
+				break;
+
+			case 'code-combo':
+				newElement = document.createElement('things-code-combo');
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+				newElement.setAttribute('code-name', element.codeName);
+				newElement.setAttribute('label-path', 'description');
+				newElement.setAttribute('value-path', 'name');
+				break;
+			case 'date':
+				newElement = document.createElement('things-date-picker');
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+				break;
+
+			case 'time':
+				newElement = document.createElement('things-time-picker');
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+				break;
+
+			case 'datetime':
+				// TODO
+				break;
+
+			// code-editor, template-editor 필드인 경우 정보를 저장은 해당 editor에서 책임지고 Form에서는 관계하지 않는다.
+			case 'code-editor':
+				break;
+
+			case 'template-editor':
+				break;
+
+			default:
+				newElement = document.createElement('things-input-field');
+				//newElement = this._bindAttributes(newElement, element);
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+		}
+
+		if(!newElement) return null;
+		
+		if(element.name == 'id' || element.name == 'domain_id' || element.name == 'domainId') {
+			newElement.setAttribute('hidden', true);
+		}
+
+		newElement.setAttribute('class', 'flex style-scope things-form');
+		return newElement;
+	},
+
+	/**
+	 * key event - form submits when enter key is monitored
+	 * @param {Object} event A 'KeyPressed' event
+	 */
+	handleKeyPress: function(event) {
+		var code = event.keyCode;
+		if(code == 13) {
+			if(this.page == 1) this.submitMyForm();
+			else this.page = 1;
+		}
+	},
+
+	/**
+	 * find form by querySelector and return found form
+	 * @return {Object}
+	 */
+	getMyForm: function() {
+		return this.querySelector('form');
+	},
+
+	/**
+	 * Resets form
+	 */
+	resetMyForm: function() {
+		this.getMyForm().reset();
+	},
+
+	/**
+	 * Serialize form and return serialized object.
+	 * It can be used form parameters
+	 * @return {Object} serialized object
+	 */
+	serializeMyForm: function() {
+		return this.getMyForm().serialize();
+	}
+
+};
+
+Things.SelectorFormBehavior = [
+	'IronFormElementBehavior', 
+	Things.SelectorFormBehaviorImpl, 
+	Things.GlobalBehavior
+];
+
+</script>

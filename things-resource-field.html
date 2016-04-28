@@ -1,0 +1,199 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="./things-resource-selector-behavior.html">
+<link rel="import" href="../things-combo/things-combo.html">
+
+<!--
+Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 input field에 표시하는 컴포넌트 
+
+  Example:
+
+    <things-resource-field 
+      id="resource-selector" 
+      label="Language" 
+      name="user_id"
+      resource-type="User" 
+      resource-url="users"
+      delegate-column="name">
+    </things-resource-field>
+
+
+@demo demo/demo-resource-field.html
+-->
+
+<dom-module id="things-resource-field">
+  <style>
+    .paper-font-caption {
+      margin-bottom: 0px;
+    }
+  </style>
+
+  <template>
+    <input is="iron-input" name="[[name]]" bind-value="[[value]]" hidden>
+    <input is="iron-input" name="[[idName]]" bind-value="[[idValue]]" hidden>
+
+    <p class="paper-font-caption">[[label]]</p>
+    <input is="iron-input" value="[[displayValue]]" readonly>
+    <iron-icon icon="icons:list" prefix on-tap="openResourceSelector" hidden="[[readOnly]]"></iron-icon>
+    <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear" hidden="[[readOnly]]">
+    </paper-icon-button>
+  </template>
+
+  <script type="text/javascript">
+  	(function() {
+      Polymer({
+        is: "things-resource-field",
+
+        properties: {
+
+          /**
+           * element 필드명, Form 안에 들어가는 경우 Ajax 요청시 name : value 형식으로 서버에 요청된다.
+           */
+          name : {
+            type: String
+          },
+
+          /**
+           * element id 필드명 
+           */
+          idName: {
+            type: String,
+            computed: '_computeIdName(name)'
+          },
+
+          /**
+           * input field 상단에 표시할 라벨 
+           */
+          label: {
+            type: String
+          },
+
+          /**
+           * Resource Selector로 부터 선택한 값 
+           */
+          value: {
+            type: Object,
+            observer: '_valueChanged'
+          },
+
+          /**
+           * Resource Selector로 부터 선택한 Object 값의 id
+           */
+          idValue: {
+            type: Number
+          },
+
+          /**
+           * Resource Selector로 부터 선택한 표시 값 
+           */
+          displayValue: {
+            type: String
+          },
+
+          /**
+           * entity type
+           */
+          resourceType: {
+            type: String
+          },
+
+          /**
+           * 데이터 조회를 위한 URL
+           */
+          resourceUrl: {
+            type: String
+          },
+
+          /**
+           * 화면에 표시할 대표 컬럼명 
+           */
+          delegateColumn: {
+            type: String,
+            value: 'name'
+          },
+
+          /**
+           * 읽기 전용인지 여부 
+           */
+          readOnly: {
+            type: Boolean,
+            value: false
+          }
+        },
+
+        behaviors: [
+          Things.ResourceSelectorBehavior
+        ],
+
+        /**
+         * id 필드명을 설정 
+         *
+         * @param {Object} value
+         */
+        _computeIdName: function(name) {
+          return name.substr(0, name.indexOf('_id'));
+        },
+
+        /**
+         * value값이 변경될 경우 
+         *
+         * @param {Object} value
+         */
+        _valueChanged: function(value) {
+          if(this.value) {
+            this.idValue = this.value.id;
+            this.displayValue = this.value[this.delegateColumn];            
+          } else {
+            this.idValue = null;
+            this.displayValue = '';
+          }
+        },
+
+        /**
+         * Resource Selector로 부터 Object 값을 설정
+         *
+         * @param {Object} objValue
+         */
+        setObjValue: function(objValue) {
+          this.value = objValue;
+        },
+
+        /**
+         * 설정된 값을 리턴
+         */
+        getValue: function() {
+          return this.value;
+        },
+
+        /**
+         * Resource Selector로 부터 값을 설정
+         *
+         * @param {Object} value
+         */
+        setValue: function(value) {
+          this.value = value;
+        },
+
+        /**
+         * Open Resource Selector
+         */
+        openResourceSelector: function() {
+          this.openResourceSelectorByForm(this, true);
+        },
+
+        /**
+         * 값을 리셋
+         */
+        clearValue: function() {
+          var obj = { id : null };
+          obj[this.delegateColumn] = '';
+          this.value = obj;
+        }
+
+      })
+  	})();
+  </script>
+</dom-module>
