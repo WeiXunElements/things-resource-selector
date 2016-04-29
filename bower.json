@@ -1,6 +1,6 @@
 {
   "name": "things-resource-selector",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": [
     "Hatio Lab. <heartyoh@hatiolab.com>"
   ],
@@ -21,12 +21,6 @@
     "polymer": "Polymer/polymer#^1.2.0",
     "paper-dialog": "^1.0.4",
     "paper-dialog-scrollable": "^1.1.4",
-    "things-combo": "ThingsElements/things-combo#latest",
-    "iron-icon": "^1.0.8",
-    "paper-input": "^1.1.11",
-    "paper-icon-button": "^1.0.7",
-    "iron-icons": "^1.1.3",
-    "iron-form-element-behavior": "^1.0.6",
     "paper-button": "^1.0.11",
     "paper-checkbox": "^1.1.3",
     "paper-dropdown-menu": "^1.2.1",
@@ -37,6 +31,13 @@
     "paper-toggle-button": "^1.1.2",
     "paper-toolbar": "^1.1.4",
     "paper-tooltip": "^1.1.2",
+    "paper-input": "^1.1.11",
+    "paper-icon-button": "^1.0.7",
+    "iron-icon": "^1.0.8",
+    "iron-icons": "^1.1.3",
+    "iron-form-element-behavior": "^1.0.6",
+    "iron-form": "^1.0.16",
+    "things-combo": "ThingsElements/things-combo",
     "things-ajax": "ThingsElements/things-ajax",
     "things-button": "ThingsElements/things-button",
     "things-full-dialog": "ThingsElements/things-full-dialog",
@@ -49,13 +50,12 @@
     "things-global-behavior": "ThingsElements/things-global-behavior",
     "things-fullscreen": "ThingsElements/things-fullscreen",
     "things-msg-box-behavior": "ThingsElements/things-msg-box-behavior",
-    "things-spinner": "ThingsElements/things-spinner",
-    "iron-form": "^1.0.16"
+    "things-spinner": "ThingsElements/things-spinner"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-form": "^1.0.16",
     "web-component-tester": "^4.0.0",
-    "things-setting": "ThingsElements/things-setting",
-    "iron-form": "^1.0.16"
+    "things-setting": "ThingsElements/things-setting"
   }
 }
