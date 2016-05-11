@@ -26,8 +26,23 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
 
 <dom-module id="things-resource-field">
   <style>
-    .paper-font-caption {
-      margin-bottom: 0px;
+    label{
+      @apply(--things-label);
+    }
+    input{
+      @apply(--things-input);
+      width:calc(65% - 37px);
+    }
+    paper-icon-button{
+      @apply(--things-small-icon);
+      margin-right:7px;margin-left:-27px;
+      opacity:.4;
+      position:relative;
+      top:-2px;
+    }
+    iron-icon{
+      @apply(--things-picker-button);
+      background:url(/images/icon-resource-select.png) 50% 3px no-repeat var(--paper-blue-grey-300);
     }
   </style>
 
@@ -35,11 +50,11 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
     <input is="iron-input" name="[[name]]" bind-value="[[value]]" hidden>
     <input is="iron-input" name="[[idName]]" bind-value="[[idValue]]" hidden>
 
-    <p class="paper-font-caption">[[label]]</p>
+    <label>[[label]]</label>
     <things-input-field value="[[displayValue]]" readonly></things-input-field>
-    <iron-icon icon="icons:list" prefix on-tap="openResourceSelector" hidden="[[readOnly]]"></iron-icon>
     <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear" hidden="[[readOnly]]">
     </paper-icon-button>
+    <iron-icon prefix on-tap="openResourceSelector" hidden="[[readOnly]]"></iron-icon>
   </template>
 
   <script type="text/javascript">
