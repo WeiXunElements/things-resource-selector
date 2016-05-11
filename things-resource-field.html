@@ -4,7 +4,6 @@
 
 <link rel="import" href="./things-resource-selector-behavior.html">
 <link rel="import" href="../things-combo/things-combo.html">
-<link rel="import" href="../things-input-field/things-input-field.html">
 
 <!--
 Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 input field에 표시하는 컴포넌트 
@@ -51,7 +50,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
     <input is="iron-input" name="[[idName]]" bind-value="[[idValue]]" hidden>
 
     <label>[[label]]</label>
-    <things-input-field value="[[displayValue]]" readonly></things-input-field>
+    <input is="iron-input" value="[[displayValue]]" readonly>
     <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear" hidden="[[readOnly]]">
     </paper-icon-button>
     <iron-icon prefix on-tap="openResourceSelector" hidden="[[readOnly]]"></iron-icon>
