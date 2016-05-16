@@ -67,7 +67,7 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				per-page="{{perPage}}"
 				data="[[lastResponse.items]]"
 				total-count="[[lastResponse.total]]"
-				buttons='[]'
+				buttons="[[buttons]]"
 				paginatable>
 			</things-resource-grid>
 		</div>
@@ -94,9 +94,16 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				 */
 				title: {
 					type: String
-				}
-			},
+				},
 
+				/**
+				 * 버튼  
+				 */
+				buttons: {
+					type: Array,
+					value: []
+				}				
+			},
 
 			/**
 			 * 화면 초기화 함수 
