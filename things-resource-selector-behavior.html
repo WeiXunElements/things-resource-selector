@@ -55,16 +55,18 @@ Things.ResourceSelectorBehavior = {
     var me = this;
 
     selector.addEventListener('things-grid-row-data-select', function(e) {
+      // 메뉴에서 설정한 idField와 titleField로 e.detail내의 값을 추출한 뒤 object로 구성하여 그리드의 row 데이터 중에 업데이트 할 필드로 업데이트한다.
+      var idField = e.currentTarget.getIdField();
+      var titleField = e.currentTarget.getTitleField();
       var row = parentGrid.focusedRow();
       var dataSet = parentGrid.dataSource();
       var valueField = resourceObj.valueField;
-      var delegateColumn = resourceObj.delegateColumn;
 
       if(row && row.dataIndex() >= 0) {
         var rowObj = row.getRowObject();
         var selectedObj = rowObj[valueField];
-        selectedObj.id = e.detail.id;
-        selectedObj[delegateColumn] = e.detail[delegateColumn];
+        selectedObj[idField] = e.detail[idField];
+        selectedObj[titleField] = e.detail[titleField];
         rowObj[valueField] = selectedObj;
         me.fire('things-resource-selector-selected', { rowObj: rowObj, resource : e.detail } );
         dataSet.updateRow(parentRowIdx, rowObj);

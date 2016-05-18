@@ -46,8 +46,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
   </style>
 
   <template>
-    <input is="iron-input" bind-value="[[value]]" hidden>
-    <input is="iron-input" name="[[idName]]" bind-value="[[idValue]]" hidden>
+    <input id="id-value-field" is="iron-input" name="[[submitName]]" bind-value="[[idValue]]" hidden>
 
     <label>[[label]]</label>
     <input is="iron-input" value="[[displayValue]]" readonly>
@@ -64,18 +63,20 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
         properties: {
 
           /**
-           * element 필드명, Form 안에 들어가는 경우 Ajax 요청시 name : value 형식으로 서버에 요청된다.
+           * Form Load시에 서버에서 받은 데이터와 things-resource-field값과 매핑하기 위한 필드명.
+           * 예를 들어 특정 resource에 creator_id가 있다면 서버에서 해당 resource를 조회하면 creator 데이터에 { id : '10', name : '홍길동' } 형식으로 넘어온다. 
+           * Form에서 things-resource-field가 creator와 매핑되어 있다면 name 필드는 creator가 되고 submitName은 creator_id가 된다.
+           * Form 로딩 후에 사용자가 편집을 다시하여 서버에 보낼 경우 submitName으로 id값만 보내게 된다.
            */
           name : {
             type: String
           },
 
           /**
-           * element id 필드명 
+           * Form Submit시에 서버로 날려줄 Form Field Name
            */
-          idName: {
-            type: String,
-            computed: '_computeIdName(name)'
+          submitName: {
+            type: String
           },
 
           /**
@@ -97,7 +98,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
            * Resource Selector로 부터 선택한 Object 값의 id
            */
           idValue: {
-            type: Number
+            type: String
           },
 
           /**
@@ -141,15 +142,6 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
         behaviors: [
           Things.ResourceSelectorBehavior
         ],
-
-        /**
-         * id 필드명을 설정 
-         *
-         * @param {Object} value
-         */
-        _computeIdName: function(name) {
-          return name.substr(0, name.indexOf('_id'));
-        },
 
         /**
          * value값이 변경될 경우 
@@ -202,7 +194,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
          * 값을 리셋
          */
         clearValue: function() {
-          var obj = { id : null };
+          var obj = { id : '0' };
           obj[this.delegateColumn] = '';
           this.value = obj;
         }
