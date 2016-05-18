@@ -1,27 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 
 <link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
-<link rel="import" href="../iron-input/iron-input.html">
-
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../paper-input/paper-textarea.html">
-<link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../paper-listbox/paper-listbox.html">
-<link rel="import" href="../paper-material/paper-material.html">
-<link rel="import" href="../paper-radio-button/paper-radio-button.html">
-<link rel="import" href="../paper-radio-group/paper-radio-group.html">
-<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
-
-<link rel="import" href="../things-button/things-button.html">
-<link rel="import" href="../things-date-picker/things-date-picker.html">
-<link rel="import" href="../things-date-picker/things-date-from-to.html">
-<link rel="import" href="../things-date-picker/things-time-picker.html">
-<link rel="import" href="../things-input-field/things-input-field.html">
-<link rel="import" href="../things-resource-combo/things-code-combo.html">
-<link rel="import" href="../things-tristate-checkbox/things-tristate-checkbox.html">
-
 <link rel="import" href="../things-global-behavior/things-global-behavior.html">
 
 <script>
@@ -29,9 +8,7 @@
 window.Things = window.Things || {};
 
 /**
- * 기본 Selector Form Behavior
- * Things.SelectorFormBehavior 사용하고자 한다면 반드시 reconfigureMyForm() 함수를 구현해야 한다.
- * 구현 내용 - Things.SelectorFormBehavior 이용하여 Form을 구성한다.
+ * Resource Selector용 Form Behavior
  *
  * @polymerBehavior Things.SelectorFormBehavior
  */
@@ -41,7 +18,7 @@ Things.SelectorFormBehaviorImpl = {
 		/**
      * Meta-Data of the form elements of the form.
      * Custom Form element can configure child elements of the form dynamically.
-     * StdFormBehavior create form element by each of this attributes
+     * StdSelectorFormBehavior create form element by each of this attributes
      */
 		formFields: {
 			type: Array,
@@ -109,7 +86,7 @@ Things.SelectorFormBehaviorImpl = {
   /**
    * Handler after Form element changed.
    * Child elements of the form is reconfigured by this function.
-   * The form that extends StdFormBehavior must implement 'reconfigureMyForm' function.
+   * The form that extends StdSelectorFormBehavior must implement 'reconfigureMyForm' function.
    * Logic of'reconfigureMyForm' function is creation form child elements by formFields attributes and configuration layout.
    *
    * @param {Array} formFields attribute
@@ -176,6 +153,13 @@ Things.SelectorFormBehaviorImpl = {
 				newElement.setAttribute('label', element.label);
 				break;
 
+			case 'tristate-radio':
+				newElement = document.createElement('things-tristate-radio');
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+				newElement.showIgnore = element.searchForm ? true : false;
+				break;
+
 			case 'button':
 				newElement = document.createElement('things-button');
 				newElement = this._bindAttributes(newElement, element);
@@ -207,7 +191,7 @@ Things.SelectorFormBehaviorImpl = {
 				break;
 
 			case 'textarea':
-				newElement = document.createElement('paper-textarea');
+				newElement = document.createElement('things-textarea');
 				newElement = this._bindAttributes(newElement, element)
 				break;
 
@@ -219,42 +203,90 @@ Things.SelectorFormBehaviorImpl = {
 				newElement.setAttribute('label-path', 'description');
 				newElement.setAttribute('value-path', 'name');
 				break;
-			case 'date':
+
+			case 'resource-selector':
+				newElement = document.createElement('things-resource-selector');
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+				newElement.setAttribute('resource-type', element.userObj.resourceType);
+				newElement.setAttribute('resource-url', element.userObj.resourceUrl);
+				break;
+
+			case 'resource-field':
+				newElement = document.createElement('things-resource-field');
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+				newElement.setAttribute('resource-type', element.userObj.resourceType);
+				newElement.setAttribute('resource-url', element.userObj.resourceUrl);
+				if(element.userObj.readOnly && element.userObj.readOnly === true) {
+					newElement.setAttribute('read-only', element.userObj.readOnly);
+				}
+				break;
+
+			case 'date-picker':
 				newElement = document.createElement('things-date-picker');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
 				break;
 
-			case 'time':
+			case 'time-picker':
 				newElement = document.createElement('things-time-picker');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
 				break;
 
-			case 'datetime':
-				// TODO
+			// user stamp & time stamp
+			case 'things-stamp':
+				newElement = document.createElement('things-stamp');
 				break;
 
-			// code-editor, template-editor 필드인 경우 정보를 저장은 해당 editor에서 책임지고 Form에서는 관계하지 않는다.
-			case 'code-editor':
-				break;
-
-			case 'template-editor':
+			case 'empty':
+				newElement = document.createElement('label');
 				break;
 
 			default:
 				newElement = document.createElement('things-input-field');
-				//newElement = this._bindAttributes(newElement, element);
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
+
+				// Resource Form일 경우에만 Validation은 의미가 있고 Search Form일 경우는 의미없다.
+				if(!element.searchForm && element.userObj) {
+					if(element.userObj.required) {
+						newElement.setAttribute('required', true);
+						newElement.setAttribute('error-message', 'This field has to be filled')
+						newElement.setAttribute('auto-validate', true);
+					}
+
+					if(element.userObj.max && element.userObj.max > 0) {
+						newElement.setAttribute('maxlength', element.userObj.max);
+						newElement.setAttribute('auto-validate', true);
+					}
+
+					if(element.userObj.type) {
+						if(element.userObj.type == 'integer') {
+							newElement.setAttribute('type', 'number');
+							newElement.setAttribute('min', 0);
+
+						} else if (element.userObj.type == 'string' || element.userObj.type == 'text') {
+							newElement.setAttribute('type', 'text');
+
+						} else if (element.userObj.type == 'password') {
+							newElement.setAttribute('type', 'password');
+						}
+					}
+
+					if(element.userObj.hidden) {
+						newElement.setAttribute('hidden', true);
+					}
+
+					if(element.userObj.readonly) {
+						newElement.setAttribute('readonly', true);
+					}
+				}
 		}
 
 		if(!newElement) return null;
 		
-		if(element.name == 'id' || element.name == 'domain_id' || element.name == 'domainId') {
-			newElement.setAttribute('hidden', true);
-		}
-
 		newElement.setAttribute('class', 'flex style-scope things-form');
 		return newElement;
 	},

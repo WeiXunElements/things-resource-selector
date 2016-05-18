@@ -14,12 +14,13 @@
 <link rel="import" href="../paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../paper-tooltip/paper-tooltip.html">
 
+<link rel="import" href="../things-button/things-button.html">
 <link rel="import" href="../things-fullscreen/things-fullscreen-behavior.html">
 <link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 <link rel="import" href="../things-spinner/things-spinner-behavior.html">
 
-<link rel="import" href="things-selector-form-behavior.html">
-<link rel="import" href="things-selector-form-search-behavior.html">
+<link rel="import" href="./things-selector-form-behavior.html">
+<link rel="import" href="./things-selector-form-search-behavior.html">
 
 <!--
 `<things-search-form>` is an HTML `<form>` element that can search data by configure form fields dinamically.
@@ -33,7 +34,7 @@
       last-response="{{formFields}}">
     </things-ajax>
 
-    <things-selector-form
+    <things-search-form 
       id="search-form"
       class="flex"
       title="Sample Title"
@@ -42,7 +43,7 @@
       page="{{page}}"
       per-page="{{limit}}"
       last-response="{{lastResponse}}">
-    </things-selector-form>
+    </things-search-form>
 
 @demo demo/demo-things-search-form.html
 -->
@@ -55,69 +56,27 @@
     <style>
       :host {
         display: block;
-        box-sizing: border-box;
-        /*text-align: center;*/
-        /*margin: 0 auto;*/
-        height: 100%;
-        width: 98%;
+        background-color:var(--things-lightgrey-background-color);
       }
-          
-      :host paper-input {
-        margin-left: auto;
-        margin-right: auto;
-        width: 90%;
+      form{
+        @apply(--things-default-padding);
+        padding-bottom:0;
+        border-bottom:1px solid rgba(0,0,0,.1);
       }
-
-      :host things-code-combo {
-        margin-left: auto;
-        margin-right: auto;
-        width: 90%;
-      }    
-      
-      :host paper-material {
-        padding: 10px;
-      }
-
-      :host .search {
-        padding:5px 0 3px 5px;
-      }
-
-      :host .fields {
-        padding: 0px 10px 0px 0px;
+      paper-fab{
+        @apply(--things-search-fab);
       }
     </style>
 
-    <paper-material elevation="1" class="flex" on-keypress="handleKeyPress">
-      <paper-toolbar>
-        <paper-icon-button icon="menu"></paper-icon-button>
-        <span class="title">[[title]]</span>
-        <paper-icon-button icon="search" id="search-btn" on-tap="submitMyForm">
-        </paper-icon-button>
-        <paper-icon-button icon="refresh" id="reset-btn" on-tap="resetMyForm">
-        </paper-icon-button>
-        <paper-icon-button icon="icons:fullscreen" id="fullscreen-btn" on-tap="toggleFullscreen">
-        </paper-icon-button>
-        <paper-tooltip for="search-btn" offset="0">
-          <things-i18n-msg msgid="button.search">Search</things-i18n-msg>
-        </paper-tooltip>
-        <paper-tooltip for="reset-btn" offset="0">
-          <things-i18n-msg msgid="button.reset">Reset</things-i18n-msg>
-        </paper-tooltip>
-        <paper-tooltip for="fullscreen-btn" offset="0">
-          <things-i18n-msg msgid="button.fullscreen">Full Screen</things-i18n-msg>
-        </paper-tooltip>
-      </paper-toolbar>
-
+    <paper-material elevation="0" class="flex" on-keypress="handleKeyPress">
       <div class="layout vertical flex">
         <form is="iron-form"
               action="[[action]]"
               content-type="[[contentType]]"
               last-response ="{{lastResponse}}"
               with-credentials="[[withCredentials]]">
-          <div class="layout horizontal flex" >
-            <div id="left-fields" class="layout vertical flex fields"></div>
-            <div id="right-fields" class="layout vertical flex"></div>
-          </div>
+          <div id="fields" class="layout vertical flex"></div>
+          <paper-fab icon="search" title="search" on-tap="_onSearchFormTap"></paper-fab>
         </form>
       </div>
     </paper-material>
@@ -130,12 +89,6 @@
     is: 'things-selector-form',
 
     properties: {
-      /**
-       * Toolbar에 표시할 화면 타이틀 
-       */
-      title: {
-        type: String
-      }
     },
 
     listeners : {
@@ -156,38 +109,59 @@
      * 리소스 폼이 이미 구성되었는지 여부 
      */
     isFormConfigured: function() {
-      return this.$['left-fields'].childNodes.length > 0 || this.$['right-fields'].childNodes.length > 0;
+      return this.$.fields.childNodes.length > 0;
     },
 
     /**
      * 검색 폼 화면을 구성. formFields 정보로 동적으로 폼 하위 엘리먼트를 생성하여 폼을 구성한다.
      */
     reconfigureMyForm: function() {
-      if(this.isFormConfigured()) return;
+      if(!this.formFields || this.formFields.length <= 0 || this.isFormConfigured()) return;
+      var divContainer = this.$.fields, rowDiv = null;
 
-      if(this.formFields.length > 0) {
-        for(index in this.formFields) {
-          var field = this.formFields[index];
-          var newElement = this._createFormElement(field);
-          if(!newElement) continue;
-          
-          if((index % 2) == 0) {
-            this.$['left-fields'].appendChild(newElement);
-          } else {
-            this.$['right-fields'].appendChild(newElement);
-          }
+      for(index in this.formFields) {
+        var field = this.formFields[index];
+        field.searchForm = true;
+        var newElement = this._createFormElement(field);
+        if(!newElement) continue;
+
+        if((index % 2) == 0) {
+          rowDiv = document.createElement('div');
+          rowDiv.setAttribute('class', 'layout horizontal');
+          divContainer.appendChild(rowDiv);
+        }
+
+        rowDiv.appendChild(newElement);          
+      }
+
+      // 마지막 Div가 홀수이고 textarea가 아니면 empty 열 추가
+      if(rowDiv && rowDiv.childNodes && rowDiv.childNodes.length == 1) {
+        if(rowDiv.childNodes[0].localName.indexOf('textarea') < 0) {
+          var emptyElement = this._createFormElement({ type: 'empty' });
+          rowDiv.appendChild(emptyElement);
         }
       }
+
+      this.active = true;
+      this.fire('things-search-form-configured', this.formFields);      
     },
 
     /**
-    * Submits form
-    */
+     * 조회 버튼 클릭시 current page를 1로 리셋
+     *
+     * @param {Object} e 버튼 클릭 이벤트
+     */
+    _onSearchFormTap: function(e) {
+      if(this.page > 1) this.page = 1;
+      else this.submitMyForm();      
+    },
+
+    /**
+     * Submit Form. 검색 실행 
+     */
     submitMyForm: function() {
       this.startSpinner();
-
-      if(this.page > 1) this.page = 1;
-      else this.getMyForm().submit();
+      this.getMyForm().submit();
     },
 
     /**

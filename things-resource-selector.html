@@ -49,125 +49,124 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
     
     <label>[[label]]</label>
     <input is="iron-input" bind-value="[[display]]" readonly>
-    <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear"></paper-icon-button>
+    <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear">
+    </paper-icon-button>
     <iron-icon prefix on-tap="openResourceSelector"></iron-icon>
   </template>
 
   <script type="text/javascript">
-  	(function() {
-      Polymer({
-        is: "things-resource-selector",
+    Polymer({
+      is: "things-resource-selector",
 
-        properties: {
-          /**
-           * element name, Form 안에 들어가는 경우 Ajax 요청시 name : value 형식으로 서버에 요청된다.
-           */
-          name : {
-            type: String
-          },
-
-          /**
-           * Resource Object Value
-           */
-          objValue: {
-            type: Object,
-            observer: '_objValueChanged'
-          },
-
-          /**
-           * element에 표시할 라벨 
-           */
-          label: {
-            type: String
-          },
-
-          /**
-           * Resource Selector로 부터 선택한 값 - id값
-           */
-          value: {
-            type: String
-          },
-
-          /**
-           * Resource Selector로 부터 선택한 표시 값 
-           */
-          display: {
-            type: String
-          },
-
-          /**
-           * entity type
-           */
-          resourceType: {
-            type: String
-          },
-
-          /**
-           * 데이터 조회를 위한 URL.
-           */
-          resourceUrl: {
-            type: String
-          },
-
-          /**
-           * 화면에 표시할 대표 컬럼명 
-           */
-          delegateColumn: {
-            type: String,
-            value: 'name'
-          }
-        },
-
-        behaviors: [
-          Things.ResourceSelectorBehavior
-        ],
-
+      properties: {
         /**
-         * display값이 변경될 경우 
+         * element name, Form 안에 들어가는 경우 Ajax 요청시 name : value 형식으로 서버에 요청된다.
          */
-        _objValueChanged: function(objValue) {
-          if(objValue) {
-            this.value = objValue.id;
-            this.display = objValue[this.delegateColumn];
-          } else {
-            this.idValue = null;
-            this.display = '';
-          }
+        name : {
+          type: String
         },
 
         /**
-         * Object Value를 리턴한다.
+         * Resource Object Value
          */
-        getObjValue: function() {
-          return this.objValue;
+        objValue: {
+          type: Object,
+          observer: '_objValueChanged'
         },
 
         /**
-         * Object Value를 설정한다.
-         *
-         * @param {Object} objValue
+         * element에 표시할 라벨 
          */
-        setObjValue: function(objValue) {
-          this.objValue = objValue;
+        label: {
+          type: String
         },
 
         /**
-         * Open Resource Selector
+         * Resource Selector로 부터 선택한 값 - id값
          */
-        openResourceSelector: function() {
-          this.openResourceSelectorByForm(this, true);
+        value: {
+          type: String
         },
 
         /**
-         * 값을 리셋
+         * Resource Selector로 부터 선택한 표시 값 
          */
-        clearValue: function() {
-          var obj = { id : null };
-          obj[this.delegateColumn] = '';
-          this.objValue = obj;
+        display: {
+          type: String
+        },
+
+        /**
+         * entity type
+         */
+        resourceType: {
+          type: String
+        },
+
+        /**
+         * 데이터 조회를 위한 URL.
+         */
+        resourceUrl: {
+          type: String
+        },
+
+        /**
+         * 화면에 표시할 대표 컬럼명 
+         */
+        delegateColumn: {
+          type: String,
+          value: 'name'
         }
+      },
 
-      })
-  	})();
+      behaviors: [
+        Things.ResourceSelectorBehavior
+      ],
+
+      /**
+       * display값이 변경될 경우 
+       */
+      _objValueChanged: function(objValue) {
+        if(objValue) {
+          this.value = objValue.id;
+          this.display = objValue[this.delegateColumn];
+        } else {
+          this.idValue = null;
+          this.display = '';
+        }
+      },
+
+      /**
+       * Object Value를 리턴한다.
+       */
+      getObjValue: function() {
+        return this.objValue;
+      },
+
+      /**
+       * Object Value를 설정한다.
+       *
+       * @param {Object} objValue
+       */
+      setObjValue: function(objValue) {
+        this.objValue = objValue;
+      },
+
+      /**
+       * Open Resource Selector
+       */
+      openResourceSelector: function() {
+        this.openResourceSelectorByForm(this, true);
+      },
+
+      /**
+       * 값을 리셋
+       */
+      clearValue: function() {
+        var obj = { id : null };
+        obj[this.delegateColumn] = '';
+        this.objValue = obj;
+      }
+
+    });
   </script>
 </dom-module>

@@ -1,15 +1,13 @@
 <link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="../iron-icons/iron-icons.html">
-<link rel="import" href="../paper-icon-button/paper-icon-button.html">
-
 <link rel="import" href="../things-ajax/things-ajax.html">
 <link rel="import" href="../things-button/things-button.html">
 <link rel="import" href="../things-full-dialog/things-full-dialog.html">
-<link rel="import" href="../things-grid/things-resource-grid.html">
-<link rel="import" href="../things-meta/things-resource-meta-behavior.html">
+<link rel="import" href="../things-grid/things-basic-grid.html">
+<link rel="import" href="../things-meta/things-named-meta-behavior.html">
 
 <link rel="import" href="things-selector-form.html">
+
 <!--
 하나의 리소스에 대한 기본 액션 (List, Create, Find, Upate, Delete) 및 Import, Export 등의 기능을 제공하는 화면 셋 
 
@@ -32,27 +30,30 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 		<style>
 			:host {
 				display: block;
-				height: 100%;
+				@apply(--layout-vertical);
+				@apply(--layout-flex);
+			}
+			
+			things-resource-grid {
+				@apply(--layout-flex);
 			}
 		</style>
 
-		<div class="[[layout]]">
+		<div class="layout vertical">
 			<things-ajax 
+				auto
 				id="resource-meta"
 				method="GET"
-				resource-url="[[resourceMetaUrl]]"
+				resource-url="[[menuMetaUrl]]"
 				last-response="{{metaData}}">
 			</things-ajax>
 
 			<things-selector-form 
 				id="search-form"
-				class="flex"
-				active="[[active]]"
-				title="[[title]]"
 				form-fields="[[searchFormFields]]" 
 				select-fields="[[selectFields]]"
 				sort-fields="[[sortFields]]"
-				action-url="[[resourceUrl]]" 
+				action-url="[[menuInfo.resource_url]]" 
 				page="{{page}}"
 				per-page="[[perPage]]"
 				last-response="{{lastResponse}}">
@@ -63,12 +64,11 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				model="[[gridModel]]" 
 				columns="[[gridColumns]]"
 				config="[[gridConfig]]"
+				buttons="[[buttons]]"
 				current-page="{{page}}"
 				per-page="{{perPage}}"
-				data="[[lastResponse.items]]"
-				total-count="[[lastResponse.total]]"
-				buttons="[[buttons]]"
-				paginatable>
+				data="[[items]]"
+				total-count="[[itemCount]]">
 			</things-resource-grid>
 		</div>
 	</template>
@@ -78,7 +78,7 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			is: 'things-selector-content',
 
 			behaviors: [ 
-				Things.ResourceMetaBehavior
+				Things.NamedMetaBehavior
 			],
 			
 			properties: {
@@ -90,10 +90,10 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				},
 
 				/**
-				 * 화면 타이틀 
+				 * Resource Selector 타이틀
 				 */
 				title: {
-					type: String
+					type: String,
 				},
 
 				/**
@@ -102,15 +102,99 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				buttons: {
 					type: Array,
 					value: []
-				}				
+				},
+
+				/**
+				 * 조회 결과 
+				 */
+				lastResponse: {
+					type: Object,
+					observer: '_responseChanged'
+				},
+
+				/**
+				 * 조회 결과 리스트 데이터 프로퍼티 명
+				 */
+				itemsProp: {
+					type: String,
+					value: 'items'
+				},
+
+				/**
+				 * 조회 결과 리스트 Total Count 프로퍼티 명
+				 */
+				totalProp: {
+					type: String,
+					value: 'total'
+				},
+
+				/**
+				 * 조회 결과 리스트 데이터
+				 */
+				items: {
+					type: Array
+				},
+
+				/**
+				 * 조회 결과 레코드 수  
+				 */
+				itemCount: {
+					type: Number
+				}
+			},
+
+			listeners : {
+				'grid.things-grid-configured' : 'refreshGridData'
+			},
+
+			observers: [
+				'_menuInfoChanged(menuInfo)'
+			],
+
+			/**
+			 * 메뉴 메타데이터 변경시
+		   *
+			 * @param {Object} menuInfo
+			 */
+			_menuInfoChanged: function(menuInfo) {
+				if(menuInfo) {
+					this.title = menuInfo.title;
+					this.$.grid.paginatable = menuInfo.pagination;
+					this.itemsProp = menuInfo.items_prop;
+					this.totalProp = menuInfo.total_prop;
+					var searchForm = this.$['search-form'];
+
+					if(menuInfo.resource_type == 'ENTITY') {
+						searchForm.paramType = 'RESOURCE';
+
+					} else if(menuInfo.resource_type == 'DIY_SERVICE') {
+						searchForm.paramType = 'DIY';
+					}
+				}
 			},
 
 			/**
-			 * 화면 초기화 함수 
-			 * 메타 데이터를 서버로 요청하여 화면을 구성한다.
+			 * ID Field를 리턴한다.
 			 */
-			initializeContent: function() {
-				this.$['resource-meta'].generateRequest();
+			getIdField: function() {
+				return (this.menuInfo && this.menuInfo.id_field) ? this.menuInfo.id_field : 'id';
+			},
+
+			/**
+			 * Title Field를 리턴한다.
+			 */
+			getTitleField: function() {
+				return (this.menuInfo && this.menuInfo.title_field) ? this.menuInfo.title_field : 'name';
+			},
+
+			/**
+			 * 조회 데이터 변경시 
+			 *
+			 * @param {Object} lastResponse
+			 */
+			_responseChanged: function(lastResponse) {
+				this.items = lastResponse[this.itemsProp] ? lastResponse[this.itemsProp] : lastResponse;
+				this.itemCount = lastResponse[this.totalProp] ? lastResponse[this.totalProp] : lastResponse.length;
 			},
 
 			/**
@@ -119,7 +203,14 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			 */
 			refreshGridData: function(grid) {
 				this.$['search-form'].submitMyForm();
-			}
+			},
+
+			/**
+			 * 화면 초기화 함수 
+			 * 메타 데이터를 서버로 요청하여 화면을 구성한다.
+			 */
+			initializeContent: function() {
+			}			
 
 		});
 	</script>

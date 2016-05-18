@@ -1,16 +1,14 @@
 <link rel="import" href="../polymer/polymer.html">
 
 <link rel="import" href="./things-resource-dialog.html">
-<link rel="import" href="./things-selector-content.html">
 
 <script>
 
 window.Things = window.Things || {};
 
 /**
- * ResourceSelector를 오픈해주는 Behavior.
- * 
- * ResourceSelector는 Form이나 Grid에서 오픈할 수 있다.
+ * ResourceSelector를 오픈해주는 Behavior. ResourceSelector는 Form이나 Grid에서 오픈할 수 있다.
+ * 주의 : things-selector-content.html 파일을 import 하면 안 된다. 그럴 경우 circular reference 때문인지 behavior가 작동하지 않는다.
  *
  * @polymerBehavior Things.ResourceSelectorBehavior
  * 
@@ -27,7 +25,7 @@ Things.ResourceSelectorBehavior = {
    * @param {Boolean} modal modal로 오픈할 지 여부
    */
   openResourceSelectorByGrid: function(parentGrid, parentGridRowIdx, resourceObj, modal) {
-    var selector = this._createResourceContent(resourceObj.resourceType, resourceObj.resourceUrl);
+    var selector = this._createResourceContent(resourceObj.resourceType);
     this._getResourceSelectorDialog().showResourceDialog(selector, modal, selector.refreshGridData);
     this._addSelectedListenerByGrid(selector, parentGrid, parentGridRowIdx, resourceObj);
   },
@@ -35,18 +33,13 @@ Things.ResourceSelectorBehavior = {
   /**
    * resource-content element를 생성한다.
    *
-   * @param {String} resourceType
-   * @param {String} resourceUrl
+   * @param {String} resourceName
    * @return {Object} element
    */
-  _createResourceContent: function(resourceType, resourceUrl) {
+  _createResourceContent: function(resourceName) {
     var selector = document.createElement('things-selector-content');
     selector.id = "resource-selector";
-    selector.layout = "fullbleed layout vertical";
-    selector.title = resourceType;
-    selector.resourceType=resourceType;
-    selector.resourceUrl = resourceUrl;
-    selector.initializeContent();
+    selector.menuName = resourceName;
     return selector;
   },
 
@@ -86,13 +79,11 @@ Things.ResourceSelectorBehavior = {
   /**
    * open resource selector - form에서 사용 
    *
-   * @params {Object} parentForm
-   * @params {Object} formField
-   * @params {Object} resourceObj
+   * @params {Object} container
    * @param {Boolean} modal modal로 오픈할 지 여부
    */
   openResourceSelectorByForm: function(container, modal) {
-    var selector = this._createResourceContent(container.resourceType, container.resourceUrl);
+    var selector = this._createResourceContent(container.resourceType);
     this._getResourceSelectorDialog().showResourceDialog(selector, modal, selector.refreshGridData);
     this._addSelectedListenerByForm(selector, container);
   },
@@ -120,6 +111,7 @@ Things.ResourceSelectorBehavior = {
    * Resource Selector Dialog
    */
   _getResourceSelectorDialog: function() {
+    // FIXME things-full-dialog 처럼 이벤트 방식으로 변경한다.
     return app.$['resource-dialog'];
   }
 

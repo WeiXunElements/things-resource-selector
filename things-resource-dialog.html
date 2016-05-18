@@ -1,10 +1,16 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../paper-scroll-header-panel/paper-scroll-header-panel.html">
+<link rel="import" href="../paper-toolbar/paper-toolbar.html">
 
 <!--
 ResourceSelector를 위한 다이얼로그.
 애플리케이션에 단 하나만 존재하고 다이얼로그가 오픈 될 때 마다 화면 구성을 다시하여 오픈한다. 
+단. Full Dialog에서 다시 Resource Dialog가 오픈 될 수 있으므로 FullDialog 보다 작게 구성한다.
 
   Example:
 
@@ -14,50 +20,89 @@ ResourceSelector를 위한 다이얼로그.
 -->
 
 <dom-module id="things-resource-dialog">
-  <style>
+	<style>
 		:host {
 			display: inline-block;
-			margin: 1em;
+			@apply(--layout-vertical)
 		}
-
+		paper-toolbar {
+			background-color:var(--things-primary-background-color);
+			height:45px;
+			margin-top:0px !important;
+			@apply(--things-padding-clear)
+		}
+		paper-toolbar::shadow #topBar {
+			height:45px;
+			@apply(--things-padding-clear)
+		}
 		paper-dialog {
 			position: fixed;
-			top: 10%;
-			bottom:10%;
-			left: 15%;
-			right: 15%;
+			top: 15%;
+			bottom: 15%;
+			left: 20%;
+			right: 20%;
 			margin: 0px;
+			@apply(--layout-flex);
+			@apply(--layout-vertical);
 		}
-
-		paper-dialog-scrollable {
-			position: fixed;
-			top: 10%;
-			bottom:10%;
-			left: 15%;
-			right: 15%;
-			margin: 0px;
+		.buttonsGroup {
+			@apply(--layout-horizontal);
+			@apply(--layout-end-justified);
+			@apply(--layout-flex);
 		}
-  </style>
+		.scrollroot {
+			@apply(--layout-flex);
+			@apply(--layout-vertical);
+			@apply(--things-padding-clear);
+			@apply(--things-margin-clear);
+		}
+		.scrollroot::content #detail-view {
+			@apply(--layout-flex);
+		}
+		.title {
+			margin-left:20px !important;
+			font-size:20px;
+			font-weight:400;
+		}
+		.close-btn {
+			@apply(--things-header-button);
+			background:url(/images/icon-close.png) 100% 50% no-repeat;
+			margin-right:10px;
+		}
+		button:focus {
+			outline:none;
+		}
+	</style>
 
 	<template>
 		<paper-dialog
-			id='dialog' 
-			entry-animation="scale-up-animation"
-			exit-animation="fade-out-animation">
-			<paper-dialog-scrollable id="scrollroot"></paper-dialog-scrollable>
-			<div class="buttons">
-				<paper-button dialog-dismiss>Close</paper-button>
-			</div>
+		id='dialog' 
+		entry-animation="scale-up-animation"
+		exit-animation="fade-out-animation">
+			<paper-toolbar>
+				<span class="title">[[title]]</span>
+				<div class="buttonsGroup">
+					<button dialog-dismiss class="close-btn"></button>
+				</div>
+			</paper-toolbar>
+
+			<div id="scrollroot" class="scrollroot"></div>
 		</paper-dialog>
 	</template>
 
-  <script>
+	<script>
 	Polymer({
 
 		is: 'things-resource-dialog',
 
 		properties: {
-			
+			/**
+			* 다이얼로그 타이틀
+			*/
+			title: {
+				type: String
+			},
+
 			/**
 			* Dialog 내에 포함될 뷰 
 			*/
@@ -66,10 +111,10 @@ ResourceSelector를 위한 다이얼로그.
 			},
 
 			/**
-			 * Dialog가 오픈된 후 콜백 
-			 */
+			* Dialog가 오픈된 후 콜백 
+			*/
 			openCallback: {
-				type: Object
+				type: Function
 			}
 		},
 
@@ -88,10 +133,14 @@ ResourceSelector를 위한 다이얼로그.
 			var dialog = this.$.dialog;
 			dialog.modal = modal;
 			dialog.noCancelOnEscKey = false;
-			var scrollable = this.$.scrollroot.$.scrollable;
+			var scrollable = this.$.scrollroot;
 
 			if(this.detailView) {
-				scrollable.removeChild(this.detailView);
+				try {
+					scrollable.removeChild(this.detailView);
+				} catch(e) {
+					console.log(e);
+				}
 			} 
 
 			if(this.openCallback) {
@@ -101,7 +150,7 @@ ResourceSelector를 위한 다이얼로그.
 			this.detailView = view;
 			this.openCallback = openCallback;
 			scrollable.appendChild(this.detailView);
-			dialog.open();		
+			dialog.open();
 		},
 
 		/**
@@ -115,12 +164,14 @@ ResourceSelector를 위한 다이얼로그.
 		 * 다이얼로그가 오픈된 경우 핸들러 
 		 */
 		_openHandler: function(e) {
+			this.title = this.detailView.title;
+
 			if(this.openCallback) {
 				this.openCallback.apply(this.detailView);
 			}
-		}
+		} 
 
 	});
-  </script>
+	</script>
 
 </dom-module>
