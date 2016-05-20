@@ -65,8 +65,19 @@ Things.ResourceSelectorBehavior = {
       if(row && row.dataIndex() >= 0) {
         var rowObj = row.getRowObject();
         var selectedObj = rowObj[valueField];
-        selectedObj[idField] = e.detail[idField];
-        selectedObj[titleField] = e.detail[titleField];
+        if(typeof(selectedObj) === 'undefined' || selectedObj === null) selectedObj = {};
+        
+        if(typeof(selectedObj) == 'object') {
+          selectedObj[idField] = e.detail[idField];
+          selectedObj[titleField] = e.detail[titleField];
+
+        } else if(typeof(selectedObj) == 'string') {
+          selectedObj = e.detail[titleField];
+
+        } else if(typeof(selectedObj) == 'number') {
+          selectedObj = e.detail[idField];
+        }
+
         rowObj[valueField] = selectedObj;
         me.fire('things-resource-selector-selected', { rowObj: rowObj, resource : e.detail } );
         dataSet.updateRow(parentRowIdx, rowObj);
