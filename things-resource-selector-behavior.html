@@ -25,7 +25,7 @@ Things.ResourceSelectorBehavior = {
    * @param {Boolean} modal modal로 오픈할 지 여부
    */
   openResourceSelectorByGrid: function(parentGrid, parentGridRowIdx, resourceObj, modal) {
-    var selector = this._createResourceContent(resourceObj.resourceType);
+    var selector = this._createResourceContent(resourceObj.selectorType, resourceObj.resourceType);
     this._getResourceSelectorDialog().showResourceDialog(selector, modal, selector.refreshGridData);
     this._addSelectedListenerByGrid(selector, parentGrid, parentGridRowIdx, resourceObj);
   },
@@ -33,13 +33,20 @@ Things.ResourceSelectorBehavior = {
   /**
    * resource-content element를 생성한다.
    *
+   * @param {String} selectorType
    * @param {String} resourceName
    * @return {Object} element
    */
-  _createResourceContent: function(resourceName) {
-    var selector = document.createElement('things-selector-content');
+  _createResourceContent: function(selectorType, resourceName) {
+    var selector = document.createElement('things-selector-content-by-' + selectorType.toLowerCase());
     selector.id = "resource-selector";
-    selector.menuName = resourceName;
+
+    if(selectorType == 'Menu') {
+      selector.menuName = resourceName;
+    } else {
+      selector.entityName = resourceName;  
+    }
+    
     return selector;
   },
 
@@ -96,7 +103,7 @@ Things.ResourceSelectorBehavior = {
    * @param {Boolean} modal modal로 오픈할 지 여부
    */
   openResourceSelectorByForm: function(container, modal) {
-    var selector = this._createResourceContent(container.resourceType);
+    var selector = this._createResourceContent(container.selectorType, container.resourceType);
     this._getResourceSelectorDialog().showResourceDialog(selector, modal, selector.refreshGridData);
     this._addSelectedListenerByForm(selector, container);
   },

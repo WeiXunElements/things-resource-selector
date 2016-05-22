@@ -109,6 +109,16 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
           },
 
           /**
+          * Resource Selector Type - Entity or Menu
+          * 1) Entity : Entity 설정에 의한 Selector 화면 구성 
+          * 2) Menu : Menu 설정에 의한 Selector 화면 구성
+          */
+          selectorType: {
+            type: String,
+            value: 'Entity'
+          },
+        
+          /**
            * entity type
            */
           resourceType: {

@@ -208,6 +208,7 @@ Things.SelectorFormBehaviorImpl = {
 				newElement = document.createElement('things-resource-selector');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
+				newElement.setAttribute('selector-type', element.userObj.selectorType);
 				newElement.setAttribute('resource-type', element.userObj.resourceType);
 				newElement.setAttribute('resource-url', element.userObj.resourceUrl);
 				break;
@@ -216,6 +217,7 @@ Things.SelectorFormBehaviorImpl = {
 				newElement = document.createElement('things-resource-field');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
+				newElement.setAttribute('selector-type', element.userObj.selectorType);
 				newElement.setAttribute('resource-type', element.userObj.resourceType);
 				newElement.setAttribute('resource-url', element.userObj.resourceUrl);
 				if(element.userObj.readOnly && element.userObj.readOnly === true) {
