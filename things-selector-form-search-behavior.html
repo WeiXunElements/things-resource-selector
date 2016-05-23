@@ -58,6 +58,15 @@ Things.SelectorFormSearchBehaviorImpl = {
     paramType: {
       type: String,
       value: 'RESOURCE'
+    },
+
+    /**
+     * Resource Selector 창이 실행되면서 바로 반영되어야 할 파라미터들을 지정한다.
+     * Resource Selector가 실행된 후 바로 서비스 호출을 하게 되는데 이 때 initialParams가 서비스 호출 파라미터에 반영된다.
+     * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},... 
+     */
+    initialParams: {
+      type: String
     }
 
     /**
@@ -130,7 +139,26 @@ Things.SelectorFormSearchBehaviorImpl = {
         }
       }
     }
-  }, 
+  },
+
+  /**
+   * 검색 폼 구성 완료 후에 initialParams를 서비스 호출시 파라미터에 반영한다.
+   */
+  _bindInitialParams: function() {
+    if(!this.initialParams) return;
+
+    var defaultQuery = {};
+    var queryParamArr = this.initialParams.split(',');
+    for(var i = 0 ; i < queryParamArr.length ; i++) {
+      var queryParamStr = queryParamArr[i];
+      var paramArr = queryParamStr.split(':');
+
+      if(paramArr[1])
+        defaultQuery[paramArr[0]] = paramArr[1];
+    }
+
+    this.setFormData(defaultQuery);
+  },  
 
   /**
    * Submit 전에 전처리 핸들

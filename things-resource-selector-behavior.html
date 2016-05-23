@@ -17,48 +17,62 @@ window.Things = window.Things || {};
 Things.ResourceSelectorBehavior = {
 
   /**
-   * open resource selector - 그리드에서 사용 
+   * Open resource selector - 그리드 컬럼에서 사용 
    *
    * @params {Object} parentGrid
    * @params {Object} parentGridRowIdx
-   * @params {Object} resourceObj
+   * @params {Object} selectorConfig
    * @param {Boolean} modal modal로 오픈할 지 여부
    */
-  openResourceSelectorByGrid: function(parentGrid, parentGridRowIdx, resourceObj, modal) {
-    var selector = this._createResourceContent(resourceObj.selectorType, resourceObj.resourceType);
+  openResourceSelectorByGrid: function(parentGrid, parentGridRowIdx, selectorConfig, modal) {
+    var selector = this._createResourceContent(selectorConfig.resourceType, selectorConfig.resourceName, selectorConfig.initialParams);
     this._getResourceSelectorDialog().showResourceDialog(selector, modal, selector.refreshGridData);
-    this._addSelectedListenerByGrid(selector, parentGrid, parentGridRowIdx, resourceObj);
+    this._addSelectedListenerByGrid(selector, parentGrid, parentGridRowIdx, selectorConfig);
   },
 
   /**
-   * resource-content element를 생성한다.
+   * Open resource selector - form field(things-resource-field, things-resource-selector)에서 사용 
    *
-   * @param {String} selectorType
-   * @param {String} resourceName
-   * @return {Object} element
+   * @params {Object} ownerElement ResourceSelectorContent를 호출한 FormField Element
+   * @param {Boolean} modal modal로 오픈할 지 여부
    */
-  _createResourceContent: function(selectorType, resourceName) {
-    var selector = document.createElement('things-selector-content-by-' + selectorType.toLowerCase());
-    selector.id = "resource-selector";
+  openResourceSelectorByForm: function(ownerElement, modal) {
+    var selector = this._createResourceContent(ownerElement.resourceType, ownerElement.resourceName, ownerElement.initialParams);
+    this._getResourceSelectorDialog().showResourceDialog(selector, modal, selector.refreshGridData);
+    this._addSelectedListenerByForm(selector, ownerElement);
+  },  
 
-    if(selectorType == 'Menu') {
-      selector.menuName = resourceName;
-    } else {
-      selector.entityName = resourceName;  
-    }
-    
+  /**
+   * Resource Selector를 위한 Content element를 생성하여 리턴한다.
+   * Resource Selector와 연동하기 위해서는 다음과 같은 파라미터가 필요하다.
+   *
+   * @param {String} resourceType ResourceSelector의 종류 (Menu / Entity). Menu 설정을 바탕으로 ResourceSelector를 구성할 것인지 Entity 설정을 바탕으로 할 것인지 설정
+   * @param {String} resourceName resourceType이 Menu로 선택되어 있다면 Menu 명, resourceType이 Entity로 선택되어 있다면 Entity 명  
+   * @param {String} initialParams ResourceSelector에 전달할 초기 파라미터. {ParamName1}:{ParamValue1},{ParamName2}:{ParamValue2}, .... 형식의 String 값  
+   * @param {String} extraTargetFields ResourceSelector에서 선택한 값을 기본값(id, title필드 값) 외에 ownerResource의 다른 필드에 설정하고자 할 때 사용. ','구분자로 구분한다.
+   * @param {Object} ownerResource ResourceSelector를 호출한 (폼 필드나 그리드 컬럼) 측에서 해당 데이터를 변경시키기 위해서 넘겨준다. extraTargetFields가 설정된 경우는 반드시 설정해야 한다. 
+   * @return {Object} things-resource-selector-content element
+   */
+  _createResourceContent: function(resourceType, resourceName, initialParams, extraTargetFields, ownerResource) {
+    var selector = document.createElement('things-selector-content-by-' + resourceType.toLowerCase());
+    selector.id = "resource-selector";
+    selector.initialParams = initialParams;
+    selector.resourceName = resourceName;
+    selector.extraTargetFields = extraTargetFields;
+    selector.ownerResource = ownerResource;
     return selector;
   },
 
   /**
    * selector selected changed 
+   * TODO SelectorContent 내부에서 처리하기로 한다.
    *
    * @params {Object} parentGrid
    * @params {Object} parentGridRowIdx
-   * @params {Object} resourceObj
+   * @params {Object} selectorConfig
    * @param {Object} selector
    */
-  _addSelectedListenerByGrid: function(selector, parentGrid, parentRowIdx, resourceObj) {
+  _addSelectedListenerByGrid: function(selector, parentGrid, parentRowIdx, selectorConfig) {
     var me = this;
 
     selector.addEventListener('things-grid-row-data-select', function(e) {
@@ -67,11 +81,11 @@ Things.ResourceSelectorBehavior = {
       var titleField = e.currentTarget.getTitleField();
       var row = parentGrid.focusedRow();
       var dataSet = parentGrid.dataSource();
-      var valueField = resourceObj.valueField;
+      var ownerField = selectorConfig.ownerField;
 
       if(row && row.dataIndex() >= 0) {
         var rowObj = row.getRowObject();
-        var selectedObj = rowObj[valueField];
+        var selectedObj = rowObj[ownerField];
         if(typeof(selectedObj) === 'undefined' || selectedObj === null) selectedObj = {};
         
         if(typeof(selectedObj) == 'object') {
@@ -85,10 +99,9 @@ Things.ResourceSelectorBehavior = {
           selectedObj = e.detail[idField];
         }
 
-        rowObj[valueField] = selectedObj;
+        rowObj[ownerField] = selectedObj;
         me.fire('things-resource-selector-selected', { rowObj: rowObj, resource : e.detail } );
         dataSet.updateRow(parentRowIdx, rowObj);
-        // popup 닫기 
         me._getResourceSelectorDialog().closeResourceDialog();
         // 부모 그리드 Refresh
         parentGrid.refreshView();
@@ -97,33 +110,23 @@ Things.ResourceSelectorBehavior = {
   },
 
   /**
-   * open resource selector - form에서 사용 
+   * Resource Selector에서 값이 선택되었을 경우
+   * TODO SelectorContent 내부에서 처리하기로 한다.
    *
-   * @params {Object} container
-   * @param {Boolean} modal modal로 오픈할 지 여부
+   * @params {Object} selector
+   * @params {Object} ownerElement
    */
-  openResourceSelectorByForm: function(container, modal) {
-    var selector = this._createResourceContent(container.selectorType, container.resourceType);
-    this._getResourceSelectorDialog().showResourceDialog(selector, modal, selector.refreshGridData);
-    this._addSelectedListenerByForm(selector, container);
-  },
-
-    /**
-   * selector selected changed 
-   *
-   * @params {Object} parentGrid
-   * @params {Object} parentGridRowIdx
-   * @params {Object} resourceObj
-   * @param {Object} selector
-   */
-  _addSelectedListenerByForm: function(selector, container) {
+  _addSelectedListenerByForm: function(selector, ownerElement) {
     var me = this;
 
     selector.addEventListener('things-grid-row-data-select', function(e) {
-      // popup 닫기 
+      // Container에서 필요한 대표 컬럼 및 선택한 값을 설정한다. 
+      ownerElement.resourceIdField = selector.getIdField();
+      ownerElement.resourceTitleField = selector.getTitleField();
+      var idValue = e.detail[selector.getIdField()];
+      var displayValue = e.detail[selector.getTitleField()];
+      ownerElement.setResourceValue(idValue, displayValue);
       me._getResourceSelectorDialog().closeResourceDialog();
-      // 값 설정 
-      container.setObjValue(e.detail);
     });
   },
 

@@ -50,6 +50,7 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 
 			<things-selector-form 
 				id="search-form"
+				initial-params="[[initialParams]]"
 				form-fields="[[searchFormFields]]" 
 				select-fields="[[selectFields]]"
 				sort-fields="[[sortFields]]"
@@ -133,6 +134,29 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				 */
 				itemCount: {
 					type: Number
+				},
+
+				/**
+				 * Resource Selector 창이 실행되면서 바로 반영되어야 할 파라미터들을 지정한다.
+				 * Resource Selector가 실행된 후 바로 서비스 호출을 하게 되는데 이 때 initialParams가 서비스 호출 파라미터에 반영된다.
+				 * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},... 
+				 */
+				initialParams: {
+					type: String
+				},
+
+				/**
+				 * ResourceSelector에서 선택한 값을 기본값(id, title필드 값) 외에 ownerResource의 다른 필드에 설정하고자 할 때 사용. ','구분자로 구분한다.
+				 */
+				extraTargetFields: {
+					type: String
+				},
+
+				/**
+				 * ResourceSelector를 호출한 (폼 필드나 그리드 컬럼) 측에서 해당 데이터를 변경시키기 위해서 넘겨준다. extraTargetFields가 설정된 경우는 반드시 설정해야 한다. 
+				 */
+				ownerResource: {
+					type: Object
 				}
 			},
 
@@ -164,21 +188,7 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 						searchForm.paramType = 'DIY';
 					}
 				}
-			},
-
-			/**
-			 * ID Field를 리턴한다.
-			 */
-			getIdField: function() {
-				return (this.menuInfo && this.menuInfo.id_field) ? this.menuInfo.id_field : 'id';
-			},
-
-			/**
-			 * Title Field를 리턴한다.
-			 */
-			getTitleField: function() {
-				return (this.menuInfo && this.menuInfo.title_field) ? this.menuInfo.title_field : 'name';
-			},
+			},		
 
 			/**
 			 * 조회 데이터 변경시 
@@ -199,11 +209,28 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			},
 
 			/**
+			 * ID Field를 리턴한다.
+			 */
+			getIdField: function() {
+				return (this.menuInfo && this.menuInfo.id_field) ? this.menuInfo.id_field : 'id';
+			},
+
+			/**
+			 * Title Field를 리턴한다.
+			 */
+			getTitleField: function() {
+				return (this.menuInfo && this.menuInfo.title_field) ? this.menuInfo.title_field : 'name';
+			},			
+
+			/**
+			 * TODO ResourceSelector에서 데이터 선택시 액션을 (things-resource-selector-behavior에 있는 로직을 이동) 구현 
+			 */
+
+			/**
 			 * 화면 초기화 함수 
 			 * 메타 데이터를 서버로 요청하여 화면을 구성한다.
 			 */
-			initializeContent: function() {
-			}			
+			// initializeContent: function() {} 		
 
 		});
 	</script>

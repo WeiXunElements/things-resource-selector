@@ -117,26 +117,6 @@ Things.SelectorFormBehaviorImpl = {
 		return element;
 	},
 
-	/**
-	 * create list box
-	 *
-	 * @param {Array} items Listbox values
-	 * @return {Object} paper-listbox element 
-	 */
-	_makeListBox: function(items) {
-		var listbox = document.createElement('paper-listbox');
-		listbox.setAttribute('selected','0');
-		
-		for(index in items) {
-			option = items[index];
-			item = document.createElement('paper-item');
-			item.innerHTML = option;
-			listbox.appendChild(item);
-		}
-
-		return listbox;
-	},
-
   /**
    * Create child element of the form by one of the formFields object
    *
@@ -166,11 +146,6 @@ Things.SelectorFormBehaviorImpl = {
 				newElement.label = element.label;
 				break;
 
-			case 'listbox':
-				newElement = this._makeListBox(element.options);
-				newElement = this._bindAttributes(newElement, element);
-				break;
-
 			case 'dropdown':
 				newElement = document.createElement('paper-dropdown-menu');
 				newElement = this._bindAttributes(newElement, element);
@@ -182,6 +157,7 @@ Things.SelectorFormBehaviorImpl = {
 			case 'radio':
 				newElement = document.createElement('paper-radio-group');
 				newElement = this._bindAttributes(newElement, element);
+
 				for(index in element.child) {
 					child = element[index];
 					newChild = document.createElement('paper-radio-button');
@@ -208,21 +184,27 @@ Things.SelectorFormBehaviorImpl = {
 				newElement = document.createElement('things-resource-selector');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
-				newElement.setAttribute('selector-type', element.userObj.selectorType);
 				newElement.setAttribute('resource-type', element.userObj.resourceType);
-				newElement.setAttribute('resource-url', element.userObj.resourceUrl);
+				newElement.setAttribute('resource-name', element.userObj.resourceName);
+				
+				if(element.userObj.initialParams)
+					newElement.setAttribute('initial-params', element.userObj.initialParams);
+
 				break;
 
 			case 'resource-field':
 				newElement = document.createElement('things-resource-field');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
-				newElement.setAttribute('selector-type', element.userObj.selectorType);
 				newElement.setAttribute('resource-type', element.userObj.resourceType);
-				newElement.setAttribute('resource-url', element.userObj.resourceUrl);
-				if(element.userObj.readOnly && element.userObj.readOnly === true) {
+				newElement.setAttribute('resource-name', element.userObj.resourceName);
+				
+				if(element.userObj.initialParams)
+					newElement.setAttribute('initial-params', element.userObj.initialParams);
+
+				if(element.userObj.readOnly && element.userObj.readOnly === true)
 					newElement.setAttribute('read-only', element.userObj.readOnly);
-				}
+				
 				break;
 
 			case 'date-picker':
@@ -250,45 +232,9 @@ Things.SelectorFormBehaviorImpl = {
 				newElement = document.createElement('things-input-field');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
-
-				// Resource Form일 경우에만 Validation은 의미가 있고 Search Form일 경우는 의미없다.
-				if(!element.searchForm && element.userObj) {
-					if(element.userObj.required) {
-						newElement.setAttribute('required', true);
-						newElement.setAttribute('error-message', 'This field has to be filled')
-						newElement.setAttribute('auto-validate', true);
-					}
-
-					if(element.userObj.max && element.userObj.max > 0) {
-						newElement.setAttribute('maxlength', element.userObj.max);
-						newElement.setAttribute('auto-validate', true);
-					}
-
-					if(element.userObj.type) {
-						if(element.userObj.type == 'integer') {
-							newElement.setAttribute('type', 'number');
-							newElement.setAttribute('min', 0);
-
-						} else if (element.userObj.type == 'string' || element.userObj.type == 'text') {
-							newElement.setAttribute('type', 'text');
-
-						} else if (element.userObj.type == 'password') {
-							newElement.setAttribute('type', 'password');
-						}
-					}
-
-					if(element.userObj.hidden) {
-						newElement.setAttribute('hidden', true);
-					}
-
-					if(element.userObj.readonly) {
-						newElement.setAttribute('readonly', true);
-					}
-				}
 		}
 
 		if(!newElement) return null;
-		
 		newElement.setAttribute('class', 'flex style-scope things-form');
 		return newElement;
 	},
@@ -327,7 +273,28 @@ Things.SelectorFormBehaviorImpl = {
 	 */
 	serializeMyForm: function() {
 		return this.getMyForm().serialize();
-	}
+	},
+
+	/**
+	 * 폼 내 모든 엘리먼트를 리턴한다.
+	 */
+	getFormElements: function() {
+		// 여기서는 Form 내부 구조를 모르기 때문에 실제 상위 Form에서 구현
+		return null;
+	},
+
+	/**
+	 * Resource로 해당 Form elements에 각각 바인딩한다.
+	 *
+	 * @param {Object} resource
+	 */
+	setFormData: function(resource) {
+		var elements = this.getFormElements();
+		for(var i = 0 ; i < elements.length ; i++) {
+			var element = elements[i];
+			element.value = resource ? resource[element.name] : null;
+		}
+	}	
 
 };
 

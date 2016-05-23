@@ -96,36 +96,50 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         },
 
         /**
-         * Resource Selector Type - Entity or Menu
-         * 1) Entity : Entity 설정에 의한 Selector 화면 구성 
-         * 2) Menu : Menu 설정에 의한 Selector 화면 구성
-         */
-        selectorType: {
+        * Resource Type - Entity or Menu
+        * 1) Entity : Entity 설정에 의한 Selector 화면 구성 
+        * 2) Menu : Menu 설정에 의한 Selector 화면 구성
+        */
+        resourceType: {
           type: String,
           value: 'Entity'
         },
-
+      
         /**
-         * entity type
+         * Resource Selector에서 표시할 리소스 명
+         * resourceType이 Menu로 선택되어 있다면 Menu 명, resourceType이 Entity로 선택되어 있다면 Entity 명이 된다.
          */
-        resourceType: {
+        resourceName: {
           type: String
         },
 
         /**
-         * 데이터 조회를 위한 URL.
+         * Resource Selector를 띄우기 위해 필요한 기본 파라미터 
+         * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},... 
          */
-        resourceUrl: {
+        initialParams: {
           type: String
         },
 
         /**
-         * 화면에 표시할 대표 컬럼명 
+         * Resource Selector에서 선택한 resource의 id field
+         * Resource Selector에서 선택한 resource의 id값이 이 필드가 가지는 실제 값이 된다. 
+         * Resource Selector에서 자동으로 설정하므로 외부에서는 설정하지 않는다.
          */
-        delegateColumn: {
+        resourceIdField: {
+          type: String,
+          value: 'id'
+        }
+
+        /**
+         * Resource Selector에서 선택한 resource의 title field
+         * 화면에 표시할 대표 컬럼명. 
+         * Resource Selector에서 자동으로 설정하므로 외부에서는 설정하지 않는다.
+         */
+        resourceTitleField: {
           type: String,
           value: 'name'
-        }
+        },
       },
 
       behaviors: [
@@ -137,12 +151,23 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        */
       _objValueChanged: function(objValue) {
         if(objValue) {
-          this.value = objValue.id;
-          this.display = objValue[this.delegateColumn];
+          this.value = objValue[this.resourceIdField];
+          this.display = objValue[this.resourceTitleField];
         } else {
-          this.idValue = null;
+          this.value = null;
           this.display = '';
         }
+      },
+
+      /**
+       * Resource Selector로 부터 id, display 값을 설정한다.
+       *
+       * @param {String} idValue
+       * @param {String} displayValue
+       */
+      setResourceValue: function(idValue, displayValue) {
+        this.value = idValue;
+        this.display = displayValue;
       },
 
       /**
@@ -172,9 +197,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * 값을 리셋
        */
       clearValue: function() {
-        var obj = { id : null };
-        obj[this.delegateColumn] = '';
-        this.objValue = obj;
+        var obj = {};
       }
 
     });

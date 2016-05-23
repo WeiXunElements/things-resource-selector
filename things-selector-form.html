@@ -142,8 +142,38 @@
         }
       }
 
+      // 초기 파라미터 설정
+      this._bindInitialParams();
       this.active = true;
-      this.fire('things-search-form-configured', this.formFields);      
+      this.fire('things-search-form-configured', this.formFields);
+    },
+
+    /**
+     * 모든 Form Element를 리턴 
+     */
+    getFormElements: function() {
+      var formElements = [];
+      var allDivs = this.$.fields.childNodes;
+      if(!allDivs || allDivs.length == 0) 
+        return [];
+
+      for(var i = 0 ; i < allDivs.length; i++) {
+        var divContainer = allDivs[i];
+        var divElements = divContainer.childNodes ? divContainer.childNodes : [];
+        for(var j = 0 ; j < divElements.length ; j++) { 
+          formElements.push(divElements[j]); 
+        }
+      }
+
+      return formElements;
+    },
+
+    /**
+     * Submit Form. 검색 실행 
+     */
+    submitMyForm: function() {
+      this.startSpinner();
+      this.getMyForm().submit();
     },
 
     /**
@@ -154,14 +184,6 @@
     _onSearchFormTap: function(e) {
       if(this.page > 1) this.page = 1;
       else this.submitMyForm();      
-    },
-
-    /**
-     * Submit Form. 검색 실행 
-     */
-    submitMyForm: function() {
-      this.startSpinner();
-      this.getMyForm().submit();
     },
 
     /**

@@ -56,160 +56,170 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
   </template>
 
   <script type="text/javascript">
-    (function() {
-      Polymer({
-        is: "things-resource-field",
+    Polymer({
+      is: "things-resource-field",
 
-        properties: {
-
-          /**
-           * Form Load시에 서버에서 받은 데이터와 things-resource-field값과 매핑하기 위한 필드명.
-           * 예를 들어 특정 resource에 creator_id가 있다면 서버에서 해당 resource를 조회하면 creator 데이터에 { id : '10', name : '홍길동' } 형식으로 넘어온다. 
-           * Form에서 things-resource-field가 creator와 매핑되어 있다면 name 필드는 creator가 되고 submitName은 creator_id가 된다.
-           * Form 로딩 후에 사용자가 편집을 다시하여 서버에 보낼 경우 submitName으로 id값만 보내게 된다.
-           */
-          name : {
-            type: String
-          },
-
-          /**
-           * Form Submit시에 서버로 날려줄 Form Field Name
-           */
-          submitName: {
-            type: String
-          },
-
-          /**
-           * input field 상단에 표시할 라벨 
-           */
-          label: {
-            type: String
-          },
-
-          /**
-           * Resource Selector로 부터 선택한 값 
-           */
-          value: {
-            type: Object,
-            observer: '_valueChanged'
-          },
-
-          /**
-           * Resource Selector로 부터 선택한 Object 값의 id
-           */
-          idValue: {
-            type: String
-          },
-
-          /**
-           * Resource Selector로 부터 선택한 표시 값 
-           */
-          displayValue: {
-            type: String
-          },
-
-          /**
-          * Resource Selector Type - Entity or Menu
-          * 1) Entity : Entity 설정에 의한 Selector 화면 구성 
-          * 2) Menu : Menu 설정에 의한 Selector 화면 구성
-          */
-          selectorType: {
-            type: String,
-            value: 'Entity'
-          },
-        
-          /**
-           * entity type
-           */
-          resourceType: {
-            type: String
-          },
-
-          /**
-           * 데이터 조회를 위한 URL
-           */
-          resourceUrl: {
-            type: String
-          },
-
-          /**
-           * 화면에 표시할 대표 컬럼명 
-           */
-          delegateColumn: {
-            type: String,
-            value: 'name'
-          },
-
-          /**
-           * 읽기 전용인지 여부 
-           */
-          readOnly: {
-            type: Boolean,
-            value: false
-          }
-        },
-
-        behaviors: [
-          Things.ResourceSelectorBehavior
-        ],
+      properties: {
 
         /**
-         * value값이 변경될 경우 
-         *
-         * @param {Object} value
+         * Form Load시에 서버에서 받은 데이터와 things-resource-field값과 매핑하기 위한 필드명.
+         * 예를 들어 특정 resource에 creator_id가 있다면 서버에서 해당 resource를 조회하면 creator 데이터에 { id : '10', name : '홍길동' } 형식으로 넘어온다. 
+         * Form에서 things-resource-field가 creator와 매핑되어 있다면 name 필드는 creator가 되고 submitName은 creator_id가 된다.
+         * Form 로딩 후에 사용자가 편집을 다시하여 서버에 보낼 경우 submitName으로 id값만 보내게 된다.
          */
-        _valueChanged: function(value) {
-          if(this.value) {
-            this.idValue = this.value.id;
-            this.displayValue = this.value[this.delegateColumn];            
-          } else {
-            this.idValue = null;
-            this.displayValue = '';
-          }
+        name : {
+          type: String
         },
 
         /**
-         * Resource Selector로 부터 Object 값을 설정
-         *
-         * @param {Object} objValue
+         * Form Submit시에 서버로 날려줄 Form Field Name
          */
-        setObjValue: function(objValue) {
-          this.value = objValue;
+        submitName: {
+          type: String
         },
 
         /**
-         * 설정된 값을 리턴
+         * Input field 상단에 표시할 라벨 
          */
-        getValue: function() {
-          return this.value;
+        label: {
+          type: String
         },
 
         /**
-         * Resource Selector로 부터 값을 설정
-         *
-         * @param {Object} value
+         * Resource Selector로 부터 선택한 값 
          */
-        setValue: function(value) {
-          this.value = value;
+        value: {
+          type: Object,
+          observer: '_valueChanged'
         },
 
         /**
-         * Open Resource Selector
+         * Resource Selector로 부터 선택한 Object 값의 id
          */
-        openResourceSelector: function() {
-          this.openResourceSelectorByForm(this, true);
+        idValue: {
+          type: String
         },
 
         /**
-         * 값을 리셋
+         * Resource Selector로 부터 선택한 표시 값 
          */
-        clearValue: function() {
-          var obj = { id : '0' };
-          obj[this.delegateColumn] = '';
-          this.value = obj;
+        displayValue: {
+          type: String
+        },
+
+        /**
+        * Resource Type - Entity or Menu
+        * 1) Entity : Entity 설정에 의한 Selector 화면 구성 
+        * 2) Menu : Menu 설정에 의한 Selector 화면 구성
+        */
+        resourceType: {
+          type: String,
+          value: 'Entity'
+        },
+      
+        /**
+         * Resource Selector에서 표시할 리소스 명
+         * resourceType이 Menu로 선택되어 있다면 Menu 명, resourceType이 Entity로 선택되어 있다면 Entity 명이 된다.
+         */
+        resourceName: {
+          type: String
+        },
+
+        /**
+         * Resource Selector를 띄우기 위해 필요한 기본 파라미터 
+         * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},... 
+         */
+        initialParams: {
+          type: String
+        },
+
+        /**
+         * Resource Selector에서 선택한 resource의 id field
+         * Resource Selector에서 선택한 resource의 id값이 이 필드가 가지는 실제 값이 된다. 
+         */
+        resourceIdField: {
+          type: String,
+          value: 'id'
         }
 
-      })
-    })();
+        /**
+         * Resource Selector에서 선택한 resource의 title field
+         * 화면에 표시할 대표 컬럼명. 
+         */
+        resourceTitleField: {
+          type: String,
+          value: 'name'
+        },
+
+        /**
+         * 읽기 전용인지 여부 
+         */
+        readOnly: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      behaviors: [
+        Things.ResourceSelectorBehavior
+      ],
+
+      /**
+       * value값이 변경될 경우 
+       *
+       * @param {Object} value
+       */
+      _valueChanged: function(value) {
+        if(this.value) {
+          this.idValue = this.value[this.resourceIdField];
+          this.displayValue = this.value[this.resourceTitleField];
+        } else {
+          this.idValue = null;
+          this.displayValue = '';
+        }
+      },
+
+      /**
+       * Resource Selector로 부터 id, display 값을 설정한다.
+       *
+       * @param {String} idValue
+       * @param {String} displayValue
+       */
+      setResourceValue: function(idValue, displayValue) {
+        this.idValue = idValue;
+        this.displayValue = displayValue;
+      },
+
+      /**
+       * 설정된 값을 리턴
+       */
+      getValue: function() {
+        return this.value;
+      },
+
+      /**
+       * Resource Selector로 부터 값을 설정
+       *
+       * @param {Object} value
+       */
+      setValue: function(value) {
+        this.value = value;
+      },
+
+      /**
+       * Open Resource Selector
+       */
+      openResourceSelector: function() {
+        this.openResourceSelectorByForm(this, true);
+      },
+
+      /**
+       * 값을 리셋
+       */
+      clearValue: function() {
+        this.value = {};
+      }
+
+    });
   </script>
 </dom-module>
