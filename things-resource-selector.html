@@ -198,6 +198,9 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        */
       clearValue: function() {
         var obj = {};
+        obj[this.resourceIdField] = null;
+        obj[this.resourceTitleField] = null;
+        this.objValue = obj;
       }
 
     });

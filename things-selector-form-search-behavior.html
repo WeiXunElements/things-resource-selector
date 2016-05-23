@@ -151,7 +151,7 @@ Things.SelectorFormSearchBehaviorImpl = {
     var queryParamArr = this.initialParams.split(',');
     for(var i = 0 ; i < queryParamArr.length ; i++) {
       var queryParamStr = queryParamArr[i];
-      var paramArr = queryParamStr.split(':');
+      var paramArr = queryParamStr.split('=');
 
       if(paramArr[1])
         defaultQuery[paramArr[0]] = paramArr[1];

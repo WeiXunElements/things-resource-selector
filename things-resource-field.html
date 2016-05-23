@@ -217,7 +217,10 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
        * 값을 리셋
        */
       clearValue: function() {
-        this.value = {};
+        var obj = {};
+        obj[this.resourceIdField] = '0';
+        obj[this.resourceTitleField] = null;
+        this.value = obj;
       }
 
     });
