@@ -146,14 +146,14 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				},
 
 				/**
-				 * ResourceSelector에서 선택한 값을 기본값(id, title필드 값) 외에 ownerResource의 다른 필드에 설정하고자 할 때 사용. ','구분자로 구분한다.
+				 * ResourceSelector에서 선택한 값을 기본값(id, title필드 값) 외에 ownerResource의 다른 필드에 설정하고자 할 때 사용. fromField1=toField1,fromField2=toField2... ','구분자로 구분한다.
 				 */
-				extraTargetFields: {
+				bindFields: {
 					type: String
 				},
 
 				/**
-				 * ResourceSelector를 호출한 (폼 필드나 그리드 컬럼) 측에서 해당 데이터를 변경시키기 위해서 넘겨준다. extraTargetFields가 설정된 경우는 반드시 설정해야 한다. 
+				 * ResourceSelector를 호출한 (폼 필드나 그리드 컬럼) 측에서 해당 데이터를 변경시키기 위해서 넘겨준다. bindFields가 설정된 경우는 반드시 설정해야 한다. 
 				 */
 				ownerResource: {
 					type: Object
@@ -225,12 +225,6 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			/**
 			 * TODO ResourceSelector에서 데이터 선택시 액션을 (things-resource-selector-behavior에 있는 로직을 이동) 구현 
 			 */
-
-			/**
-			 * 화면 초기화 함수 
-			 * 메타 데이터를 서버로 요청하여 화면을 구성한다.
-			 */
-			// initializeContent: function() {} 		
 
 		});
 	</script>
