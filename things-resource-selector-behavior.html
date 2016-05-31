@@ -144,7 +144,7 @@ Things.ResourceSelectorBehavior = {
       ownerElement.resourceTitleField = selector.getTitleField();
       var idValue = e.detail[selector.getIdField()];
       var displayValue = e.detail[selector.getTitleField()];
-      ownerElement.setResourceValue(idValue, displayValue);
+      ownerElement.setResourceValue(idValue, displayValue,e.detail);
       me._getResourceSelectorDialog().closeResourceDialog();
     });
   },
