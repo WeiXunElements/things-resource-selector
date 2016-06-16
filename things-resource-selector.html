@@ -72,7 +72,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         objValue: {
           type: Object,
           notify:true,
-          // observer: '_objValueChanged'
+          observer: '_objValueChanged'
         },
 
         /**
@@ -150,15 +150,15 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
       /**
        * display값이 변경될 경우 
        */
-      // _objValueChanged: function(objValue) {
-      //   if(objValue) {
-      //     this.value = objValue[this.resourceIdField];
-      //     this.display = objValue[this.resourceTitleField];
-      //   } else {
-      //     this.value = null;
-      //     this.display = '';
-      //   }
-      // },
+      _objValueChanged: function(objValue) {
+        if(objValue) {
+          this.value = objValue[this.resourceIdField];
+          this.display = objValue[this.resourceTitleField];
+        } else {
+          this.value = null;
+          this.display = '';
+        }
+      },
 
       /**
        * Resource Selector로 부터 id, display 값을 설정한다.
