@@ -123,6 +123,13 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         },
 
         /**
+         * Initial Params가 변경되기 때문에 항상 설정한 값으로 보관 
+         */
+        oriInitialParams: {
+          type: String
+        },
+
+        /**
          * Resource Selector에서 선택한 resource의 id field
          * Resource Selector에서 선택한 resource의 id값이 이 필드가 가지는 실제 값이 된다. 
          * Resource Selector에서 자동으로 설정하므로 외부에서는 설정하지 않는다.
@@ -192,7 +199,65 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * Open Resource Selector
        */
       openResourceSelector: function() {
+        this.preprocessInitialParams();
         this.openResourceSelectorByForm(this, true);
+      },
+
+      /**
+       * initialParams가 설정되어 있고, 변수를 의미하는 $가 존재하고 
+       * container가 폼이라면 폼에서 initialParams의 변수명에 해당하는 이름으로 데이터를 찾아 initialParams를 구성하고 
+       * container가 그리드라면 그리드의 해당 row에서 initialParams의 변수명에 해당하는 이름으로 데이터를 찾아 initialParams를 구성한다.
+       */
+      preprocessInitialParams: function() {
+        if(!this.oriInitialParams && this.initialParams && this.initialParams.indexOf('$') > 1) {
+          this.oriInitialParams = this.initialParams;
+        }
+
+        if(this.oriInitialParams) {
+          var form = this.findOwnerForm(this);
+          if(form && form.serialize) {
+            var formData = form.serialize ? form.serialize() : (form.serializeMyForm ? form.serializeMyForm() : null);
+            if(formData) {
+              this.changeInitialParams(formData);
+            }
+          }
+        }
+      },
+
+      /**
+       * initialParams에서 변수(즉 $부분)를 찾아 formData의 값으로 Replace
+       *
+       * @param {Object} formData
+       */
+      changeInitialParams: function(formData) {
+        var initParamArr = this.oriInitialParams.split(',');
+        for(var i = 0 ; i < initParamArr.length ; i++) {
+          var initParam = initParamArr[i];
+          var paramArr = initParam.split('=');
+          var varName = paramArr[1];
+
+          if(varName[0] == '$') {
+            var varData = formData[varName.substr(1)] || '';
+            this.initialParams = this.oriInitialParams.replace(varName, varData);
+          }
+        }
+      },
+
+      /**
+       * Resource Selector의 Container 폼을 찾아 리턴
+       */
+      findOwnerForm: function(element) {
+        if(!element.parentElement) {
+          return null;
+        } else {
+          if(element.parentElement.localName == 'form' || 
+             element.parentElement.localName == 'things-form' || 
+             element.parentElement.localName == 'things-search-form') {
+            return element.parentElement;
+          } else {
+            return this.findOwnerForm(element.parentElement);
+          }
+        }
       },
 
       /**
