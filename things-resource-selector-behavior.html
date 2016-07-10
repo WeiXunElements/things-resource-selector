@@ -26,7 +26,7 @@ Things.ResourceSelectorBehavior = {
    */
   openResourceSelectorByGrid: function(parentGrid, parentGridRowIdx, selectorConfig, modal) {
     var selector = this._createResourceContent(selectorConfig.resourceType, selectorConfig.resourceName, selectorConfig.initialParams, selectorConfig.bindFields);
-    this._getResourceSelectorDialog().showResourceDialog(selector, modal, selector.refreshGridData);
+    this._getResourceSelectorDialog().showResourceDialog(selector, modal);
     this._addSelectedListenerByGrid(selector, parentGrid, parentGridRowIdx, selectorConfig);
   },
 
@@ -38,7 +38,7 @@ Things.ResourceSelectorBehavior = {
    */
   openResourceSelectorByForm: function(ownerElement, modal) {
     var selector = this._createResourceContent(ownerElement.resourceType, ownerElement.resourceName, ownerElement.initialParams, ownerElement.bindFields);
-    this._getResourceSelectorDialog().showResourceDialog(selector, modal, selector.refreshGridData);
+    this._getResourceSelectorDialog().showResourceDialog(selector, modal);
     this._addSelectedListenerByForm(selector, ownerElement);
   },  
 
