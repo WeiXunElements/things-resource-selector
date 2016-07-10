@@ -165,11 +165,11 @@ ResourceSelector를 위한 다이얼로그.
 		 * 다이얼로그가 오픈된 경우 핸들러 
 		 */
 		_openHandler: function(e) {
-			this.title = this.detailView.title;
-
 			if(this.openCallback) {
 				this.openCallback.apply(this.detailView);
 			}
+
+			this.title = this.detailView.title;
 		} 
 
 	});
