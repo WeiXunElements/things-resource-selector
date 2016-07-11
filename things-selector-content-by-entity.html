@@ -9,17 +9,7 @@
 <link rel="import" href="things-selector-form.html">
 
 <!--
-하나의 리소스에 대한 기본 액션 (List, Create, Find, Upate, Delete) 및 Import, Export 등의 기능을 제공하는 화면 셋 
-
-Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그리드에서 레코드 하나를 선택할 경우 해당 레코드에 대한 Detail Form이 출력된다.
-
-	Example:
-
-	<things-selector-content-by-entity 
-	  resource-type="Terminology">
-	</things-selector-content>
-
-@demo demo/index.html
+사용자가 Entity 기반으로 설정된 특정 리소스에 대해서 선택할 수 있도록 제공하는 Selector
 -->
 
 <dom-module id="things-selector-content-by-entity">
@@ -47,7 +37,6 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 
 			<things-selector-form 
 				id="search-form"
-				initial-params="[[initialParams]]"
 				form-fields="[[searchFormFields]]" 
 				select-fields="[[selectFields]]"
 				sort-fields="[[sortFields]]"
@@ -153,31 +142,77 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				},
 
 				/**
-				 * ResourceSelector를 호출한 (폼 필드나 그리드 컬럼) 측에서 해당 데이터를 변경시키기 위해서 넘겨준다. bindFields가 설정된 경우는 반드시 설정해야 한다. 
+				 * Resource Selector를 호출한 Element
 				 */
-				ownerResource: {
+				ownerElement: {
 					type: Object
+				},
+
+				/**
+				 * Resource Selector Dialog를 띄운 Element의 (폼 필드 명 혹은 그리드 필드 명)Field 명
+				 */
+				ownerField: {
+					type: String
+				},				
+
+				/**
+				 * OwnerElement가 소속된 Container - Form or Grid
+				 * initialParams로 검색 조건을 dynamic하게 설정하거나 bindFields로 ResourceSelectorDialog에서 선택한 Record에 다른 값들을 자동으로 설정하고자 할 때 필요하다.
+				 */
+				ownerContainer: {
+					type: Object
+				},
+
+				/**
+				 * ownerType이 Grid일 경우에만 해당
+				 * ResourceSelector를 호출한 그리드의 선택된 Row Index - 이 정보로 ResourceSelector로 선택한 데이터를 업데이트 한다.
+				 */
+				parentGridRowIdx: {
+					type: Number
+				},
+
+				/**
+				 * 호출 측 타입 - Form or Grid
+				 */
+				ownerType: {
+					type: String
 				}
 			},
 
 			listeners : {
-				'grid.things-grid-configured' : 'refreshGridData'
+				'grid.things-grid-configured' : 'refreshGridData',
+				'grid.things-grid-row-data-select' : 'selectRecord'
 			},
 
 			observers: [
-				'_entityChanged(entity)'
+				'_entityChanged(entity)',
+				'_ownerElementChanged(ownerElement)'
 			],
 
 			/**
 			 * 엔티티 메타데이터 변경시
-		   *
+			 *
 			 * @param {Object} entity
 			 */
 			_entityChanged: function(entity) {
 				if(entity) {
 					this.title = entity.title;
 				}
-			},	
+			},
+
+			/**
+			 * ownerElement가 변경되었을 경우
+			 *
+			 * @param {Object} ownerElement
+			 */
+			_ownerElementChanged: function(ownerElement) {
+				var elementName = ownerElement.localName;
+				if(!elementName) {
+					this.ownerType = 'Grid';
+				} else {
+					this.ownerType = 'Form';
+				}
+			},
 
 			/**
 			 * 조회 데이터 변경시 
@@ -187,13 +222,6 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			_responseChanged: function(lastResponse) {
 				this.items = lastResponse[this.itemsProp] ? lastResponse[this.itemsProp] : lastResponse;
 				this.itemCount = lastResponse[this.totalProp] ? lastResponse[this.totalProp] : lastResponse.length;
-			},
-
-			/**
-			 * Reload Grid Data
-			 */
-			refreshGridData: function(grid) {
-				this.$['search-form'].submitMyForm();
 			},
 
 			/**
@@ -208,11 +236,217 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			 */
 			getTitleField: function() {
 				return (this.entity && this.entity.title_field) ? this.entity.title_field : 'name';
-			}
+			},
 
 			/**
-			 * TODO ResourceSelector에서 데이터 선택시 액션을 (things-resource-selector-behavior에 있는 로직을 이동) 구현 
+			 * Reload Grid Data
+			 *
+			 * @param {Object} grid
 			 */
+			refreshGridData: function(grid) {
+				this.preprocessInitialParams();
+				this.$['search-form'].submitMyForm();
+			},
+
+			/**
+			 * initialParams가 설정되어 있고, 변수를 의미하는 $가 존재하고 
+			 * container가 폼이라면 폼에서 initialParams의 변수명에 해당하는 이름으로 데이터를 찾아 initialParams를 구성하고 
+			 * container가 그리드라면 그리드의 해당 row에서 initialParams의 변수명에 해당하는 이름으로 데이터를 찾아 initialParams를 구성한다.
+			 */
+			preprocessInitialParams: function() {
+				if(this.initialParams && this.initialParams.indexOf('$') > 1) {
+					var ownerData = this.findOwnerData();
+					if(ownerData) {
+						this.resetSearchParams(ownerData);
+					}
+				}
+			},
+
+			/**
+			 * initialParams에서 변수(즉 $부분)를 찾아 ownerData의 값으로 Replace
+			 *
+			 * @param {Object} ownerData
+			 */
+			resetSearchParams: function(ownerData) {
+				var searchParams = null;
+				var initParamArr = this.initialParams.split(',');
+
+				for(var i = 0 ; i < initParamArr.length ; i++) {
+					var initParam = initParamArr[i];
+					var paramArr = initParam.split('=');
+					var varName = paramArr[1];
+
+					if(varName[0] == '$') {
+						var varRealName = varName.substr(1);
+						var varData = ownerData[varRealName] || '';
+
+						if(!varData && varRealName.indexOf('_id') > 0) {
+							varRealName = varRealName.substr(0, varRealName.lastIndexOf('_id'));
+							varData = ownerData[varRealName] || '';
+							if(varData) {
+								varData = varData.id || '';
+							}
+							
+							searchParams = this.initialParams.replace(varName, varData);
+
+						} else {
+							searchParams = this.initialParams.replace(varName, varData);
+						}
+					}
+				}
+
+				if(searchParams != null)
+					this.$['search-form'].initialParams = searchParams;
+			},
+
+			/**
+			 * Owner Data를 찾아 리턴 
+			 */
+			findOwnerData: function() {
+				if(this.ownerType == 'Form') {
+					if(this.ownerContainer) {
+						return this.ownerContainer.serialize ? 
+									 this.ownerContainer.serialize() : 
+									 (this.ownerContainer.serializeMyForm ? this.ownerContainer.serializeMyForm() : null);
+					} else {
+						return null;
+					}
+
+				} else if(this.ownerType == 'Grid') {
+					var row = this.ownerElement.focusedRow();
+					return (row && row.dataIndex() >= 0) ? row.getRowObject() : null;
+
+				} else {
+					return null;
+				}
+			},
+
+			/**
+			 * Selector Grid에서 데이터 선택시 
+			 *
+			 * @param {Object} event
+			 */
+			selectRecord: function(event) {
+				if(this.ownerType == 'Form') {
+					this._selectRecordByForm(event);
+
+				} else if(this.ownerType == 'Grid') {
+					this._selectRecordByGrid(event);
+				}
+			},
+
+			/**
+			 * Owner가 Form인 경우에 데이터 선택시 
+			 *
+			 * @param {Object} event
+			 */
+			_selectRecordByForm: function(event) {
+				var selectedResource = event.detail;
+				var ownerData = this.findOwnerData();
+
+				// Container에서 필요한 대표 컬럼 및 선택한 값을 설정한다. 
+				this.ownerElement.resourceIdField = this.getIdField();
+				this.ownerElement.resourceTitleField = this.getTitleField();
+				var idValue = selectedResource[this.getIdField()];
+				var displayValue = selectedResource[this.getTitleField()];
+				this.ownerElement.setResourceValue(idValue, displayValue, selectedResource);
+				this._bindObjectFields(selectedResource, ownerData);
+				this.closeResourceSelectorDialog();
+			},
+
+			/**
+			 * bindFields 정보를 기반으로 targetData에 sourceData의 데이터를 설정한다. 
+			 *
+			 * @param {Object} sourceData
+			 * @param {Object} targetData
+			 */
+			_bindObjectFields: function(sourceData, targetData) {
+				// 현재는 Grid인 경우만 가능 - Form은 추후 지원 
+				if(this.ownerType == 'Grid' && this.bindFields) {
+					var binders = this.bindFields.split(',');
+					for(var i = 0 ; i < binders.length ; i++) {
+						var binder = binders[i];
+						var fromField = binder, toField = binder;
+
+						if(binder.indexOf('=') > 0) {
+							var binderArr = binder.split('=');
+							toField = binderArr[0], fromField = binderArr[1];
+						}
+
+						targetData[toField] = sourceData[fromField];
+					}
+				}
+			},
+
+			/**
+			 * Owner가 Grid인 경우에 데이터 선택시 
+			 *
+			 * @param {Object} event
+			 */
+			_selectRecordByGrid: function(event) {
+				var selectedResource = event.detail;
+
+				// 메뉴에서 설정한 idField와 titleField로 event.detail내의 값을 추출한 뒤 object로 구성하여 그리드의 row 데이터 중에 업데이트 할 필드로 업데이트한다.
+				var parentGrid = this.ownerElement;
+				var idField = this.getIdField();
+				var titleField = this.getTitleField();
+				var row = parentGrid.focusedRow();
+				var dataSet = parentGrid.dataSource();
+
+				if(row && row.dataIndex() >= 0) {
+					var rowObj = row.getRowObject();
+					var objToChange = rowObj[this.ownerField];
+					if(typeof(objToChange) === 'undefined' || objToChange === null) objToChange = {};
+
+					if(typeof(objToChange) == 'object') {
+						objToChange[idField] = selectedResource[idField];
+						objToChange[titleField] = selectedResource[titleField];
+
+					} else if(typeof(objToChange) == 'string') {
+						objToChange = selectedResource[titleField];
+
+					} else if(typeof(objToChange) == 'number') {
+						objToChange = selectedResource[idField];
+					}
+
+					// Grid의 ownerField 데이터 변경 
+					rowObj[this.ownerField] = objToChange;
+					// Bind Fields 정보로 Grid 데이터 변경 
+					this._bindObjectFields(selectedResource, rowObj);
+
+					this.fire('things-resource-selector-selected', { rowObj: rowObj, resource : selectedResource } );
+					dataSet.updateRow(this.parentGridRowIdx, rowObj);
+					// 부모 그리드 Refresh
+					parentGrid.refreshView();
+					// Close Dialog
+					this.closeResourceSelectorDialog();
+				}
+			},
+
+			/**
+			 * Close Resource Selector Dialog
+			 */
+			closeResourceSelectorDialog: function() {
+				var dialog = this.findOwnerDialog(this);
+				if(dialog) {
+					dialog.closeResourceDialog();
+				}
+			},
+
+			/**
+			 * Resource Selector의 Container 폼을 찾아 리턴
+			 */
+			findOwnerDialog: function(element) {
+				if(!element.parentElement) {
+					return null;
+				} else {
+					if(element.parentElement.localName == 'things-resource-dialog') {
+						return element.parentElement;
+					} else {
+						return this.findOwnerDialog(element.parentElement);
+					}
+				}
+			}
 
 		});
 	</script>

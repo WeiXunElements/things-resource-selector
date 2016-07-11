@@ -142,8 +142,6 @@
         }
       }
 
-      // 초기 파라미터 설정
-      this._bindInitialParams();
       this.active = true;
       this.fire('things-search-form-configured', this.formFields);
     },
@@ -172,8 +170,13 @@
      * Submit Form. 검색 실행 
      */
     submitMyForm: function() {
-      this.startSpinner();
-      this.getMyForm().submit();
+      var evt = this.fire('things-selector-form-search', this.grid, { cancelable: true });
+      if(!evt.defaultPrevented) {
+        // 초기 파라미터 설정
+        this._bindInitialParams();
+        this.startSpinner();
+        this.getMyForm().submit();
+      }
     },
 
     /**
@@ -194,7 +197,6 @@
      */
     _successResponseHandler: function(event) {
       this.stopSpinner();
-      
       this.lastResponse = event.detail.xhr.response;
       this.handleSuccessResponse(this.lastResponse);
     },

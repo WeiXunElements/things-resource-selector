@@ -76,10 +76,10 @@ ResourceSelector를 위한 다이얼로그.
 
 	<template>
 		<paper-dialog
-		id='dialog' 
-		always-on-top
-		entry-animation="scale-up-animation"
-		exit-animation="fade-out-animation">
+			id='dialog' 
+			always-on-top
+			entry-animation="scale-up-animation"
+			exit-animation="fade-out-animation">
 			<paper-toolbar>
 				<span class="title">[[title]]</span>
 				<div class="buttonsGroup">
@@ -133,7 +133,7 @@ ResourceSelector를 위한 다이얼로그.
 		showResourceDialog: function(view, modal, openCallback) {
 			var dialog = this.$.dialog;
 			dialog.modal = modal;
-			dialog.noCancelOnEscKey = false;
+			dialog.noCancelOnEscKey = true;
 			var scrollable = this.$.scrollroot;
 
 			if(this.detailView) {

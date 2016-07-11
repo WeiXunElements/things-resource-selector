@@ -123,9 +123,9 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         },
 
         /**
-         * Initial Params가 변경되기 때문에 항상 설정한 값으로 보관 
+         * Resource Selector에서 선택한 리소스와 Owner Data간 바인딩하기 위한 정보 
          */
-        oriInitialParams: {
+        bindFields: {
           type: String
         },
 
@@ -155,7 +155,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
       ],
 
       /**
-       * display값이 변경될 경우 
+       * Object 값이 변경될 경우 
        */
       _objValueChanged: function(objValue) {
         if(objValue) {
@@ -199,48 +199,8 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * Open Resource Selector
        */
       openResourceSelector: function() {
-        this.preprocessInitialParams();
-        this.openResourceSelectorByForm(this, true);
-      },
-
-      /**
-       * initialParams가 설정되어 있고, 변수를 의미하는 $가 존재하고 
-       * container가 폼이라면 폼에서 initialParams의 변수명에 해당하는 이름으로 데이터를 찾아 initialParams를 구성하고 
-       * container가 그리드라면 그리드의 해당 row에서 initialParams의 변수명에 해당하는 이름으로 데이터를 찾아 initialParams를 구성한다.
-       */
-      preprocessInitialParams: function() {
-        if(!this.oriInitialParams && this.initialParams && this.initialParams.indexOf('$') > 1) {
-          this.oriInitialParams = this.initialParams;
-        }
-
-        if(this.oriInitialParams) {
-          var form = this.findOwnerForm(this);
-          if(form && form.serialize) {
-            var formData = form.serialize ? form.serialize() : (form.serializeMyForm ? form.serializeMyForm() : null);
-            if(formData) {
-              this.changeInitialParams(formData);
-            }
-          }
-        }
-      },
-
-      /**
-       * initialParams에서 변수(즉 $부분)를 찾아 formData의 값으로 Replace
-       *
-       * @param {Object} formData
-       */
-      changeInitialParams: function(formData) {
-        var initParamArr = this.oriInitialParams.split(',');
-        for(var i = 0 ; i < initParamArr.length ; i++) {
-          var initParam = initParamArr[i];
-          var paramArr = initParam.split('=');
-          var varName = paramArr[1];
-
-          if(varName[0] == '$') {
-            var varData = formData[varName.substr(1)] || '';
-            this.initialParams = this.oriInitialParams.replace(varName, varData);
-          }
-        }
+        var form = this.findOwnerForm(this);
+        this.openResourceSelectorByForm(this, true, form);
       },
 
       /**
