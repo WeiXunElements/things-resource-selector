@@ -177,6 +177,10 @@
 				 */
 				ownerType: {
 					type: String
+				},
+
+				valueField: {
+					type: String
 				}
 			},
 
@@ -345,7 +349,7 @@
 				var selectedResource = event.detail;
 				var ownerData = this.findOwnerData();
 
-				if(this.ownerElement.localName == 'things-resource-selector-by-format') {
+				if(this.ownerElement.localName == 'things-resource-format-selector') {
 					this.ownerElement.setObjValue(selectedResource);
 				} else {
 					// Container에서 필요한 대표 컬럼 및 선택한 값을 설정한다. 
@@ -402,6 +406,28 @@
 				if(row && row.dataIndex() >= 0) {
 					var rowObj = row.getRowObject();
 					var objToChange = rowObj[this.ownerField];
+
+					if(this.valueField) {
+						objToChange = this._getSingleValueOfSelectedRecord(selectedResource, this.valueField);
+					} else {
+						objToChange = this._getResourceValueOfSelectedRecord(selectedResource, objToChange, idField, titleField);
+					}
+
+					rowObj[this.ownerField] = objToChange;
+					
+					// Bind Fields 정보로 Grid 데이터 변경 
+					this._bindObjectFields(selectedResource, rowObj);
+
+					this.fire('things-resource-selector-selected', { rowObj: rowObj, resource : selectedResource } );
+					dataSet.updateRow(this.parentGridRowIdx, rowObj);
+					// 부모 그리드 Refresh
+					parentGrid.refreshView();
+					// Close Dialog
+					this.closeResourceSelectorDialog();
+				}
+			},
+
+			_getResourceValueOfSelectedRecord: function(selectedResource, objToChange, idField, titleField) {
 					if(typeof(objToChange) === 'undefined' || objToChange === null) objToChange = {};
 
 					if(typeof(objToChange) == 'object') {
@@ -415,18 +441,12 @@
 						objToChange = selectedResource[idField];
 					}
 
-					// Grid의 ownerField 데이터 변경 
-					rowObj[this.ownerField] = objToChange;
-					// Bind Fields 정보로 Grid 데이터 변경 
-					this._bindObjectFields(selectedResource, rowObj);
+					return objToChange;
+			},
 
-					this.fire('things-resource-selector-selected', { rowObj: rowObj, resource : selectedResource } );
-					dataSet.updateRow(this.parentGridRowIdx, rowObj);
-					// 부모 그리드 Refresh
-					parentGrid.refreshView();
-					// Close Dialog
-					this.closeResourceSelectorDialog();
-				}
+
+			_getSingleValueOfSelectedRecord: function(selectedResource, valueField) {
+				return selectedResource[valueField];
 			},
 
 			/**

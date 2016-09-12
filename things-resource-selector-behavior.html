@@ -27,6 +27,7 @@ Things.ResourceSelectorBehavior = {
   openResourceSelectorByGrid: function(parentGrid, parentGridRowIdx, selectorConfig, modal) {
     var selector = this._createResourceContent(parentGrid, parentGrid, selectorConfig.ownerField, selectorConfig.resourceType, selectorConfig.resourceName, selectorConfig.initialParams, selectorConfig.bindFields);
     selector.parentGridRowIdx = parentGridRowIdx;
+    if(selectorConfig.valueField) selector.valueField = selectorConfig.valueField;
     this._getResourceSelectorDialog().showResourceDialog(selector, modal);
   },
 
