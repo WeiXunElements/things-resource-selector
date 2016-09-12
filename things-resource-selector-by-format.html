@@ -1,0 +1,178 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="./things-resource-selector-behavior.html">
+
+<dom-module id="things-resource-selector-by-format">
+  <style>
+    label{
+      @apply(--things-label);
+    }
+    input{
+      @apply(--things-input);
+      width:calc(65% - 37px);
+    }
+    paper-icon-button{
+      @apply(--things-small-icon);
+      margin-right:7px;margin-left:-27px;
+      opacity:.4;
+      position:relative;
+      top:-2px;
+    }
+    iron-icon{
+      @apply(--things-picker-button);
+      background:url(/images/icon-resource-select.png) 50% 3px no-repeat var(--paper-blue-grey-300);
+    }
+  </style>
+  
+  <template>
+    
+    <label>[[label]]</label>
+    <input is="iron-input" name="[[name]]" bind-value="[[value]]" readonly>
+    <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear">
+    </paper-icon-button>
+    <iron-icon prefix on-tap="openResourceSelector"></iron-icon>
+  </template>
+
+  <script type="text/javascript">
+    Polymer({
+      is: "things-resource-selector-by-format",
+
+      properties: {
+        /**
+         * element name, Form 안에 들어가는 경우 Ajax 요청시 name : value 형식으로 서버에 요청된다.
+         */
+        name : {
+          type: String
+        },
+
+        /**
+         * Resource Object Value
+         */
+        objValue: {
+          type: Object,
+          notify:true,
+          observer: '_objValueChanged'
+        },
+
+        /**
+         * element에 표시할 라벨 
+         */
+        label: {
+          type: String
+        },
+
+        /**
+         * Resource Selector로 부터 선택한 값 - id값
+         */
+        value: {
+          type: String
+        },
+
+        /**
+        * Resource Type - Entity or Menu
+        * 1) Entity : Entity 설정에 의한 Selector 화면 구성 
+        * 2) Menu : Menu 설정에 의한 Selector 화면 구성
+        */
+        resourceType: {
+          type: String,
+          value: 'Entity'
+        },
+      
+        /**
+         * Resource Selector에서 표시할 리소스 명
+         * resourceType이 Menu로 선택되어 있다면 Menu 명, resourceType이 Entity로 선택되어 있다면 Entity 명이 된다.
+         */
+        resourceName: {
+          type: String
+        },
+
+        /**
+         * Resource Selector를 띄우기 위해 필요한 기본 파라미터 
+         * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},... 
+         */
+        initialParams: {
+          type: String
+        },
+
+        /**
+         * Resource Selector에서 선택한 리소스와 Owner Data간 바인딩하기 위한 정보 
+         */
+        bindFields: {
+          type: String
+        },
+
+        valueProp: {
+          type: String
+        }
+      },
+
+      behaviors: [
+        Things.ResourceSelectorBehavior
+      ],
+
+      /**
+       * Object 값이 변경될 경우 
+       */
+      _objValueChanged: function(objValue) {
+        if(objValue) {
+          this.value = objValue[this.valueProp];
+        } else {
+          this.value = null;
+        }
+      },
+
+      /**
+       * Object Value를 리턴한다.
+       */
+      getObjValue: function() {
+        return this.objValue;
+      },
+
+      /**
+       * Object Value를 설정한다.
+       *
+       * @param {Object} objValue
+       */
+      setObjValue: function(objValue) {
+        this.objValue = objValue;
+      },
+
+      /**
+       * Open Resource Selector
+       */
+      openResourceSelector: function() {
+        var form = this.findOwnerForm(this);
+        this.openResourceSelectorByForm(this, true, form);
+      },
+
+      /**
+       * Resource Selector의 Container 폼을 찾아 리턴
+       */
+      findOwnerForm: function(element) {
+        if(!element.parentElement) {
+          return null;
+        } else {
+          if(element.parentElement.localName == 'form' || 
+             element.parentElement.localName == 'things-form' || 
+             element.parentElement.localName == 'things-search-form') {
+            return element.parentElement;
+          } else {
+            return this.findOwnerForm(element.parentElement);
+          }
+        }
+      },
+
+      /**
+       * 값을 리셋
+       */
+      clearValue: function() {
+        var obj = {};
+        obj[this.valueProp] = null;
+        this.objValue = obj;
+      }
+
+    });
+  </script>
+</dom-module>
