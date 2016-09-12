@@ -103,7 +103,7 @@
           type: String
         },
 
-        valueProp: {
+        valueField: {
           type: String
         }
       },
@@ -117,7 +117,7 @@
        */
       _objValueChanged: function(objValue) {
         if(objValue) {
-          this.value = objValue[this.valueProp];
+          this.value = objValue[this.valueField];
         } else {
           this.value = null;
         }
@@ -169,7 +169,7 @@
        */
       clearValue: function() {
         var obj = {};
-        obj[this.valueProp] = null;
+        obj[this.valueField] = null;
         this.objValue = obj;
       }
 
