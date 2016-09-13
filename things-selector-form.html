@@ -41,7 +41,7 @@
       form-fields="[[formFields]]" 
       action-url="diy_services/DynamicScreen/query.json" 
       page="{{page}}"
-      per-page="{{limit}}"
+      limit="{{limit}}"
       last-response="{{lastResponse}}">
     </things-search-form>
 
@@ -152,8 +152,7 @@
     getFormElements: function() {
       var formElements = [];
       var allDivs = this.$.fields.childNodes;
-      if(!allDivs || allDivs.length == 0) 
-        return [];
+      if(!allDivs || allDivs.length == 0) return [];
 
       for(var i = 0 ; i < allDivs.length; i++) {
         var divContainer = allDivs[i];
@@ -211,9 +210,9 @@
       this.stopSpinner();
 
       var response = event.detail.request.xhr.response;
+      
       if(response && response.status == 401) {
         this.handleUnauthorized();
-
       } else {
         if(response) {
           this.openResponseError(response);
@@ -225,7 +224,6 @@
 
       this.handleErrorResponse(response);
     }
-
   });
   </script>
 </dom-module>

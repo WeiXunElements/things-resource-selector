@@ -27,7 +27,6 @@
   </style>
   
   <template>
-    
     <label>[[label]]</label>
     <input is="iron-input" name="[[name]]" bind-value="[[value]]" readonly>
     <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear">
@@ -37,6 +36,7 @@
 
   <script type="text/javascript">
     Polymer({
+      
       is: "things-resource-format-selector",
 
       properties: {

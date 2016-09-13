@@ -26,28 +26,11 @@ Things.SelectorFormSearchBehaviorImpl = {
     },
 
     /**
-     * 현재 페이지
-     */
-    page: {
-      type: Number,
-      notify: true
-    },
-    
-    /**
-     * TODO limit으로 변경. 현재는 perPage가 변경될 때 ResourceSearchBehavior의 limit변수를 변경해 줌 
-     * Pagination을 위한 설정. 페이지에 표시할 데이터 개수
-     */
-    perPage: {
-      type: Number,
-      value: 50
-    },
-
-    /**
      * 값이 필요없는 operator
      */
     nonValueOpers: {
       type: Array,
-      value: ['is_null', 'is_not_null', 'is_true', 'is_false', 'is_present', 'is_blank']
+      value: ['is_null', 'is_not_null', 'is_true', 'is_not_true', 'is_false', 'is_not_false', 'is_present', 'is_blank']
     },
 
     /**
@@ -90,8 +73,7 @@ Things.SelectorFormSearchBehaviorImpl = {
   },
 
   observers: [
-    '_pageChanged(page)',
-    '_perPageChanged(perPage)'
+    '_pageChanged(page)'
   ],
 
   /**
@@ -106,15 +88,6 @@ Things.SelectorFormSearchBehaviorImpl = {
   },
 
   /**
-   * perPage가 변경되었을 때 액션
-   *
-   * @param {Number} perPage 페이지 당 표시할 레코드 수 
-   */
-  _perPageChanged: function(perPage) {
-    this.limit = perPage;
-  },
-
-  /**
    * paramType이 'RESOURCE'일 경우에 Search Parameters인 queryFields를 초기화하고 
    * 파라미터 정보로 부터 다시 queryFields를 설정한다.
    * 
@@ -125,17 +98,14 @@ Things.SelectorFormSearchBehaviorImpl = {
     if(!params) return;
 
     for(prop in params) {
-      if(params[prop] && params[prop] != '') {
-        var fieldModels = this.formFields.filter(function(formField) { return formField.name == prop });
+      var fieldModels = this.formFields.filter(function(formField) { return formField.name == prop });
 
-        if (fieldModels && fieldModels.length > 0) {
-          var fieldModel = fieldModels[0];
-          var query = { name : prop, operator : fieldModel.op };
-          if(!this.nonValueOpers.includes(fieldModel.op)) {
-            query.value = params[prop];
-          }
+      if (fieldModels && fieldModels.length > 0) {
+        var fieldModel = fieldModels[0];
+        var operator = fieldModel.op;
 
-          this.queryFields.push(query);
+        if(params[prop] || this.nonValueOpers.includes(operator)) {
+          this.queryFields.push({ name : prop, operator : operator, value : params[prop] });
         }
       }
     }
@@ -162,7 +132,7 @@ Things.SelectorFormSearchBehaviorImpl = {
 
   /**
    * Submit 전에 전처리 핸들
-   * Pagination을 사용하는 경우에 page, perPage 정보를 파라미터에 추가한다.
+   * Pagination을 사용하는 경우에 page, limit 정보를 파라미터에 추가한다.
    */
   handleBeforeSubmit: function(event) {
     var form = event.srcElement;
