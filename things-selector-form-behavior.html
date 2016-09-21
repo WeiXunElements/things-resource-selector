@@ -184,11 +184,11 @@ Things.SelectorFormBehaviorImpl = {
 				newElement = document.createElement('things-resource-selector');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
-				newElement.setAttribute('resource-type', element.userObj.resourceType);
-				newElement.setAttribute('resource-name', element.userObj.resourceName);
+				newElement.setAttribute('resource-type', element.userData.resourceType);
+				newElement.setAttribute('resource-name', element.userData.resourceName);
 				
-				if(element.userObj.initialParams)
-					newElement.setAttribute('initial-params', element.userObj.initialParams);
+				if(element.userData.initialParams)
+					newElement.setAttribute('initial-params', element.userData.initialParams);
 
 				break;
 
@@ -196,14 +196,14 @@ Things.SelectorFormBehaviorImpl = {
 				newElement = document.createElement('things-resource-field');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
-				newElement.setAttribute('resource-type', element.userObj.resourceType);
-				newElement.setAttribute('resource-name', element.userObj.resourceName);
+				newElement.setAttribute('resource-type', element.userData.resourceType);
+				newElement.setAttribute('resource-name', element.userData.resourceName);
 				
-				if(element.userObj.initialParams)
-					newElement.setAttribute('initial-params', element.userObj.initialParams);
+				if(element.userData.initialParams)
+					newElement.setAttribute('initial-params', element.userData.initialParams);
 
-				if(element.userObj.readOnly && element.userObj.readOnly === true)
-					newElement.setAttribute('read-only', element.userObj.readOnly);
+				if(element.userData.readOnly && element.userData.readOnly === true)
+					newElement.setAttribute('read-only', element.userData.readOnly);
 				
 				break;
 
