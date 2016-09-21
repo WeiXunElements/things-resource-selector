@@ -28,7 +28,7 @@ Things.ResourceSelectorBehavior = {
     var selector = this._createResourceContent(parentGrid, parentGrid, selectorConfig.ownerField, selectorConfig.resourceType, selectorConfig.resourceName, selectorConfig.initialParams, selectorConfig.bindFields);
     selector.parentGridRowIdx = parentGridRowIdx;
     if(selectorConfig.valueField) selector.valueField = selectorConfig.valueField;
-    this._getResourceSelectorDialog().showResourceDialog(selector, modal);
+    this._getResourceSelectorDialog().openDialog(selector, modal);
   },
 
   /**
@@ -39,7 +39,7 @@ Things.ResourceSelectorBehavior = {
    */
   openResourceSelectorByForm: function(ownerElement, modal, ownerForm) {
     var selector = this._createResourceContent(ownerElement, ownerForm, ownerElement.name, ownerElement.resourceType, ownerElement.resourceName, ownerElement.initialParams, ownerElement.bindFields);
-    this._getResourceSelectorDialog().showResourceDialog(selector, modal);
+    this._getResourceSelectorDialog().openDialog(selector, modal);
   },  
 
   /**
@@ -72,7 +72,7 @@ Things.ResourceSelectorBehavior = {
    */
   _getResourceSelectorDialog: function() {
     // FIXME things-full-dialog 처럼 이벤트 방식으로 변경한다.
-    return app.$['resource-dialog'];
+    return app.$['dialog-manager'];
   }
 
 };
