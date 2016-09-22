@@ -119,11 +119,20 @@ ResourceSelector를 위한 다이얼로그.
 			*/
 			openCallback: {
 				type: Function
+			},
+
+			/**
+			 * 다이얼로그 활성화 여부
+			 */
+			active: {
+				type: Boolean,
+				value: false
 			}
 		},
 
 		listeners: {
-			'dialog.iron-overlay-opened' : '_openHandler'
+			'dialog.iron-overlay-opened' : '_openHandler',
+			'dialog.iron-overlay-closed' : '_closeHandler'
 		},
 
 		/**
@@ -168,12 +177,21 @@ ResourceSelector를 위한 다이얼로그.
 		 * 다이얼로그가 오픈된 경우 핸들러 
 		 */
 		_openHandler: function(e) {
+			this.active = true;
+
 			if(this.openCallback) {
 				this.openCallback.apply(this.detailView);
 			}
 
 			this.title = this.detailView.title;
-		} 
+		},
+
+		/**
+		 * 다이얼로그가 클로즈 된 경우 핸들러
+		 */
+		_closeHandler: function() {
+			this.active	= false
+		}
 
 	});
 	</script>
