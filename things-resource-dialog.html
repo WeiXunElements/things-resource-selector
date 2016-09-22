@@ -35,16 +35,56 @@ ResourceSelector를 위한 다이얼로그.
 			height:45px;
 			@apply(--things-padding-clear)
 		}
-		paper-dialog {
+		.size5 {
 			position: fixed;
-			top: 15%;
-			bottom: 15%;
-			left: 20%;
-			right: 20%;
+			top: 10%;
+			bottom: 10%;
+			left: 15%;
+			right: 15%;
 			margin: 0px;
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+		.size4 {
+			position: fixed;
+			top: 13%;
+			bottom: 13%;
+			left: 18%;
+			right: 12%;
+			margin: 0px;
+			@apply(--layout-flex);
+			@apply(--layout-vertical);
+		}
+		.size3 {
+			position: fixed;
+			top: 16%;
+			bottom: 10%;
+			left: 21%;
+			right: 9%;
+			margin: 0px;
+			@apply(--layout-flex);
+			@apply(--layout-vertical);
+		}
+		.size2 {
+			position: fixed;
+			top: 19%;
+			bottom: 7%;
+			left: 24%;
+			right: 6%;
+			margin: 0px;
+			@apply(--layout-flex);
+			@apply(--layout-vertical);
+		}
+		.size1 {
+			position: fixed;
+			top: 22%;
+			bottom: 4%;
+			left: 27%;
+			right: 3%;
+			margin: 0px;
+			@apply(--layout-flex);
+			@apply(--layout-vertical);
+		}												
 		.buttonsGroup {
 			@apply(--layout-horizontal);
 			@apply(--layout-end-justified);
@@ -79,7 +119,8 @@ ResourceSelector를 위한 다이얼로그.
 
 	<template>
 		<paper-dialog
-			id='dialog' 
+			id='dialog'
+			class$="[[dialogSize]]"
 			always-on-top
 			entry-animation="scale-up-animation"
 			exit-animation="fade-out-animation">
@@ -127,6 +168,11 @@ ResourceSelector를 위한 다이얼로그.
 			active: {
 				type: Boolean,
 				value: false
+			},
+
+			dialogSize: {
+				type: String,
+				value: 'size1'
 			}
 		},
 
