@@ -28,7 +28,8 @@ Things.ResourceSelectorBehavior = {
     var selector = this._createResourceContent(parentGrid, parentGrid, selectorConfig.ownerField, selectorConfig.resourceType, selectorConfig.resourceName, selectorConfig.initialParams, selectorConfig.bindFields);
     selector.parentGridRowIdx = parentGridRowIdx;
     if(selectorConfig.valueField) selector.valueField = selectorConfig.valueField;
-    this._getResourceSelectorDialog().openDialog(selector, modal);
+    var event = { view: selector, modal: modal };
+    this.fire('things-open-popup-view', event);
   },
 
   /**
@@ -39,7 +40,8 @@ Things.ResourceSelectorBehavior = {
    */
   openResourceSelectorByForm: function(ownerElement, modal, ownerForm) {
     var selector = this._createResourceContent(ownerElement, ownerForm, ownerElement.name, ownerElement.resourceType, ownerElement.resourceName, ownerElement.initialParams, ownerElement.bindFields);
-    this._getResourceSelectorDialog().openDialog(selector, modal);
+    var event = { view: selector, modal: modal };
+    this.fire('things-open-popup-view', event);
   },  
 
   /**
