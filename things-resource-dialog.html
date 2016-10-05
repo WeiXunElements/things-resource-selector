@@ -163,6 +163,13 @@ ResourceSelector를 위한 다이얼로그.
 			},
 
 			/**
+			 * dialog가 close된 후 콜백
+			 */
+			closeCallback: {
+				type: Function
+			},
+
+			/**
 			 * 다이얼로그 활성화 여부
 			 */
 			active: {
@@ -170,6 +177,10 @@ ResourceSelector를 위한 다이얼로그.
 				value: false
 			},
 
+			/**
+			 * 중첩되는 다이얼로그가 생길수록
+			 * 다이얼로그의 위치 및 크기를 변경 시키기 위한 변수
+			 */
 			dialogSize: {
 				type: String,
 				value: 'size1'
@@ -179,44 +190,6 @@ ResourceSelector를 위한 다이얼로그.
 		listeners: {
 			'dialog.iron-overlay-opened' : '_openHandler',
 			'dialog.iron-overlay-closed' : '_closeHandler'
-		},
-
-		/**
-		 * 전역 ResourceDialog를 찾아서 view를 내용으로 추가하여 오픈한다.
-		 *
-		 * @param {Object} view 오픈할 view
-		 * @param {Boolean} modal modal로 오픈할 지 여부
-		 * @param {Object} openCallback
-		 */
-		showResourceDialog: function(view, modal, openCallback) {
-			var dialog = this.$.dialog;
-			dialog.modal = modal;
-			dialog.noCancelOnEscKey = true;
-			var scrollable = this.$.scrollroot;
-
-			if(this.detailView) {
-				try {
-					scrollable.removeChild(this.detailView);
-				} catch(e) {
-					console.log(e);
-				}
-			} 
-
-			if(this.openCallback) {
-				this.openCallback = null;
-			}
-
-			this.detailView = view;
-			this.openCallback = openCallback;
-			scrollable.appendChild(this.detailView);
-			dialog.open();
-		},
-
-		/**
-		 * 전역 ResourceDialog를 찾아서 닫는다.
-		 */
-		closeResourceDialog: function() {
-			this.$.dialog.close();
 		},
 
 		/**
@@ -237,6 +210,10 @@ ResourceSelector를 위한 다이얼로그.
 		 */
 		_closeHandler: function() {
 			this.active	= false
+
+			if(this.closeCallback) {
+				this.closeCallback();
+			}
 		}
 
 	});
