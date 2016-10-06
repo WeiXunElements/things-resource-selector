@@ -436,10 +436,7 @@
 			 * Close Resource Selector Dialog
 			 */
 			closeResourceSelectorDialog: function() {
-				var dialog = this.findOwnerDialog(this);
-				if(dialog) {
-					dialog.closeResourceDialog();
-				}
+				this.fire('things-dialog-close');
 			},
 
 			/**
