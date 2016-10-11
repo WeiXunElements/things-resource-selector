@@ -4,23 +4,27 @@
 
 <link rel="import" href="./things-resource-selector-behavior.html">
 
+<!--
+  Name Based Resource Selector
+-->
+
 <dom-module id="things-resource-format-selector">
   <style>
-    label{
+    label {
       @apply(--things-label);
     }
-    input{
+    input {
       @apply(--things-input);
       width:calc(65% - 37px);
     }
-    paper-icon-button{
+    paper-icon-button {
       @apply(--things-small-icon);
       margin-right:7px;margin-left:-27px;
       opacity:.4;
       position:relative;
       top:-2px;
     }
-    iron-icon{
+    iron-icon {
       @apply(--things-picker-button);
       background:url(/images/icon-resource-select.png) 50% 3px no-repeat var(--paper-blue-grey-300);
     }
@@ -103,8 +107,12 @@
           type: String
         },
 
+        /**
+         * 리소스 선택시 값으로 설정할 필드 
+         */
         valueField: {
-          type: String
+          type: String,
+          value: 'name'
         }
       },
 
@@ -172,7 +180,6 @@
         obj[this.valueField] = null;
         this.objValue = obj;
       }
-
     });
   </script>
 </dom-module>
