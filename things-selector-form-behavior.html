@@ -280,13 +280,15 @@ Things.SelectorFormBehaviorImpl = {
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
 
-				if(element.userData.hidden) {
-					newElement.setAttribute('hidden', true);
-				}
+				if(element.userData) {
+					if(element.userData.hidden) {
+						newElement.setAttribute('hidden', true);
+					}
 
-				if(element.userData.readonly) {
-					newElement.setAttribute('readonly', true);
-				}				
+					if(element.userData.readonly) {
+						newElement.setAttribute('readonly', true);
+					}
+				}
 		}
 
 		if(!newElement) return null;
