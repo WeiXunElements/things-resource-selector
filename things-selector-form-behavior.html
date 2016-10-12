@@ -168,7 +168,8 @@ Things.SelectorFormBehaviorImpl = {
 
 			case 'textarea':
 				newElement = document.createElement('things-textarea');
-				newElement = this._bindAttributes(newElement, element)
+				newElement = this._bindAttributes(newElement, element);
+				newElement.rows = 4;
 				break;
 
 			case 'code-combo':
@@ -180,6 +181,15 @@ Things.SelectorFormBehaviorImpl = {
 				newElement.setAttribute('value-path', 'name');
 				break;
 
+			case 'resource-combo':
+				newElement = document.createElement('things-resource-combo');
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+				newElement.setAttribute('resource-name', element.userData.resourceName);
+				newElement.setAttribute('resource-type', element.userData.resourceType);
+				newElement.setAttribute('value-path', element.userData.delegateColumn);
+				break;
+
 			case 'resource-selector':
 				newElement = document.createElement('things-resource-selector');
 				newElement.setAttribute('name', element.name);
@@ -187,9 +197,20 @@ Things.SelectorFormBehaviorImpl = {
 				newElement.setAttribute('resource-type', element.userData.resourceType);
 				newElement.setAttribute('resource-name', element.userData.resourceName);
 				
+				if(element.userData.bindFields)
+					newElement.setAttribute('bind-fields', element.userData.bindFields);
+				
 				if(element.userData.initialParams)
 					newElement.setAttribute('initial-params', element.userData.initialParams);
+				break;
 
+			case 'resource-format-selector':
+				newElement = document.createElement('things-resource-format-selector');
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+				newElement.setAttribute('resource-type', element.userData.resourceType);
+				newElement.setAttribute('resource-name', element.userData.resourceName);
+				newElement.setAttribute('value-field', element.userData.delegateColumn);
 				break;
 
 			case 'resource-field':
@@ -198,19 +219,45 @@ Things.SelectorFormBehaviorImpl = {
 				newElement.setAttribute('label', element.label);
 				newElement.setAttribute('resource-type', element.userData.resourceType);
 				newElement.setAttribute('resource-name', element.userData.resourceName);
+				newElement.setAttribute('submit-name', element.userData.submitName);
 				
+				if(element.userData.bindFields)
+					newElement.setAttribute('bind-fields', element.userData.bindFields);
+
 				if(element.userData.initialParams)
 					newElement.setAttribute('initial-params', element.userData.initialParams);
 
 				if(element.userData.readOnly && element.userData.readOnly === true)
 					newElement.setAttribute('read-only', element.userData.readOnly);
-				
+				break;
+
+			case 'image-selector':
+				newElement = document.createElement('things-image-selector');
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
 				break;
 
 			case 'date-picker':
 				newElement = document.createElement('things-date-picker');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
+				break;
+
+			case 'date-from-to-picker':
+				newElement = document.createElement('things-date-from-to');
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+				newElement.setAttribute('selected-to-date', new Date());
+				var range = element.userData.defaultRange;
+
+				if(range && range != '' && parseInt(range)) {
+					var rangeDays = parseInt(range);
+					var fromDate = new Date();
+					fromDate.setDate(fromDate.getDate() - rangeDays);
+					newElement.setAttribute('selected-from-date', fromDate);
+					newElement.setAttribute('allow-range', range);
+					newElement.setAttribute('error-message', Things.DataGlobal.t('text.invalid_date_range') + ' : ' + range);
+				}
 				break;
 
 			case 'time-picker':
@@ -232,6 +279,14 @@ Things.SelectorFormBehaviorImpl = {
 				newElement = document.createElement('things-input-field');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
+
+				if(element.userData.hidden) {
+					newElement.setAttribute('hidden', true);
+				}
+
+				if(element.userData.readonly) {
+					newElement.setAttribute('readonly', true);
+				}				
 		}
 
 		if(!newElement) return null;
@@ -294,8 +349,7 @@ Things.SelectorFormBehaviorImpl = {
 			var element = elements[i];
 			element.value = resource ? resource[element.name] : null;
 		}
-	}	
-
+	}
 };
 
 Things.SelectorFormBehavior = [
