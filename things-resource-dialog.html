@@ -84,7 +84,37 @@ ResourceSelector를 위한 다이얼로그.
 			margin: 0px;
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
-		}												
+		}
+    .large {
+      position: fixed;
+      top: 10%;
+      bottom: 10%;
+      left: 15%;
+      right: 15%;
+      margin: 0px;
+      @apply(--layout-flex);
+      @apply(--layout-vertical);
+    }
+    .medium {
+      position: fixed;
+      top: 20%;
+      bottom: 20%;
+      left: 25%;
+      right: 25%;
+      margin: 0px;
+      @apply(--layout-flex);
+      @apply(--layout-vertical);
+    }
+    .small {
+      position: fixed;
+      top: 30%;
+      bottom: 30%;
+      left: 35%;
+      right: 35%;
+      margin: 0px;
+      @apply(--layout-flex);
+      @apply(--layout-vertical);
+    }
 		.buttonsGroup {
 			@apply(--layout-horizontal);
 			@apply(--layout-end-justified);
@@ -119,7 +149,7 @@ ResourceSelector를 위한 다이얼로그.
 
 	<template>
 		<paper-dialog
-			id='dialog'
+			id='resource-dialog'
 			class$="[[dialogSize]]"
 			always-on-top
 			entry-animation="scale-up-animation"
@@ -188,32 +218,40 @@ ResourceSelector를 위한 다이얼로그.
 		},
 
 		listeners: {
-			'dialog.iron-overlay-opened' : '_openHandler',
-			'dialog.iron-overlay-closed' : '_closeHandler'
+			'resource-dialog.iron-overlay-opened' : '_openHandler',
+			'resource-dialog.iron-overlay-closed' : '_closeHandler'
 		},
 
 		/**
 		 * 다이얼로그가 오픈된 경우 핸들러 
 		 */
 		_openHandler: function(e) {
-			this.active = true;
+			if(e.target.id == 'resource-dialog') {
+				this.active = true;
 
-			if(this.openCallback) {
-				this.openCallback.apply(this.detailView);
+				if(this.openCallback) {
+					this.openCallback.apply(this.detailView);
+				}
+
+				this.title = this.detailView.title;
 			}
-
-			this.title = this.detailView.title;
 		},
 
 		/**
 		 * 다이얼로그가 클로즈 된 경우 핸들러
 		 */
-		_closeHandler: function() {
-			this.active	= false
+		_closeHandler: function(e) {
+			if(e.target.id == 'resource-dialog') {
+				this.active	= false
 
-			if(this.closeCallback) {
-				this.closeCallback();
+				if(this.closeCallback) {
+					this.closeCallback();
+				}
 			}
+		},
+
+		getDialog: function() {
+			return this.$['resource-dialog'];
 		}
 
 	});
