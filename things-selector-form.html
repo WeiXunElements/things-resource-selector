@@ -83,147 +83,144 @@
   </template>
 
   <script>
+    Polymer({
+      is: 'things-selector-form',
 
-  Polymer({
+      behaviors: [ 
+        Things.SelectorFormBehavior,
+        Things.SelectorFormSearchBehavior,
+        Things.FullscreenBehavior,
+        Things.SpinnerBehavior,
+        Things.MsgBoxBehavior
+      ],
 
-    is: 'things-selector-form',
+      listeners : {
+        'iron-form-presubmit' :'handleBeforeSubmit',
+        'iron-form-response' :'_successResponseHandler',
+        'iron-form-error' : '_errorResponseHandler'      
+      },
 
-    properties: {
-    },
+      /**
+       * 리소스 폼이 이미 구성되었는지 여부 
+       */
+      isFormConfigured: function() {
+        return this.$.fields.childNodes.length > 0;
+      },
 
-    listeners : {
-      'iron-form-presubmit' :'handleBeforeSubmit',
-      'iron-form-response' :'_successResponseHandler',
-      'iron-form-error' : '_errorResponseHandler'      
-    },
-    
-    behaviors: [ 
-      Things.SelectorFormBehavior,
-      Things.SelectorFormSearchBehavior,
-      Things.FullscreenBehavior,
-      Things.SpinnerBehavior,
-      Things.MsgBoxBehavior
-    ],
+      /**
+       * 검색 폼 화면을 구성. formFields 정보로 동적으로 폼 하위 엘리먼트를 생성하여 폼을 구성한다.
+       */
+      reconfigureMyForm: function() {
+        if(!this.formFields || this.formFields.length <= 0 || this.isFormConfigured()) return;
+        var divContainer = this.$.fields, rowDiv = null;
 
-    /**
-     * 리소스 폼이 이미 구성되었는지 여부 
-     */
-    isFormConfigured: function() {
-      return this.$.fields.childNodes.length > 0;
-    },
+        for(index in this.formFields) {
+          var field = this.formFields[index];
+          field.searchForm = true;
+          var newElement = this._createFormElement(field);
+          if(!newElement) continue;
 
-    /**
-     * 검색 폼 화면을 구성. formFields 정보로 동적으로 폼 하위 엘리먼트를 생성하여 폼을 구성한다.
-     */
-    reconfigureMyForm: function() {
-      if(!this.formFields || this.formFields.length <= 0 || this.isFormConfigured()) return;
-      var divContainer = this.$.fields, rowDiv = null;
+          if((index % 2) == 0) {
+            rowDiv = document.createElement('div');
+            rowDiv.setAttribute('class', 'layout horizontal');
+            divContainer.appendChild(rowDiv);
+          }
 
-      for(index in this.formFields) {
-        var field = this.formFields[index];
-        field.searchForm = true;
-        var newElement = this._createFormElement(field);
-        if(!newElement) continue;
-
-        if((index % 2) == 0) {
-          rowDiv = document.createElement('div');
-          rowDiv.setAttribute('class', 'layout horizontal');
-          divContainer.appendChild(rowDiv);
+          rowDiv.appendChild(newElement);          
         }
 
-        rowDiv.appendChild(newElement);          
-      }
-
-      // 마지막 Div가 홀수이고 textarea가 아니면 empty 열 추가
-      if(rowDiv && rowDiv.childNodes && rowDiv.childNodes.length == 1) {
-        if(rowDiv.childNodes[0].localName.indexOf('textarea') < 0) {
-          var emptyElement = this._createFormElement({ type: 'empty' });
-          rowDiv.appendChild(emptyElement);
+        // 마지막 Div가 홀수이고 textarea가 아니면 empty 열 추가
+        if(rowDiv && rowDiv.childNodes && rowDiv.childNodes.length == 1) {
+          if(rowDiv.childNodes[0].localName.indexOf('textarea') < 0) {
+            var emptyElement = this._createFormElement({ type: 'empty' });
+            rowDiv.appendChild(emptyElement);
+          }
         }
-      }
 
-      this.active = true;
-      this.fire('things-search-form-configured', this.formFields);
-    },
+        this.active = true;
+        this.fire('things-search-form-configured', this.formFields);
+      },
 
-    /**
-     * 모든 Form Element를 리턴 
-     */
-    getFormElements: function() {
-      var formElements = [];
-      var allDivs = this.$.fields.childNodes;
-      if(!allDivs || allDivs.length == 0) return [];
+      /**
+       * 모든 Form Element를 리턴 
+       */
+      getFormElements: function() {
+        var formElements = [];
+        var allDivs = this.$.fields.childNodes;
+        if(!allDivs || allDivs.length == 0) return [];
 
-      for(var i = 0 ; i < allDivs.length; i++) {
-        var divContainer = allDivs[i];
-        var divElements = divContainer.childNodes ? divContainer.childNodes : [];
-        for(var j = 0 ; j < divElements.length ; j++) { 
-          formElements.push(divElements[j]); 
+        for(var i = 0 ; i < allDivs.length; i++) {
+          var divContainer = allDivs[i];
+          var divElements = divContainer.childNodes ? divContainer.childNodes : [];
+          for(var j = 0 ; j < divElements.length ; j++) { 
+            formElements.push(divElements[j]); 
+          }
         }
-      }
 
-      return formElements;
-    },
+        return formElements;
+      },
 
-    /**
-     * Submit Form. 검색 실행 
-     */
-    submitMyForm: function() {
-      var evt = this.fire('things-selector-form-search', this.grid, { cancelable: true });
-      if(!evt.defaultPrevented) {
-        // 초기 파라미터 설정
-        this._bindInitialParams();
-        this.startSpinner();
-        this.getMyForm().submit();
-      }
-    },
+      /**
+       * Submit Form. 검색 실행 
+       */
+      submitMyForm: function() {
+        var evt = this.fire('things-selector-form-search', this.grid, { cancelable: true });
+        if(!evt.defaultPrevented) {
+          // 1. 초기 파라미터가 있다면 설정해준다.
+          this._bindInitialParams();
+          // 2. Start Spinner
+          this.startSpinner();
+          // 3. Submit
+          this.getMyForm().submit();
+        }
+      },
 
-    /**
-     * 조회 버튼 클릭시 current page를 1로 리셋
-     *
-     * @param {Object} e 버튼 클릭 이벤트
-     */
-    _onSearchFormTap: function(e) {
-      if(this.page > 1) this.page = 1;
-      else this.submitMyForm();      
-    },
+      /**
+       * 조회 버튼 클릭시 current page를 1로 리셋
+       *
+       * @param {Object} e 버튼 클릭 이벤트
+       */
+      _onSearchFormTap: function(e) {
+        if(this.page > 1) this.page = 1;
+        else this.submitMyForm();      
+      },
 
-    /**
-     * Successful response handler After form submits.
-     * this fires a 'things-form-submit-success' in this function
-     *
-     * @param {Object} event Successful response event
-     */
-    _successResponseHandler: function(event) {
-      this.stopSpinner();
-      this.lastResponse = event.detail.xhr.response;
-      this.handleSuccessResponse(this.lastResponse);
-    },
+      /**
+       * Successful response handler After form submits.
+       * this fires a 'things-form-submit-success' in this function
+       *
+       * @param {Object} event Successful response event
+       */
+      _successResponseHandler: function(event) {
+        this.stopSpinner();
+        this.lastResponse = event.detail.xhr.response;
+        this.handleSuccessResponse(this.lastResponse);
+      },
 
-    /**
-     * Error response handler After form submits.
-     * this fires a 'things-form-submit-error' in this function
-     *
-     * @param {Object} event Error response event
-     */
-    _errorResponseHandler: function(event) {
-      this.stopSpinner();
+      /**
+       * Error response handler After form submits.
+       * this fires a 'things-form-submit-error' in this function
+       *
+       * @param {Object} event Error response event
+       */
+      _errorResponseHandler: function(event) {
+        this.stopSpinner();
+        var response = event.detail.request.xhr.response;
+        
+        if(response && response.status == 401) {
+          this.handleUnauthorized();
 
-      var response = event.detail.request.xhr.response;
-      
-      if(response && response.status == 401) {
-        this.handleUnauthorized();
-      } else {
-        if(response) {
-          this.openResponseError(response);
         } else {
-          response = event.detail.request;
-          this.openUnkownError(response);
+          if(response) {
+            this.openResponseError(response);
+          } else {
+            response = event.detail.request;
+            this.openUnkownError(response);
+          }
         }
-      }
 
-      this.handleErrorResponse(response);
-    }
-  });
+        this.handleErrorResponse(response);
+      }
+    });
   </script>
 </dom-module>

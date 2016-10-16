@@ -112,23 +112,24 @@ Things.SelectorFormSearchBehaviorImpl = {
   },
 
   /**
-   * 검색 폼 구성 완료 후에 initialParams를 서비스 호출시 파라미터에 반영한다.
+   * 조회 전에 초기 파라미터를 파싱하여 폼에 데이터를 입력 해준다.
    */
   _bindInitialParams: function() {
     if(!this.initialParams) return;
 
-    var defaultQuery = {};
+    var searchParams = this.serializeMyForm();
     var queryParamArr = this.initialParams.split(',');
+
     for(var i = 0 ; i < queryParamArr.length ; i++) {
       var queryParamStr = queryParamArr[i];
       var paramArr = queryParamStr.split('=');
 
       if(paramArr[1])
-        defaultQuery[paramArr[0]] = paramArr[1];
+        searchParams[paramArr[0]] = paramArr[1];
     }
 
-    this.setFormData(defaultQuery);
-  },  
+    this.setFormData(searchParams);
+  },   
 
   /**
    * Submit 전에 전처리 핸들

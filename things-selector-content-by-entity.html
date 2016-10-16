@@ -288,10 +288,7 @@
 						if(!varData && varRealName.indexOf('_id') > 0) {
 							varRealName = varRealName.substr(0, varRealName.lastIndexOf('_id'));
 							varData = ownerData[varRealName] || '';
-							if(varData) {
-								varData = varData.id || '';
-							}
-							
+							if(varData) varData = varData.id || '';
 							searchParams = this.initialParams.replace(varName, varData);
 
 						} else {
@@ -349,19 +346,21 @@
 				var selectedResource = event.detail;
 				var ownerData = this.findOwnerData();
 
+				// resource format selector인 경우 Object 값으로 설정한다.
 				if(this.ownerElement.localName == 'things-resource-format-selector') {
 					this.ownerElement.setObjValue(selectedResource);
+
+				// Container에서 필요한 대표 컬럼 및 선택한 값을 설정한다. 
 				} else {
-					// Container에서 필요한 대표 컬럼 및 선택한 값을 설정한다. 
 					this.ownerElement.resourceIdField = this.getIdField();
 					this.ownerElement.resourceTitleField = this.getTitleField();
 					var idValue = selectedResource[this.getIdField()];
 					var displayValue = selectedResource[this.getTitleField()];
 					this.ownerElement.setResourceValue(idValue, displayValue, selectedResource);
 				}
+
 				this._bindObjectFields(selectedResource, ownerData);
 				this.closeResourceSelectorDialog();
-
 			},
 
 			/**
@@ -413,22 +412,29 @@
 						objToChange = this._getResourceValueOfSelectedRecord(selectedResource, objToChange, idField, titleField);
 					}
 
+					// Grid의 ownerField 데이터 변경 
 					rowObj[this.ownerField] = objToChange;
 					
 					// Bind Fields 정보로 Grid 데이터 변경 
 					this._bindObjectFields(selectedResource, rowObj);
-
 					this.fire('things-resource-selector-selected', { rowObj: rowObj, resource : selectedResource } );
-					dataSet.updateRow(this.parentGridRowIdx, rowObj);
+
 					// 부모 그리드 Refresh
+					dataSet.updateRow(this.parentGridRowIdx, rowObj);
 					parentGrid.refreshView();
+
 					// Close Dialog
 					this.closeResourceSelectorDialog();
 				}
 			},
 
+			/**
+			 * 사용자가 선택한 레코드에서 Resource Value (Object)를 리턴 
+			 */
 			_getResourceValueOfSelectedRecord: function(selectedResource, objToChange, idField, titleField) {
-					if(typeof(objToChange) === 'undefined' || objToChange === null) objToChange = {};
+					if(typeof(objToChange) === 'undefined' || objToChange === null) {
+						objToChange = {};
+					}
 
 					if(typeof(objToChange) == 'object') {
 						objToChange[idField] = selectedResource[idField];
@@ -444,7 +450,9 @@
 					return objToChange;
 			},
 
-
+			/**
+			 * 사용자가 선택한 레코드 중에 valueField에 해당하는 값을 리턴 
+			 */
 			_getSingleValueOfSelectedRecord: function(selectedResource, valueField) {
 				return selectedResource[valueField];
 			},
@@ -470,7 +478,6 @@
 					}
 				}
 			}
-
 		});
 	</script>
 </dom-module>
