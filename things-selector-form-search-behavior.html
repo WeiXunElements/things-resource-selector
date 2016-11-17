@@ -99,6 +99,13 @@ Things.SelectorFormSearchBehaviorImpl = {
 
     for(prop in params) {
       var fieldModels = this.formFields.filter(function(formField) { return formField.name == prop });
+      
+      if(!fieldModels || fieldModels == 0) {
+        // reference-query인 경우 체크 
+        fieldModels = this.formFields.filter(function(formField) { 
+          return formField.type == 'reference-query' && formField.userData.searchName == prop;
+        });
+      }
 
       if (fieldModels && fieldModels.length > 0) {
         var fieldModel = fieldModels[0];

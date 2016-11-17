@@ -230,6 +230,13 @@ Things.SelectorFormBehaviorImpl = {
 					newElement.setAttribute('read-only', element.userData.readOnly);
 				break;
 
+			case 'reference-query':
+				newElement = document.createElement('things-reference-query');
+				newElement.setAttribute('ref-name', element.userData.refName);
+				newElement.setAttribute('field-name', element.userData.fieldName);
+				newElement.setAttribute('label', element.label);
+				break;
+
 			case 'image-selector':
 				newElement = document.createElement('things-image-selector');
 				newElement.setAttribute('name', element.name);

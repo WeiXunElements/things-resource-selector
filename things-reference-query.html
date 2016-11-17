@@ -1,0 +1,87 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+  참조 Resource의 다른 필드를 검색 조건에 포함(Join Query)하기 위한 쿼리 필드 
+-->
+
+<dom-module id="things-reference-query">
+  <style>
+    label {
+      @apply(--things-label);
+    }
+    input {
+      @apply(--things-input);
+      width:calc(65% - 37px);
+    }
+  </style>
+  
+  <template>
+    <label>[[label]]</label>
+    <input is="iron-input" name="[[name]]" bind-value="[[value]]">
+  </template>
+
+  <script type="text/javascript">
+    Polymer({
+      
+      is: "things-reference-query",
+
+      properties: {
+        /**
+         * element name, Form 안에 들어가는 경우 Ajax 요청시 name : value 형식으로 서버에 요청된다.
+         */
+        name : {
+          type: String,
+          computed: '_computeName(refName, fieldName)'
+        },
+
+        /**
+         * element에 표시할 라벨 
+         */
+        label: {
+          type: String
+        },
+
+        /**
+         * Resource Selector로 부터 선택한 값 - id값
+         */
+        value: {
+          type: String
+        },
+
+        /**
+         * 참조 리소스 명 - Join 쿼리의 alias에 해당 함
+         * ex) creator.name -> 'creator'에 해당 
+         */
+        refName: {
+          type: String
+        },
+
+        /**
+         * 참조 필드 명 - Join 쿼리의 필드명에 해당 함
+         * ex) creator.name -> 'name'에 해당 
+         */
+        fieldName: {
+          type: String
+        }
+      },
+
+      /**
+       * 참조 리소스 명, 참조 필드 명이 변경된 이후 
+       */
+      _computeName: function(refName, fieldName) {
+        if(refName && refName.length > 0 && fieldName && fieldName.length > 0) {
+          return refName + '.' + fieldName;
+        } else {
+          return null;
+        }
+      },
+
+      /**
+       * value 리턴
+       */
+      getValue: function() {
+        return this.value;
+      }
+    });
+  </script>
+</dom-module>
