@@ -48,7 +48,13 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
     <input is="iron-input" name="[[name]]" bind-value="[[value]]" hidden>
     
     <label>[[label]]</label>
-    <input is="iron-input" bind-value="[[display]]" readonly tabindex="[[tabIndex]]">
+    <input is="iron-input" 
+            bind-value="[[display]]"
+            readonly
+            tabindex="[[tabIndex]]"
+            error-message$="[[errorMessage]]"
+            auto-validate$="[[autoValidate]]" 
+            required$="[[required]]">
     <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear">
     </paper-icon-button>
     <iron-icon prefix on-tap="openResourceSelector"></iron-icon>
@@ -148,6 +154,34 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
           type: String,
           value: 'name'
         },
+        /**
+         * input field에 반드시 값이 포함되어야 함을 결정 합니다.
+         */
+        required: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * 자동 validation check 활성화 여부
+         */
+        autoValidate: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * validate 함수를 통해 return 되는 값으로 초기화 하는 변수
+         */
+        isValid: {
+          type: Boolean,
+          value: true
+        },
+        /**
+         * validation check를 통해 isValid의 값이 false일때 화면에 나타나는 errorMessage
+         */
+        errorMessage: {
+          type: String,
+          value: 'Invalid input'
+        }
       },
 
       behaviors: [
@@ -165,6 +199,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
           this.value = null;
           this.display = '';
         }
+        this.validate();
       },
 
       /**
@@ -228,6 +263,12 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         obj[this.resourceIdField] = null;
         obj[this.resourceTitleField] = null;
         this.objValue = obj;
+      },
+      /**
+       * 수동 validation check function
+       */
+      validate: function() {
+        this.isValid = this.$.input.validate();
       }
 
     });
