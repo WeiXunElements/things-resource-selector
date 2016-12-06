@@ -46,7 +46,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
   </style>
 
   <template>
-    <input id="id-value-field" is="iron-input" name="[[submitName]]" hidden>
+    <input id="id-value-field" is="iron-input" name="[[submitName]]" bind-value="[[idValue]]" hidden>
     <label>[[label]]</label>
     <input is="iron-input"
             id="input" 
