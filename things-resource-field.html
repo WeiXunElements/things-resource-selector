@@ -104,7 +104,8 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
          * Resource Selector로 부터 선택한 Object 값의 id
          */
         idValue: {
-          type: String
+          type: String,
+          observer:'_onIdValueChanged'
         },
 
         /**
@@ -205,7 +206,9 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
       behaviors: [
         Things.ResourceSelectorBehavior
       ],
-
+      _onIdValueChanged: function(idValue){
+        if(idValue==null ||idValue=='') this.value={};
+      },
       /**
        * value값이 변경될 경우 
        *
@@ -213,8 +216,8 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
        */
       _valueChanged: function(value) {
         if(this.value) {
-          this.idValue = this.value[this.resourceIdField];
-          this.displayValue = this.value[this.resourceTitleField];
+          this.value[this.resourceIdField]?this.idValue = this.value[this.resourceIdField]:'';
+          this.value[this.resourceTitleField]?this.displayValue = this.value[this.resourceTitleField]:'';
         } else {
           this.idValue = null;
           this.displayValue = '';
