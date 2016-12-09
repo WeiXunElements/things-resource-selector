@@ -249,21 +249,36 @@ Things.SelectorFormBehaviorImpl = {
 				newElement.setAttribute('label', element.label);
 				break;
 
-			case 'date-from-to-picker':
-				newElement = document.createElement('things-date-from-to');
+			case 'ranged-date-picker':
+				newElement = document.createElement('things-date-picker');
 				newElement.setAttribute('name', element.name);
 				newElement.setAttribute('label', element.label);
-				newElement.setAttribute('selected-to-date', new Date());
-				var range = element.userData.defaultRange;
 
-				if(range && range != '' && parseInt(range)) {
-					var rangeDays = parseInt(range);
-					var fromDate = new Date();
-					fromDate.setDate(fromDate.getDate() - rangeDays);
-					newElement.setAttribute('selected-from-date', fromDate);
-					newElement.setAttribute('allow-range', range);
-					newElement.setAttribute('error-message', Things.DataGlobal.t('text.invalid_date_range') + ' : ' + range);
+				if(element.userData) {
+					if(element.userData.min) newElement.setAttribute('min-date', element.userData.min);
+					if(element.userData.max) newElement.setAttribute('max-date', element.userData.max);
 				}
+
+				break;
+
+			case 'date-from-to-picker':
+				newElement = document.createElement('things-date-from-to');
+				var format = element.userData.format ? element.userData.format : 'YYYY-MM-DD';
+				newElement.setAttribute('read-format', format);
+				newElement.setAttribute('name', element.name);
+				newElement.setAttribute('label', element.label);
+
+				if(element.userData) {
+					if(element.userData.min) newElement.setAttribute('selected-from-date', element.userData.min);
+					if(element.userData.max) newElement.setAttribute('selected-to-date', element.userData.max);
+
+					if(element.userData.defaultRange) {
+						var range = element.userData.defaultRange;
+						newElement.setAttribute('allow-range', range);
+						newElement.setAttribute('error-message', Things.DataGlobal.t('text.invalid_date_range', {a : range}));
+					}
+				}
+
 				break;
 
 			case 'time-picker':
