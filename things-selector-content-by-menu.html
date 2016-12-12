@@ -356,8 +356,12 @@
 
 				// Container에서 필요한 대표 컬럼 및 선택한 값을 설정한다. 
 				} else {
-					this.ownerElement.resourceIdField = this.getIdField();
-					this.ownerElement.resourceTitleField = this.getTitleField();
+					var resourceIdField = this.ownerElement.resourceIdField;
+					this.ownerElement.resourceIdField = (resourceIdField) ? resourceIdField : this.getIdField();
+					
+					var resourceTitleField = this.ownerElement.resourceTitleField;
+					this.ownerElement.resourceTitleField = (resourceTitleField) ? resourceTitleField : this.getTitleField();
+					
 					var idValue = selectedResource[this.getIdField()];
 					var displayValue = selectedResource[this.getTitleField()];
 					this.ownerElement.setResourceValue(idValue, displayValue, selectedResource);
