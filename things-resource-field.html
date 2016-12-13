@@ -215,7 +215,13 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
        * @param {Object} value
        */
       _valueChanged: function(value) {
-        if(this.value) {
+        var valueEmpty = true;
+
+        for(var key in value) {
+          if(!value[key]) valueEmpty = true;
+        };
+
+        if(!valueEmpty) {
           this.value[this.resourceIdField]?this.idValue = this.value[this.resourceIdField]:'';
           this.value[this.resourceTitleField]?this.displayValue = this.value[this.resourceTitleField]:'';
         } else {
