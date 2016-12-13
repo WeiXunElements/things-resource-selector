@@ -215,15 +215,9 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
        * @param {Object} value
        */
       _valueChanged: function(value) {
-        var valueEmpty = true;
-
-        for(var key in value) {
-          if(!value[key]) valueEmpty = true;
-        };
-
-        if(!valueEmpty) {
-          this.value[this.resourceIdField]?this.idValue = this.value[this.resourceIdField]:'';
-          this.value[this.resourceTitleField]?this.displayValue = this.value[this.resourceTitleField]:'';
+        if(value) {
+          this.idValue = value[this.resourceIdField] ? value[this.resourceIdField] : null;
+          this.displayValue = value[this.resourceTitleField] ? value[this.resourceTitleField] : '';
         } else {
           this.idValue = null;
           this.displayValue = '';
@@ -288,7 +282,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
        */
       clearValue: function() {
         var obj = {};
-        obj[this.resourceIdField] = '0';
+        obj[this.resourceIdField] = null;
         obj[this.resourceTitleField] = null;
         this.value = obj;
       },
