@@ -17,7 +17,7 @@
   
   <template>
     <label>[[label]]</label>
-    <input is="iron-input" name="[[name]]" bind-value="[[value]]">
+    <input is="iron-input" name="[[name]]" bind-value="[[value]]" tabindex$="[[tabIndex]]">
   </template>
 
   <script type="text/javascript">
@@ -61,6 +61,13 @@
          * ex) creator.name -> 'name'에 해당 
          */
         fieldName: {
+          type: String
+        },
+        /**
+         * tab Index for input field
+         * @type {Number}
+         */
+        tabIndex :{
           type: String
         }
       },
