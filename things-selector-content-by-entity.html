@@ -242,6 +242,12 @@
 			getTitleField: function() {
 				return (this.entity && this.entity.title_field) ? this.entity.title_field : 'name';
 			},
+			/**
+			 * Description Field를 리턴한다.
+			 */
+			getDescriptionField: function() {
+				return (this.entity && this.entity.description_field) ? this.entity.description_field : 'description';
+			},
 
 			/**
 			 * Reload Grid Data
@@ -403,6 +409,7 @@
 				var parentGrid = this.ownerElement;
 				var idField = this.getIdField();
 				var titleField = this.getTitleField();
+				var descriptionField = this.getDescriptionField();
 				var row = parentGrid.focusedRow();
 				var dataSet = parentGrid.dataSource();
 
@@ -413,7 +420,7 @@
 					if(this.valueField) {
 						objToChange = this._getSingleValueOfSelectedRecord(selectedResource, this.valueField);
 					} else {
-						objToChange = this._getResourceValueOfSelectedRecord(selectedResource, objToChange, idField, titleField);
+						objToChange = this._getResourceValueOfSelectedRecord(selectedResource, objToChange, idField, titleField, descriptionField);
 					}
 
 					// Grid의 ownerField 데이터 변경 
@@ -435,7 +442,7 @@
 			/**
 			 * 사용자가 선택한 레코드에서 Resource Value (Object)를 리턴 
 			 */
-			_getResourceValueOfSelectedRecord: function(selectedResource, objToChange, idField, titleField) {
+			_getResourceValueOfSelectedRecord: function(selectedResource, objToChange, idField, titleField, descriptionField) {
 					if(typeof(objToChange) === 'undefined' || objToChange === null) {
 						objToChange = {};
 					}
@@ -443,6 +450,7 @@
 					if(typeof(objToChange) == 'object') {
 						objToChange[idField] = selectedResource[idField];
 						objToChange[titleField] = selectedResource[titleField];
+						objToChange[descriptionField] = selectedResource[descriptionField];
 
 					} else if(typeof(objToChange) == 'string') {
 						objToChange = selectedResource[titleField];
