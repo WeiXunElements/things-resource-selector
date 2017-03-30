@@ -29,7 +29,7 @@
       background:url(/images/icon-resource-select.png) 50% 3px no-repeat var(--paper-blue-grey-300);
     }
   </style>
-  
+
   <template>
     <label>[[label]]</label>
     <input is="iron-input" name="[[name]]" bind-value="[[value]]" readonly>
@@ -40,12 +40,14 @@
 
   <script type="text/javascript">
     Polymer({
-      
+
       is: "things-resource-format-selector",
 
       properties: {
         /**
          * element name, Form 안에 들어가는 경우 Ajax 요청시 name : value 형식으로 서버에 요청된다.
+         * *******
+         * @type {String}
          */
         name : {
           type: String
@@ -53,6 +55,8 @@
 
         /**
          * Resource Object Value
+         * ******
+         * @type {Object}
          */
         objValue: {
           type: Object,
@@ -61,7 +65,9 @@
         },
 
         /**
-         * element에 표시할 라벨 
+         * element에 표시할 라벨
+         * ******
+         * @type {String}
          */
         label: {
           type: String
@@ -69,6 +75,8 @@
 
         /**
          * Resource Selector로 부터 선택한 값 - id값
+         * ******
+         * @type {String}
          */
         value: {
           type: String
@@ -76,39 +84,49 @@
 
         /**
         * Resource Type - Entity or Menu
-        * 1) Entity : Entity 설정에 의한 Selector 화면 구성 
+        * 1) Entity : Entity 설정에 의한 Selector 화면 구성
         * 2) Menu : Menu 설정에 의한 Selector 화면 구성
+        * *******
+        * @type {String}
         */
         resourceType: {
           type: String,
           value: 'Entity'
         },
-      
+
         /**
          * Resource Selector에서 표시할 리소스 명
          * resourceType이 Menu로 선택되어 있다면 Menu 명, resourceType이 Entity로 선택되어 있다면 Entity 명이 된다.
+         * *******
+         * @type {String}
          */
         resourceName: {
           type: String
         },
 
         /**
-         * Resource Selector를 띄우기 위해 필요한 기본 파라미터 
-         * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},... 
+         * Resource Selector를 띄우기 위해 필요한 기본 파라미터
+         * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},...
+         * ******
+         * @type {String}
          */
         initialParams: {
           type: String
         },
 
         /**
-         * Resource Selector에서 선택한 리소스와 Owner Data간 바인딩하기 위한 정보 
+         * Resource Selector에서 선택한 리소스와 Owner Data간 바인딩하기 위한 정보
+         * ******
+         * @type {String}
          */
         bindFields: {
           type: String
         },
 
         /**
-         * 리소스 선택시 값으로 설정할 필드 
+         * 리소스 선택시 값으로 설정할 필드
+         * ******
+         * @type {String}
          */
         valueField: {
           type: String,
@@ -121,7 +139,7 @@
       ],
 
       /**
-       * Object 값이 변경될 경우 
+       * Object 값이 변경될 경우
        */
       _objValueChanged: function(objValue) {
         if(objValue) {
@@ -133,6 +151,7 @@
 
       /**
        * Object Value를 리턴한다.
+       * *******
        */
       getObjValue: function() {
         return this.objValue;
@@ -140,6 +159,7 @@
 
       /**
        * Object Value를 설정한다.
+       * *******
        *
        * @param {Object} objValue
        */
@@ -149,6 +169,7 @@
 
       /**
        * Open Resource Selector
+       * *********
        */
       openResourceSelector: function() {
         var form = this.findOwnerForm(this);
@@ -157,13 +178,14 @@
 
       /**
        * Resource Selector의 Container 폼을 찾아 리턴
+       * *******
        */
       findOwnerForm: function(element) {
         if(!element.parentElement) {
           return null;
         } else {
-          if(element.parentElement.localName == 'form' || 
-             element.parentElement.localName == 'things-form' || 
+          if(element.parentElement.localName == 'form' ||
+             element.parentElement.localName == 'things-form' ||
              element.parentElement.localName == 'things-search-form') {
             return element.parentElement;
           } else {
@@ -174,6 +196,7 @@
 
       /**
        * 값을 리셋
+       * ******
        */
       clearValue: function() {
         this.objValue = null;

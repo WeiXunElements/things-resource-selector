@@ -20,14 +20,14 @@
 				@apply(--layout-vertical);
 				@apply(--layout-flex);
 			}
-			
+
 			things-resource-grid {
 				@apply(--layout-flex);
 			}
 		</style>
 
 		<div class="layout vertical flex">
-			<things-ajax 
+			<things-ajax
 				auto
 				id="resource-meta"
 				method="GET"
@@ -35,21 +35,21 @@
 				last-response="{{metaData}}">
 			</things-ajax>
 
-			<things-selector-form 
+			<things-selector-form
 				id="search-form"
 				initial-params="[[initialParams]]"
-				form-fields="[[searchFormFields]]" 
+				form-fields="[[searchFormFields]]"
 				select-fields="[[selectFields]]"
 				sort-fields="[[sortFields]]"
-				action-url="[[menuInfo.resource_url]]" 
+				action-url="[[menuInfo.resource_url]]"
 				page="{{page}}"
 				limit="[[limit]]"
 				last-response="{{lastResponse}}">
 			</things-selector-form>
 
-			<things-resource-grid 
+			<things-resource-grid
 				id="grid"
-				model="[[gridModel]]" 
+				model="[[gridModel]]"
 				columns="[[gridColumns]]"
 				config="[[gridConfig]]"
 				buttons="[[screenButtons]]"
@@ -66,20 +66,24 @@
 		Polymer({
 			is: 'things-selector-content-by-menu',
 
-			behaviors: [ 
+			behaviors: [
 				Things.NamedMetaBehavior
 			],
-			
+
 			properties: {
 				/**
 				 * Resource Selector 타이틀
+				 * ******
+				 * @type {String}
 				 */
 				title: {
 					type: String,
 				},
 
 				/**
-				 * 버튼  
+				 * 버튼
+				 * ******
+				 * @type {Array}
 				 */
 				screenButtons: {
 					type: Array,
@@ -87,7 +91,9 @@
 				},
 
 				/**
-				 * 조회 결과 
+				 * 조회 결과
+				 * *****
+				 * @type {Object}
 				 */
 				lastResponse: {
 					type: Object,
@@ -96,6 +102,8 @@
 
 				/**
 				 * 조회 결과 리스트 데이터 프로퍼티 명
+				 * ******
+				 * @type {String}
 				 */
 				itemsProp: {
 					type: String,
@@ -104,6 +112,8 @@
 
 				/**
 				 * 조회 결과 리스트 Total Count 프로퍼티 명
+				 * ******
+				 * @type {String}
 				 */
 				totalProp: {
 					type: String,
@@ -112,13 +122,17 @@
 
 				/**
 				 * 조회 결과 리스트 데이터
+				 * ******
+				 * @type {Array}
 				 */
 				items: {
 					type: Array
 				},
 
 				/**
-				 * 조회 결과 레코드 수  
+				 * 조회 결과 레코드 수
+				 * *******
+				 * @type {Number}
 				 */
 				itemCount: {
 					type: Number
@@ -127,7 +141,9 @@
 				/**
 				 * Resource Selector 창이 실행되면서 바로 반영되어야 할 파라미터들을 지정한다.
 				 * Resource Selector가 실행된 후 바로 서비스 호출을 하게 되는데 이 때 initialParams가 서비스 호출 파라미터에 반영된다.
-				 * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},... 
+				 * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},...
+				 * ******
+				 * @type {String}
 				 */
 				initialParams: {
 					type: String
@@ -135,13 +151,17 @@
 
 				/**
 				 * ResourceSelector에서 선택한 값을 기본값(id, title필드 값) 외에 ownerResource의 다른 필드에 설정하고자 할 때 사용. fromField1=toField1,fromField2=toField2... ','구분자로 구분한다.
-				 */
+         ********
+         *@type {String}
+ 				 */
 				bindFields: {
 					type: String
 				},
 
 				/**
 				 * Resource Selector를 호출한 Element
+				 * *******
+				 * @type {Object}
 				 */
 				ownerElement: {
 					type: Object
@@ -149,14 +169,18 @@
 
 				/**
 				 * Resource Selector Dialog를 띄운 Element의 (폼 필드 명 혹은 그리드 필드 명)Field 명
+				 * ********
+				 * @type {String}
 				 */
 				ownerField: {
 					type: String
-				},				
+				},
 
 				/**
 				 * OwnerElement가 소속된 Container - Form or Grid
 				 * initialParams로 검색 조건을 dynamic하게 설정하거나 bindFields로 ResourceSelectorDialog에서 선택한 Record에 다른 값들을 자동으로 설정하고자 할 때 필요하다.
+				 * ******
+				 * @type {Object}
 				 */
 				ownerContainer: {
 					type: Object
@@ -165,6 +189,8 @@
 				/**
 				 * ownerType이 Grid일 경우에만 해당
 				 * ResourceSelector를 호출한 그리드의 선택된 Row Index - 이 정보로 ResourceSelector로 선택한 데이터를 업데이트 한다.
+				 * ******
+				 * @type {Number}
 				 */
 				parentGridRowIdx: {
 					type: Number
@@ -172,6 +198,8 @@
 
 				/**
 				 * 호출 측 타입 - Form or Grid
+				 * *******
+				 * @type {String}
 				 */
 				ownerType: {
 					type: String
@@ -225,7 +253,7 @@
 			},
 
 			/**
-			 * 조회 데이터 변경시 
+			 * 조회 데이터 변경시
 			 *
 			 * @param {Object} lastResponse
 			 */
@@ -236,6 +264,7 @@
 
 			/**
 			 * ID Field를 리턴한다.
+			 * ********
 			 */
 			getIdField: function() {
 				return (this.menuInfo && this.menuInfo.id_field) ? this.menuInfo.id_field : 'id';
@@ -243,12 +272,14 @@
 
 			/**
 			 * Title Field를 리턴한다.
+			 * ********
 			 */
 			getTitleField: function() {
 				return (this.menuInfo && this.menuInfo.title_field) ? this.menuInfo.title_field : 'name';
 			},
 			/**
 			 * Description Field를 리턴한다.
+			 * ********
 			 */
 			getDescriptionField: function() {
 				return (this.entity && this.entity.description_field) ? this.entity.description_field : 'description';
@@ -256,16 +287,18 @@
 			/**
 			 * reload grid data
 			 * 결국 서치 폼에서 다시 검색한다.
+			 * *******
 			 */
 			refreshGridData: function(grid) {
 				this.preprocessInitialParams();
 				this.$['search-form'].submitMyForm();
 			},
-			
+
 			/**
-			 * initialParams가 설정되어 있고, 변수를 의미하는 $가 존재하고 
-			 * container가 폼이라면 폼에서 initialParams의 변수명에 해당하는 이름으로 데이터를 찾아 initialParams를 구성하고 
+			 * initialParams가 설정되어 있고, 변수를 의미하는 $가 존재하고
+			 * container가 폼이라면 폼에서 initialParams의 변수명에 해당하는 이름으로 데이터를 찾아 initialParams를 구성하고
 			 * container가 그리드라면 그리드의 해당 row에서 initialParams의 변수명에 해당하는 이름으로 데이터를 찾아 initialParams를 구성한다.
+			 * *******
 			 */
 			preprocessInitialParams: function() {
 				if(this.initialParams && this.initialParams.indexOf('$') > 1) {
@@ -278,7 +311,7 @@
 
 			/**
 			 * initialParams에서 변수(즉 $부분)를 찾아 ownerData의 값으로 Replace
-			 *
+			 *********
 			 * @param {Object} ownerData
 			 */
 			resetSearchParams: function(ownerData) {
@@ -311,13 +344,14 @@
 			},
 
 			/**
-			 * Owner Data를 찾아 리턴 
+			 * Owner Data를 찾아 리턴
+			 * ******
 			 */
 			findOwnerData: function() {
 				if(this.ownerType == 'Form') {
 					if(this.ownerContainer) {
-						return this.ownerContainer.serialize ? 
-									 this.ownerContainer.serialize() : 
+						return this.ownerContainer.serialize ?
+									 this.ownerContainer.serialize() :
 									 (this.ownerContainer.serializeMyForm ? this.ownerContainer.serializeMyForm() : null);
 					} else {
 						return null;
@@ -333,8 +367,8 @@
 			},
 
 			/**
-			 * Selector Grid에서 데이터 선택시 
-			 *
+			 * Selector Grid에서 데이터 선택시
+			 ********
 			 * @param {Object} event
 			 */
 			selectRecord: function(event) {
@@ -347,7 +381,7 @@
 			},
 
 			/**
-			 * Owner가 Form인 경우에 데이터 선택시 
+			 * Owner가 Form인 경우에 데이터 선택시
 			 *
 			 * @param {Object} event
 			 */
@@ -359,31 +393,31 @@
 				if(this.ownerElement.localName == 'things-resource-format-selector') {
 					this.ownerElement.setObjValue(selectedResource);
 
-				// Container에서 필요한 대표 컬럼 및 선택한 값을 설정한다. 
+				// Container에서 필요한 대표 컬럼 및 선택한 값을 설정한다.
 				} else {
 					var resourceIdField = this.ownerElement.resourceIdField;
 					this.ownerElement.resourceIdField = (resourceIdField) ? resourceIdField : this.getIdField();
-					
+
 					var resourceTitleField = this.ownerElement.resourceTitleField;
 					this.ownerElement.resourceTitleField = (resourceTitleField) ? resourceTitleField : this.getTitleField();
-					
+
 					var idValue = selectedResource[this.getIdField()];
 					var displayValue = selectedResource[this.getTitleField()];
 					this.ownerElement.setResourceValue(idValue, displayValue, selectedResource);
 				}
 
 				this._bindObjectFields(selectedResource, ownerData);
-				this.closeResourceSelectorDialog();				
+				this.closeResourceSelectorDialog();
 			},
 
 			/**
-			 * bindFields 정보를 기반으로 targetData에 sourceData의 데이터를 설정한다. 
+			 * bindFields 정보를 기반으로 targetData에 sourceData의 데이터를 설정한다.
 			 *
 			 * @param {Object} sourceData
 			 * @param {Object} targetData
 			 */
 			_bindObjectFields: function(sourceData, targetData) {
-				// 현재는 Grid인 경우만 가능 - Form은 추후 지원 
+				// 현재는 Grid인 경우만 가능 - Form은 추후 지원
 				if(this.ownerType == 'Grid' && this.bindFields) {
 					var binders = this.bindFields.split(',');
 					for(var i = 0 ; i < binders.length ; i++) {
@@ -401,7 +435,7 @@
 			},
 
 			/**
-			 * Owner가 Grid인 경우에 데이터 선택시 
+			 * Owner가 Grid인 경우에 데이터 선택시
 			 *
 			 * @param {Object} event
 			 */
@@ -426,10 +460,10 @@
 						objToChange = this._getResourceValueOfSelectedRecord(selectedResource, objToChange, idField, titleField, descriptionField);
 					}
 
-					// Grid의 ownerField 데이터 변경 
+					// Grid의 ownerField 데이터 변경
 					rowObj[this.ownerField] = objToChange;
 
-					// Bind Fields 정보로 Grid 데이터 변경 
+					// Bind Fields 정보로 Grid 데이터 변경
 					this._bindObjectFields(selectedResource, rowObj);
 					this.fire('things-resource-selector-selected', { rowObj: rowObj, resource : selectedResource } );
 
@@ -443,7 +477,7 @@
 			},
 
 			/**
-			 * 사용자가 선택한 레코드에서 Resource Value (Object)를 리턴 
+			 * 사용자가 선택한 레코드에서 Resource Value (Object)를 리턴
 			 */
 			_getResourceValueOfSelectedRecord: function(selectedResource, objToChange, idField, titleField,descriptionField) {
 					if(typeof(objToChange) === 'undefined' || objToChange === null) {
@@ -466,7 +500,7 @@
 			},
 
 			/**
-			 * 사용자가 선택한 레코드 중에 valueField에 해당하는 값을 리턴 
+			 * 사용자가 선택한 레코드 중에 valueField에 해당하는 값을 리턴
 			 */
 			_getSingleValueOfSelectedRecord: function(selectedResource, valueField) {
 				return selectedResource[valueField];
@@ -481,6 +515,7 @@
 
 			/**
 			 * Resource Selector의 Container 폼을 찾아 리턴
+			 * *******
 			 */
 			findOwnerDialog: function(element) {
 				if(!element.parentElement) {

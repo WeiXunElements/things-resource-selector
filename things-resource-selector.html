@@ -5,15 +5,15 @@
 <link rel="import" href="./things-resource-selector-behavior.html">
 
 <!--
-Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하여 사용자가 리스트에서 선택할 수 있도록 표시하는 컴포넌트 
+Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하여 사용자가 리스트에서 선택할 수 있도록 표시하는 컴포넌트
 
   Example:
 
-    <things-resource-selector 
-      id="resource-selector" 
-      label="Language" 
+    <things-resource-selector
+      id="resource-selector"
+      label="Language"
       name="user_id"
-      resource-type="User" 
+      resource-type="User"
       resource-url="users"
       delegate-column="name">
     </things-resource-selector>
@@ -43,18 +43,18 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
       background:url(/images/icon-resource-select.png) 50% 3px no-repeat var(--paper-blue-grey-300);
     }
   </style>
-  
+
   <template>
     <input is="iron-input" name="[[name]]" bind-value="[[value]]" hidden>
-    
+
     <label>[[label]]</label>
-    <input is="iron-input" 
+    <input is="iron-input"
             bind-value="[[display]]"
             readonly
             tabindex="[[tabIndex]]"
             id="input"
             error-message$="[[errorMessage]]"
-            auto-validate$="[[autoValidate]]" 
+            auto-validate$="[[autoValidate]]"
             required$="[[required]]">
     <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear">
     </paper-icon-button>
@@ -68,6 +68,8 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
       properties: {
         /**
          * element name, Form 안에 들어가는 경우 Ajax 요청시 name : value 형식으로 서버에 요청된다.
+         * ******
+         * @type {String}
          */
         name : {
           type: String
@@ -75,6 +77,8 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
         /**
          * Resource Object Value
+         * ******
+         * @type {Object}
          */
         objValue: {
           type: Object,
@@ -83,7 +87,9 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         },
 
         /**
-         * element에 표시할 라벨 
+         * element에 표시할 라벨
+         * *******
+         * @type {String}
          */
         label: {
           type: String
@@ -91,13 +97,17 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
         /**
          * Resource Selector로 부터 선택한 값 - id값
+         * ******
+         * @type {String}
          */
         value: {
           type: String
         },
 
         /**
-         * Resource Selector로 부터 선택한 표시 값 
+         * Resource Selector로 부터 선택한 표시 값
+         * *******
+         * @type {String}
          */
         display: {
           type: String
@@ -105,32 +115,40 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
         /**
         * Resource Type - Entity or Menu
-        * 1) Entity : Entity 설정에 의한 Selector 화면 구성 
+        * 1) Entity : Entity 설정에 의한 Selector 화면 구성
         * 2) Menu : Menu 설정에 의한 Selector 화면 구성
+        * *******
+        * @type {String}
         */
         resourceType: {
           type: String,
           value: 'Entity'
         },
-      
+
         /**
          * Resource Selector에서 표시할 리소스 명
          * resourceType이 Menu로 선택되어 있다면 Menu 명, resourceType이 Entity로 선택되어 있다면 Entity 명이 된다.
+         * ******
+         * @type {String}
          */
         resourceName: {
           type: String
         },
 
         /**
-         * Resource Selector를 띄우기 위해 필요한 기본 파라미터 
-         * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},... 
+         * Resource Selector를 띄우기 위해 필요한 기본 파라미터
+         * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},...
+         * ******
+         * @type {String}
          */
         initialParams: {
           type: String
         },
 
         /**
-         * Resource Selector에서 선택한 리소스와 Owner Data간 바인딩하기 위한 정보 
+         * Resource Selector에서 선택한 리소스와 Owner Data간 바인딩하기 위한 정보
+         * ********
+         * @type {String}
          */
         bindFields: {
           type: String
@@ -138,8 +156,10 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
         /**
          * Resource Selector에서 선택한 resource의 id field
-         * Resource Selector에서 선택한 resource의 id값이 이 필드가 가지는 실제 값이 된다. 
+         * Resource Selector에서 선택한 resource의 id값이 이 필드가 가지는 실제 값이 된다.
          * Resource Selector에서 자동으로 설정하므로 외부에서는 설정하지 않는다.
+         * ******
+         * @type {String}
          */
         resourceIdField: {
           type: String,
@@ -148,8 +168,10 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
         /**
          * Resource Selector에서 선택한 resource의 title field
-         * 화면에 표시할 대표 컬럼명. 
+         * 화면에 표시할 대표 컬럼명.
          * Resource Selector에서 자동으로 설정하므로 외부에서는 설정하지 않는다.
+         * *******
+         * @type {Stirng}
          */
         resourceTitleField: {
           type: String,
@@ -157,6 +179,8 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         },
         /**
          * input field에 반드시 값이 포함되어야 함을 결정 합니다.
+         * *******
+         * @type {Boolean}
          */
         required: {
           type: Boolean,
@@ -164,6 +188,8 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         },
         /**
          * 자동 validation check 활성화 여부
+         * *******
+         * @type {Boolean}
          */
         autoValidate: {
           type: Boolean,
@@ -171,6 +197,8 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         },
         /**
          * validate 함수를 통해 return 되는 값으로 초기화 하는 변수
+         * *******
+         * @type {Boolean}
          */
         isValid: {
           type: Boolean,
@@ -178,6 +206,8 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         },
         /**
          * validation check를 통해 isValid의 값이 false일때 화면에 나타나는 errorMessage
+         * ******
+         * @type {String}
          */
         errorMessage: {
           type: String,
@@ -190,7 +220,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
       ],
 
       /**
-       * Object 값이 변경될 경우 
+       * Object 값이 변경될 경우
        */
       _objValueChanged: function(objValue) {
         if(objValue) {
@@ -205,7 +235,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
       /**
        * Resource Selector로 부터 id, display 값을 설정한다.
-       *
+       ********
        * @param {String} idValue
        * @param {String} displayValue
        */
@@ -217,6 +247,8 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
       /**
        * Object Value를 리턴한다.
+       * *******
+       *
        */
       getObjValue: function() {
         return this.objValue;
@@ -224,7 +256,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
       /**
        * Object Value를 설정한다.
-       *
+       ********
        * @param {Object} objValue
        */
       setObjValue: function(objValue) {
@@ -233,6 +265,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
       /**
        * Open Resource Selector
+       * *******
        */
       openResourceSelector: function() {
         var form = this.findOwnerForm(this);
@@ -241,13 +274,14 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
       /**
        * Resource Selector의 Container 폼을 찾아 리턴
+       * *******
        */
       findOwnerForm: function(element) {
         if(!element.parentElement) {
           return null;
         } else {
-          if(element.parentElement.localName == 'form' || 
-             element.parentElement.localName == 'things-form' || 
+          if(element.parentElement.localName == 'form' ||
+             element.parentElement.localName == 'things-form' ||
              element.parentElement.localName == 'things-search-form') {
             return element.parentElement;
           } else {
@@ -258,6 +292,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
       /**
        * 값을 리셋
+       * *******
        */
       clearValue: function() {
         var obj = {};
@@ -267,6 +302,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
       },
       /**
        * 수동 validation check function
+       * ********
        */
       validate: function() {
         this.isValid = this.$.input.validate();

@@ -20,6 +20,8 @@ Things.SelectorFormSearchBehaviorImpl = {
 
     /**
      * form이 active 상태인지 여부. active 상태인 경우에만 form submit이 가능하다.
+     * ******
+     * @type {Boolean}
      */
     active: {
       type: Boolean
@@ -27,6 +29,8 @@ Things.SelectorFormSearchBehaviorImpl = {
 
     /**
      * 값이 필요없는 operator
+     * ******
+     * @type {Array}
      */
     nonValueOpers: {
       type: Array,
@@ -37,6 +41,8 @@ Things.SelectorFormSearchBehaviorImpl = {
      * 검색시 파라미터 유형 : RESOURCE / PLAIN
      * RESOURCE : 리소스 쿼리인 경우 검색 파라미터가 query = "[{'name' : 'searchField', 'operator' : 'eq', 'value' : 'value'}]" 형식으로 넘어간다.
      * PLAIN : 검색 파라미터가 Key / Value 형식으로 넘어간다.
+     * ******
+     * @type {String}
      */
     paramType: {
       type: String,
@@ -46,7 +52,9 @@ Things.SelectorFormSearchBehaviorImpl = {
     /**
      * Resource Selector 창이 실행되면서 바로 반영되어야 할 파라미터들을 지정한다.
      * Resource Selector가 실행된 후 바로 서비스 호출을 하게 되는데 이 때 initialParams가 서비스 호출 파라미터에 반영된다.
-     * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},... 
+     * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},...
+     * ******
+     * @type {String}
      */
     initialParams: {
       type: String
@@ -56,18 +64,18 @@ Things.SelectorFormSearchBehaviorImpl = {
      * Fires before handle parameters before form submit
      * Form Submit 하기 전에 발생하는 이벤트.
      * paramType이 'RESOURCE'라면 이 시점에 파라미터를 서버 서비스 스펙과 맞추기 위해 파라미터를 조작한다.
-     * 여기서 조작하는 파라미터 형식과 다르게 파라미터를 핸들링하고 싶다면 event.preventDefault()를 호출하여 
+     * 여기서 조작하는 파라미터 형식과 다르게 파라미터를 핸들링하고 싶다면 event.preventDefault()를 호출하여
      * 이벤트 전파를 멈추고 Submit을 위한 정보를 조작한다.
-     *
+     ********
      * @event things-form-pre-submit
     /**
      * Fires when the successful response is arrived after submit
-     *
+     ********
      * @event things-form-submit-success
      */
     /**
      * Fires when the error response is arrived after submit
-     *
+     ********
      * @event things-form-submit-error
      */
   },
@@ -79,7 +87,7 @@ Things.SelectorFormSearchBehaviorImpl = {
   /**
    * 현재 페이지가 변경되었을 때 액션
    * 페이지가 변경된 경우 해당 페이지로 다시 검색한다.
-   * @param {Number} page 현재 페이지 
+   * @param {Number} page 현재 페이지
    */
   _pageChanged: function(page) {
     if(this.active && page > 0) {
@@ -88,9 +96,9 @@ Things.SelectorFormSearchBehaviorImpl = {
   },
 
   /**
-   * paramType이 'RESOURCE'일 경우에 Search Parameters인 queryFields를 초기화하고 
+   * paramType이 'RESOURCE'일 경우에 Search Parameters인 queryFields를 초기화하고
    * 파라미터 정보로 부터 다시 queryFields를 설정한다.
-   * 
+   *
    * @param {Object} params
    */
   _resetResourceSearchParams: function(params) {
@@ -99,10 +107,10 @@ Things.SelectorFormSearchBehaviorImpl = {
 
     for(prop in params) {
       var fieldModels = this.formFields.filter(function(formField) { return formField.name == prop });
-      
+
       if(!fieldModels || fieldModels == 0) {
-        // reference-query인 경우 체크 
-        fieldModels = this.formFields.filter(function(formField) { 
+        // reference-query인 경우 체크
+        fieldModels = this.formFields.filter(function(formField) {
           return formField.type == 'reference-query' && formField.userData.searchName == prop;
         });
       }
@@ -136,11 +144,12 @@ Things.SelectorFormSearchBehaviorImpl = {
     }
 
     this.setFormData(searchParams);
-  },   
+  },
 
   /**
    * Submit 전에 전처리 핸들
    * Pagination을 사용하는 경우에 page, limit 정보를 파라미터에 추가한다.
+   * *******
    */
   handleBeforeSubmit: function(event) {
     var form = event.srcElement;
@@ -167,7 +176,7 @@ Things.SelectorFormSearchBehaviorImpl = {
   /**
    * Successful response handler After form submits.
    * this fires a 'things-form-submit-success' in this function
-   *
+   *******
    * @param {Object} errorResponse Successful Response
    */
   handleSuccessResponse: function(errorResponse) {
@@ -177,12 +186,12 @@ Things.SelectorFormSearchBehaviorImpl = {
   /**
    * Error response handler After form submits.
    * this fires a 'things-form-submit-error' in this function
-   *
+   *********
    * @param {Object} sucessResponse Error Response
    */
   handleErrorResponse: function(sucessResponse) {
     this.fire('things-form-submit-error', sucessResponse);
-  }  
+  }
 
 };
 

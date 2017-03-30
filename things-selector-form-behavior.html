@@ -19,6 +19,8 @@ Things.SelectorFormBehaviorImpl = {
      * Meta-Data of the form elements of the form.
      * Custom Form element can configure child elements of the form dynamically.
      * StdSelectorFormBehavior create form element by each of this attributes
+     * *******
+     * @type {Array}
      */
 		formFields: {
 			type: Array,
@@ -28,6 +30,8 @@ Things.SelectorFormBehaviorImpl = {
 		/**
 		 * Url for submit. global setting의 baseUrl이 제거된 불완전한 URL.
 		 * 이 정보로는 form submit을 할 수 없고 이 url이 설정되는 순간 _computeAction이 작동하여 완전한 action url을 생성하여 action 값에 설정한다.
+     * ******
+     * @type {String}
 		 */
 		actionUrl: {
 			type: String,
@@ -35,16 +39,20 @@ Things.SelectorFormBehaviorImpl = {
 		},
 
 		/**
-		 * Action url for submit. 
+		 * Action url for submit.
 		 * This attribute is configured by base url of the global setting.
+		 * ******
+     * @type {String}
 		 */
 		action: {
 			type: String,
 			computed: '_computeAction(globals.baseUrl,actionUrl)'
 		},
-		
+
 		/**
 		 * HTTP Method for submit.
+		 * ******
+     * @type {String}
 		 */
 		method: {
 			type: String
@@ -52,6 +60,8 @@ Things.SelectorFormBehaviorImpl = {
 
 		/**
 		 * HTTP Content Type for submit.
+		 * ******
+     * @type {String}
 		 */
 		contentType: {
 			type: String,
@@ -59,7 +69,9 @@ Things.SelectorFormBehaviorImpl = {
 		},
 
 		/**
-		 * HTTP 전송시 withCredentials 값 설정 
+		 * HTTP 전송시 withCredentials 값 설정
+		 * ******
+     * @type {Boolean}
 		 */
 		withCredentials: {
 			type: Boolean,
@@ -68,13 +80,17 @@ Things.SelectorFormBehaviorImpl = {
 
 		/**
 		 * HTTP 전송시 Header 값 설정
+		 * ******
+     * @type {Object}
 		 */
 		headers: {
 		 type: Object
 		},
 
 		/**
-		 * 검색 결과 데이터 
+		 * 검색 결과 데이터
+		 * ******
+     * @type {Object}
 		 */
 		lastResponse: {
 			type: Object,
@@ -121,7 +137,7 @@ Things.SelectorFormBehaviorImpl = {
    *
    * @param {Object} one of the formFields attribute
    * @return {Object} created child element for the form
-   */	 
+   */
 	_createFormElement: function(element) {
 		var newElement = null;
 
@@ -195,10 +211,10 @@ Things.SelectorFormBehaviorImpl = {
 				newElement.setAttribute('label', element.label);
 				newElement.setAttribute('resource-type', element.userData.resourceType);
 				newElement.setAttribute('resource-name', element.userData.resourceName);
-				
+
 				if(element.userData.bindFields)
 					newElement.setAttribute('bind-fields', element.userData.bindFields);
-				
+
 				if(element.userData.initialParams)
 					newElement.setAttribute('initial-params', element.userData.initialParams);
 				break;
@@ -219,7 +235,7 @@ Things.SelectorFormBehaviorImpl = {
 				newElement.setAttribute('resource-type', element.userData.resourceType);
 				newElement.setAttribute('resource-name', element.userData.resourceName);
 				newElement.setAttribute('submit-name', element.userData.submitName);
-				
+
 				if(element.userData.bindFields)
 					newElement.setAttribute('bind-fields', element.userData.bindFields);
 
@@ -319,6 +335,7 @@ Things.SelectorFormBehaviorImpl = {
 
 	/**
 	 * key event - form submits when enter key is monitored
+	 * *******
 	 * @param {Object} event A 'KeyPressed' event
 	 */
 	handleKeyPress: function(event) {
@@ -331,6 +348,7 @@ Things.SelectorFormBehaviorImpl = {
 
 	/**
 	 * find form by querySelector and return found form
+	 * ********
 	 * @return {Object}
 	 */
 	getMyForm: function() {
@@ -339,6 +357,7 @@ Things.SelectorFormBehaviorImpl = {
 
 	/**
 	 * Resets form
+	 * ******
 	 */
 	resetMyForm: function() {
 		this.getMyForm().reset();
@@ -347,6 +366,7 @@ Things.SelectorFormBehaviorImpl = {
 	/**
 	 * Serialize form and return serialized object.
 	 * It can be used form parameters
+	 * *******
 	 * @return {Object} serialized object
 	 */
 	serializeMyForm: function() {
@@ -355,6 +375,7 @@ Things.SelectorFormBehaviorImpl = {
 
 	/**
 	 * 폼 내 모든 엘리먼트를 리턴한다.
+	 * *******
 	 */
 	getFormElements: function() {
 		// 여기서는 Form 내부 구조를 모르기 때문에 실제 상위 Form에서 구현
@@ -363,7 +384,7 @@ Things.SelectorFormBehaviorImpl = {
 
 	/**
 	 * Resource로 해당 Form elements에 각각 바인딩한다.
-	 *
+	 *******
 	 * @param {Object} resource
 	 */
 	setFormData: function(resource) {
@@ -376,8 +397,8 @@ Things.SelectorFormBehaviorImpl = {
 };
 
 Things.SelectorFormBehavior = [
-	'IronFormElementBehavior', 
-	Things.SelectorFormBehaviorImpl, 
+	'IronFormElementBehavior',
+	Things.SelectorFormBehaviorImpl,
 	Things.GlobalBehavior
 ];
 

@@ -1,6 +1,24 @@
 # things-resource-selector
 
-An element providing a starting point for your own reusable Polymer elements.
+Example:
+
+```html
+        <things-resource-field
+          id="resource-selector"
+          label="Language"
+          name="user_id"
+          resource-type="User"
+          resource-url="users"
+          delegate-column="name">
+        </things-resource-field>
+
+```
+
+*****
+</br></br>
+
+
+
 
 
 ## Dependencies
@@ -14,48 +32,17 @@ Then, go ahead and download the element's dependencies:
 
     bower install
 
-
 ## Playing With Your Element
 
 If you wish to work on your element in isolation, we recommend that you use
 [Polyserve](https://github.com/PolymerLabs/polyserve) to keep your element's
 bower dependencies in line. You can install it via:
 
-    npm install -g polyserve
+    npm install -g polymer-cli
 
 And you can run it via:
 
-    polyserve
+    polymer serve
 
 Once running, you can preview your element at
-`http://localhost:8080/components/things-resource-selector/`, where `things-resource-selector` is the name of the directory containing it.
-
-
-## Testing Your Element
-
-Simply navigate to the `/test` directory of your element to run its tests. If
-you are using Polyserve: `http://localhost:8080/components/things-resource-selector/test/`
-
-### web-component-tester
-
-The tests are compatible with [web-component-tester](https://github.com/Polymer/web-component-tester).
-Install it via:
-
-    npm install -g web-component-tester
-
-Then, you can run your tests on _all_ of your local browsers via:
-
-    wct
-
-#### WCT Tips
-
-`wct -l chrome` will only run tests in chrome.
-
-`wct -p` will keep the browsers alive after test runs (refresh to re-run).
-
-`wct test/some-file.html` will test only the files you specify.
-
-
-## Yeoman support
-
-If you'd like to use Yeoman to scaffold your element that's possible. The official [`generator-polymer`](https://github.com/yeoman/generator-polymer) generator has a [`seed`](https://github.com/yeoman/generator-polymer#seed) subgenerator.
+`http://localhost:8080/components/things-alarm/`, where `things-alarm` is the name of the directory containing it.

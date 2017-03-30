@@ -9,13 +9,13 @@
 <link rel="import" href="things-selector-form.html">
 
 <!--
-하나의 리소스에 대한 기본 액션 (List, Create, Find, Upate, Delete) 및 Import, Export 등의 기능을 제공하는 화면 셋 
+하나의 리소스에 대한 기본 액션 (List, Create, Find, Upate, Delete) 및 Import, Export 등의 기능을 제공하는 화면 셋
 
 Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그리드에서 레코드 하나를 선택할 경우 해당 레코드에 대한 Detail Form이 출력된다.
 
 	Example:
 
-	<things-selector-content 
+	<things-selector-content
 	  title="Terminology"
 	  resource-type="Terminology"
 	  resource-url="terminologies"
@@ -33,14 +33,14 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				@apply(--layout-vertical);
 				@apply(--layout-flex);
 			}
-			
+
 			things-resource-grid {
 				@apply(--layout-flex);
 			}
 		</style>
 
 		<div class="layout vertical flex">
-			<things-ajax 
+			<things-ajax
 				auto
 				id="resource-meta"
 				method="GET"
@@ -48,20 +48,20 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				last-response="{{metaData}}">
 			</things-ajax>
 
-			<things-selector-form 
+			<things-selector-form
 				id="search-form"
-				form-fields="[[searchFormFields]]" 
+				form-fields="[[searchFormFields]]"
 				select-fields="[[selectFields]]"
 				sort-fields="[[sortFields]]"
-				action-url="[[menuInfo.resource_url]]" 
+				action-url="[[menuInfo.resource_url]]"
 				page="{{page}}"
 				limit="[[limit]]"
 				last-response="{{lastResponse}}">
 			</things-selector-form>
 
-			<things-resource-grid 
+			<things-resource-grid
 				id="grid"
-				model="[[gridModel]]" 
+				model="[[gridModel]]"
 				columns="[[gridColumns]]"
 				config="[[gridConfig]]"
 				buttons="[[buttons]]"
@@ -77,13 +77,15 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 		Polymer({
 			is: 'things-selector-content',
 
-			behaviors: [ 
+			behaviors: [
 				Things.NamedMetaBehavior
 			],
-			
+
 			properties: {
 				/**
 				 * Screen layout
+				 * ******
+				 * @type {String}
 				 */
 				layout: {
 					type: String
@@ -91,13 +93,17 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 
 				/**
 				 * Resource Selector 타이틀
+				 * ******
+				 * @type {String}
 				 */
 				title: {
 					type: String,
 				},
 
 				/**
-				 * 버튼  
+				 * 버튼
+				 * ******
+				 * @type {Array}
 				 */
 				buttons: {
 					type: Array,
@@ -105,7 +111,9 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 				},
 
 				/**
-				 * 조회 결과 
+				 * 조회 결과
+				 * ******
+				 * @type {Object}
 				 */
 				lastResponse: {
 					type: Object,
@@ -114,6 +122,8 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 
 				/**
 				 * 조회 결과 리스트 데이터 프로퍼티 명
+				 * ******
+				 * @type {String}
 				 */
 				itemsProp: {
 					type: String,
@@ -122,6 +132,8 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 
 				/**
 				 * 조회 결과 리스트 Total Count 프로퍼티 명
+				 * ******
+				 * @type {String}
 				 */
 				totalProp: {
 					type: String,
@@ -130,13 +142,17 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 
 				/**
 				 * 조회 결과 리스트 데이터
+				 * ******
+				 * @type {Array}
 				 */
 				items: {
 					type: Array
 				},
 
 				/**
-				 * 조회 결과 레코드 수  
+				 * 조회 결과 레코드 수
+				 * ******
+				 * @type {Number}
 				 */
 				itemCount: {
 					type: Number
@@ -175,6 +191,7 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 
 			/**
 			 * ID Field를 리턴한다.
+			 * *********
 			 */
 			getIdField: function() {
 				return (this.menuInfo && this.menuInfo.id_field) ? this.menuInfo.id_field : 'id';
@@ -182,13 +199,14 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 
 			/**
 			 * Title Field를 리턴한다.
+			 * ********
 			 */
 			getTitleField: function() {
 				return (this.menuInfo && this.menuInfo.title_field) ? this.menuInfo.title_field : 'name';
 			},
 
 			/**
-			 * 조회 데이터 변경시 
+			 * 조회 데이터 변경시
 			 *
 			 * @param {Object} lastResponse
 			 */
@@ -200,17 +218,19 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			/**
 			 * reload grid data
 			 * 결국 서치 폼에서 다시 검색한다.
+			 * *******
 			 */
 			refreshGridData: function(grid) {
 				this.$['search-form'].submitMyForm();
 			},
 
 			/**
-			 * 화면 초기화 함수 
+			 * 화면 초기화 함수
 			 * 메타 데이터를 서버로 요청하여 화면을 구성한다.
+			 * *******
 			 */
 			initializeContent: function() {
-			}			
+			}
 
 		});
 	</script>
