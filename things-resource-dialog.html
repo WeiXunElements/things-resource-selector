@@ -9,7 +9,7 @@
 
 <!--
 ResourceSelector를 위한 다이얼로그.
-애플리케이션에 단 하나만 존재하고 다이얼로그가 오픈 될 때 마다 화면 구성을 다시하여 오픈한다.
+애플리케이션에 단 하나만 존재하고 다이얼로그가 오픈 될 때 마다 화면 구성을 다시하여 오픈한다. 
 단. Full Dialog에서 다시 Resource Dialog가 오픈 될 수 있으므로 FullDialog 보다 작게 구성한다.
 
   Example:
@@ -153,6 +153,7 @@ ResourceSelector를 위한 다이얼로그.
 			id='resource-dialog'
 			class$="[[dialogSize]]"
 			always-on-top
+			no-cancel-on-esc-key="[[noCancelOnEscKey]]"
 			entry-animation="scale-up-animation"
 			exit-animation="fade-out-animation">
 			<paper-toolbar>
@@ -174,26 +175,20 @@ ResourceSelector를 위한 다이얼로그.
 		properties: {
 			/**
 			* 다이얼로그 타이틀
-			* *******
-			* @type {String}
 			*/
 			title: {
 				type: String
 			},
 
 			/**
-			* Dialog 내에 포함될 뷰
-			* *******
-			* @type {Object}
+			* Dialog 내에 포함될 뷰 
 			*/
 			detailView: {
 				type: Object
 			},
 
 			/**
-			* Dialog가 오픈된 후 콜백
-			* *******
-			* @type {Function}
+			* Dialog가 오픈된 후 콜백 
 			*/
 			openCallback: {
 				type: Function
@@ -201,8 +196,6 @@ ResourceSelector를 위한 다이얼로그.
 
 			/**
 			 * dialog가 close된 후 콜백
-			 * *******
-			 * @type {Function}
 			 */
 			closeCallback: {
 				type: Function
@@ -210,8 +203,6 @@ ResourceSelector를 위한 다이얼로그.
 
 			/**
 			 * 다이얼로그 활성화 여부
-			 * *******
-			 * @type {Boolean}
 			 */
 			active: {
 				type: Boolean,
@@ -221,12 +212,19 @@ ResourceSelector를 위한 다이얼로그.
 			/**
 			 * 중첩되는 다이얼로그가 생길수록
 			 * 다이얼로그의 위치 및 크기를 변경 시키기 위한 변수
-			 * *******
-			 * @type {String}
 			 */
 			dialogSize: {
 				type: String,
 				value: 'size1'
+			},
+			/**
+			 * Set to true to disable canceling the overlay with the ESC key.
+			 * True로 설정시 cancel dialog에서 ESC key로 꺼지지 않음
+			 * @type {Boolean}
+			 */
+			noCancelOnEscKey:{
+				type: Boolean,
+				value: false
 			}
 		},
 
@@ -236,7 +234,7 @@ ResourceSelector를 위한 다이얼로그.
 		},
 
 		/**
-		 * 다이얼로그가 오픈된 경우 핸들러
+		 * 다이얼로그가 오픈된 경우 핸들러 
 		 */
 		_openHandler: function(e) {
 			if(e.target.id == 'resource-dialog') {
@@ -262,11 +260,7 @@ ResourceSelector를 위한 다이얼로그.
 				}
 			}
 		},
-  /**
-   * getDialog
-   * ******
-   * @return {event} resource-dialog
-   */
+
 		getDialog: function() {
 			return this.$['resource-dialog'];
 		}
