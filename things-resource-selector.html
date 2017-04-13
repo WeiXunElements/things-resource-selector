@@ -238,7 +238,35 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         }
         this.validate();
       },
+      /**
+       * related-field에 따라 정보를 파싱하여 form sierialize된 데이터로 설정하기 전에 발생하는 이벤트
+       *
+       * @event things-'[[inputFieldName]]'-related-field-configured
+       * @param value sierialize된 Object
+       */
+      
+      /**
+       * Resource Selector로 related_field(참조필드)의 값을 form serialize된 오브젝트에 넣어서 받아 온다.
+       ********
+       * @param {String} value
+       */
+      setParentFormData: function(value){
+        var evt = this.fire('things-'+[[this.name]]+'-related-field-configured',value,{ cancelable: true });
 
+        if (!evt.defaultPrevented) {
+          var commform = this.$['id-value-field'].form;
+          var resourceForm={};
+
+          if(commform){
+            resourceForm = commform.parentNode;
+          }
+
+          if(resourceForm.localName=='things-form'||
+             resourceForm.localName=='things-resource-form'){
+            this.$['id-value-field'].form.parentNode.setFormData(value);
+          }
+        }
+      },
       /**
        * Resource Selector로 부터 id, display 값을 설정한다.
        ********
