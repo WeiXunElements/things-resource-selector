@@ -417,8 +417,7 @@
 			 * @param {Object} targetData
 			 */
 			_bindObjectFields: function(sourceData, targetData) {
-				// 현재는 Grid인 경우만 가능 - Form은 추후 지원
-				if(this.ownerType == 'Grid' && this.bindFields) {
+				if(this.bindFields) {
 					var binders = this.bindFields.split(',');
 					for(var i = 0 ; i < binders.length ; i++) {
 						var binder = binders[i];
@@ -431,6 +430,10 @@
 
 						targetData[toField] = sourceData[fromField];
 					}
+				}
+
+				if(this.ownerType == 'Form' && this.bindFields) {
+					this.ownerElement.setParentFormData(targetData);
 				}
 			},
 
