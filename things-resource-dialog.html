@@ -9,7 +9,7 @@
 
 <!--
 ResourceSelector를 위한 다이얼로그.
-애플리케이션에 단 하나만 존재하고 다이얼로그가 오픈 될 때 마다 화면 구성을 다시하여 오픈한다. 
+애플리케이션에 단 하나만 존재하고 다이얼로그가 오픈 될 때 마다 화면 구성을 다시하여 오픈한다.
 단. Full Dialog에서 다시 Resource Dialog가 오픈 될 수 있으므로 FullDialog 보다 작게 구성한다.
 
   Example:
@@ -156,6 +156,7 @@ ResourceSelector를 위한 다이얼로그.
 			no-cancel-on-esc-key="[[noCancelOnEscKey]]"
 			entry-animation="scale-up-animation"
 			exit-animation="fade-out-animation">
+
 			<paper-toolbar>
 				<span class="title">[[title]]</span>
 				<div class="buttonsGroup">
@@ -174,22 +175,22 @@ ResourceSelector를 위한 다이얼로그.
 
 		properties: {
 			/**
-			* 다이얼로그 타이틀
-			*/
+			 * 다이얼로그 타이틀
+			 */
 			title: {
 				type: String
 			},
 
 			/**
-			* Dialog 내에 포함될 뷰 
-			*/
+			 * Dialog 내에 포함될 뷰
+			 */
 			detailView: {
 				type: Object
 			},
 
 			/**
-			* Dialog가 오픈된 후 콜백 
-			*/
+			 * Dialog가 오픈된 후 콜백
+			 */
 			openCallback: {
 				type: Function
 			},
@@ -217,12 +218,13 @@ ResourceSelector를 위한 다이얼로그.
 				type: String,
 				value: 'size1'
 			},
+
 			/**
 			 * Set to true to disable canceling the overlay with the ESC key.
 			 * True로 설정시 cancel dialog에서 ESC key로 꺼지지 않음
 			 * @type {Boolean}
 			 */
-			noCancelOnEscKey:{
+			noCancelOnEscKey: {
 				type: Boolean,
 				value: false
 			}
@@ -234,7 +236,8 @@ ResourceSelector를 위한 다이얼로그.
 		},
 
 		/**
-		 * 다이얼로그가 오픈된 경우 핸들러 
+		 * 다이얼로그가 오픈된 경우 핸들러
+		 * *******
 		 */
 		_openHandler: function(e) {
 			if(e.target.id == 'resource-dialog') {
@@ -250,6 +253,8 @@ ResourceSelector를 위한 다이얼로그.
 
 		/**
 		 * 다이얼로그가 클로즈 된 경우 핸들러
+		 * *******
+		 * @param {Object} e
 		 */
 		_closeHandler: function(e) {
 			if(e.target.id == 'resource-dialog') {
@@ -261,11 +266,14 @@ ResourceSelector를 위한 다이얼로그.
 			}
 		},
 
+		/**
+		 * 리소스 다이얼로그를 리턴
+		 * *******
+		 * @return {Object} Resource Dialog
+		 */
 		getDialog: function() {
 			return this.$['resource-dialog'];
 		}
-
 	});
 	</script>
-
 </dom-module>

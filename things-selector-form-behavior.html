@@ -103,7 +103,7 @@ Things.SelectorFormBehaviorImpl = {
    * Child elements of the form is reconfigured by this function.
    * The form that extends StdSelectorFormBehavior must implement 'reconfigureMyForm' function.
    * Logic of'reconfigureMyForm' function is creation form child elements by formFields attributes and configuration layout.
-   *
+   **********
    * @param {Array} formFields attribute
    */
 	_formFieldsChanged: function(formFields) {
@@ -112,8 +112,9 @@ Things.SelectorFormBehaviorImpl = {
 
 	/**
 	 * compute action url by base url of the global settings
+	 **********
 	 * @param {string} baseUrl base url of the global settings
-	 * @param {string} url url attribute
+	 * @param {string} actionUrl url attribute
 	 */
 	_computeAction: function(baseUrl, actionUrl) {
 		return baseUrl + '/' + actionUrl;
@@ -121,8 +122,9 @@ Things.SelectorFormBehaviorImpl = {
 
 	/**
 	 * Bind element's attribute values by formField informations.
-	 * @param {Object} child element of the form
+	 **********
 	 * @param {Object} element information object from formFields
+	 * @param {Object} attrs attributes
 	 */
 	_bindAttributes: function(element, attrs) {
 		for(attr in attrs) {
@@ -134,8 +136,8 @@ Things.SelectorFormBehaviorImpl = {
 
   /**
    * Create child element of the form by one of the formFields object
-   *
-   * @param {Object} one of the formFields attribute
+   **********
+   * @param {Object} element of the formFields attribute
    * @return {Object} created child element for the form
    */
 	_createFormElement: function(element) {
@@ -376,6 +378,7 @@ Things.SelectorFormBehaviorImpl = {
 	/**
 	 * 폼 내 모든 엘리먼트를 리턴한다.
 	 * *******
+	 * @return {Object} elements of form
 	 */
 	getFormElements: function() {
 		// 여기서는 Form 내부 구조를 모르기 때문에 실제 상위 Form에서 구현

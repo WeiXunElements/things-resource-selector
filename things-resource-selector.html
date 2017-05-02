@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../things-msg-box-behavior/things-msg-box-behavior.html">
 
 <link rel="import" href="./things-resource-selector-behavior.html">
 
@@ -17,7 +18,6 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
       resource-url="users"
       delegate-column="name">
     </things-resource-selector>
-
 
 @demo demo/demo-resource-selector.html
 -->
@@ -48,6 +48,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
     <input is="iron-input" name="[[name]]" bind-value="{{value}}" hidden>
 
     <label>[[label]]</label>
+
     <input is="iron-input"
             bind-value="{{display}}"
             readonly
@@ -55,9 +56,11 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
             id="input"
             error-message$="[[errorMessage]]"
             auto-validate$="[[autoValidate]]"
-            required$="[[required]]">
-    <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear">
+            required$="[[required]]"></input>
+
+    <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear" hidden="[[hideClearButton]]">
     </paper-icon-button>
+
     <iron-icon prefix on-tap="openResourceSelector"></iron-icon>
   </template>
 
@@ -211,6 +214,26 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         },
 
         /**
+         * clear 버튼을 숨기기 여부에 대한 변수
+         * *******
+         * @type {Boolean}
+         */
+        hideClearButton: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * Resource Selector에서 레코드 선택시 확인 창을 띄울 지 여부
+         * *******
+         * @type {Boolean}
+         */
+        confirmOnSelect: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
          * validation check를 통해 isValid의 값이 false일때 화면에 나타나는 errorMessage
          * ******
          * @type {String}
@@ -219,70 +242,91 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
           type: String,
           value: 'Invalid input'
         }
+
+        /**
+         * related-field에 따라 정보를 파싱하여 form sierialize된 데이터로 설정하기 전에 발생하는 이벤트
+         *********
+         * @event things-'[[inputFieldName]]'-related-field-configured
+         * @param value sierialize된 Object
+         */
       },
 
       behaviors: [
+        Things.MsgBoxBehavior,
         Things.ResourceSelectorBehavior
       ],
 
       /**
-       * Object 값이 변경될 경우
+       * Object 값이 변경된 이 후
+       **********
+       * @param {Object} objValue 선택된 값
        */
       _objValueChanged: function(objValue) {
         if(objValue) {
           this.value = objValue[this.resourceIdField];
           this.display = objValue[this.resourceTitleField];
+
         } else {
           this.value = null;
           this.display = '';
         }
+
         this.validate();
       },
-      /**
-       * related-field에 따라 정보를 파싱하여 form sierialize된 데이터로 설정하기 전에 발생하는 이벤트
-       *
-       * @event things-'[[inputFieldName]]'-related-field-configured
-       * @param value sierialize된 Object
-       */
-      
+
       /**
        * Resource Selector로 related_field(참조필드)의 값을 form serialize된 오브젝트에 넣어서 받아 온다.
        ********
        * @param {String} value
        */
-      setParentFormData: function(value){
-        var evt = this.fire('things-'+[[this.name]]+'-related-field-configured',value,{ cancelable: true });
+      setParentFormData: function(value) {
+        var evtName = 'things-' + this.name + '-related-field-configured';
+        var evt = this.fire(evtName, value, { cancelable: true });
 
         if (!evt.defaultPrevented) {
-          var commform = this.$['id-value-field'].form;
-          var resourceForm={};
+          var parentForm = this.$['id-value-field'].form;
+          var resourceForm = {};
 
-          if(commform){
-            resourceForm = commform.parentNode;
+          if(parentForm) {
+            resourceForm = parentForm.parentNode;
           }
 
-          if(resourceForm.localName=='things-form'||
-             resourceForm.localName=='things-resource-form'){
-            this.$['id-value-field'].form.parentNode.setFormData(value);
+          if(resourceForm.localName == 'things-form' || resourceForm.localName == 'things-resource-form') {
+            parentForm.form.parentNode.setFormData(value);
           }
         }
       },
+
       /**
        * Resource Selector로 부터 id, display 값을 설정한다.
        ********
-       * @param {String} idValue
-       * @param {String} displayValue
+       * @param {String} idValue  id 값
+       * @param {String} displayValue 표시를 위한 display 값
+       * @param {Object} objValue 선택된 resource object 값
        */
-      setResourceValue: function(idValue, displayValue,objValue) {
-        this.value = idValue;
-        this.display = displayValue;
-        this.setObjValue(objValue)
+      setResourceValue: function(idValue, displayValue, objValue) {
+        if(this.confirmOnSelect) {
+          this.openConfirmMsg({
+            type : 'info',
+            title : '[' + displayValue + '] ' + Things.DataGlobal.t('text.Sure to X', { x : Things.DataGlobal.t('button.select') }),
+            showCancelButton: true,
+            closeOnConfirm : true
+          }, function() {
+            this.value = idValue;
+            this.display = displayValue;
+            this.setObjValue(objValue);
+          }.bind(this));
+        } else {
+          this.value = idValue;
+          this.display = displayValue;
+          this.setObjValue(objValue);
+        }
       },
 
       /**
        * Object Value를 리턴한다.
        * *******
-       *
+       * @return {Object} 리소스 셀렉터에서 선택한 레코드 (Object) 값
        */
       getObjValue: function() {
         return this.objValue;
@@ -309,6 +353,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
       /**
        * Resource Selector의 Container 폼을 찾아 리턴
        * *******
+       * @param {Object} element
        */
       findOwnerForm: function(element) {
         if(!element.parentElement) {

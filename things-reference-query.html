@@ -13,7 +13,7 @@
       @apply(--things-input);
       width:65%;
     }
-    input:focus{
+    input:focus {
       outline:none;
     }
   </style>
@@ -76,6 +76,7 @@
         fieldName: {
           type: String
         },
+
         /**
          * tab Index for input field
          * *******
@@ -88,6 +89,10 @@
 
       /**
        * 참조 리소스 명, 참조 필드 명이 변경된 이후
+       * *******
+       * @param {string} refName
+       * @param {string} fieldName
+       * @return {string}
        */
       _computeName: function(refName, fieldName) {
         if(refName && refName.length > 0 && fieldName && fieldName.length > 0) {
@@ -100,6 +105,7 @@
       /**
        * value 리턴
        * *******
+       * @return {string}
        */
       getValue: function() {
         return this.value;

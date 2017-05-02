@@ -166,7 +166,7 @@
 
       /**
        * Container element를 생성한 후 childElement를 추가한 후 divContainer에 추가한다.
-       *
+       **********
        * @param {Object} divContainer
        * @param {Object} childElement
        */
@@ -181,6 +181,7 @@
       /**
        * 모든 Form Element를 리턴
        * *******
+       * @return {Array} form elements
        */
       getFormElements: function() {
         var formElements = [];
@@ -216,7 +217,7 @@
 
       /**
        * 조회 버튼 클릭시 current page를 1로 리셋
-       *
+       * ******
        * @param {Object} e 버튼 클릭 이벤트
        */
       _onSearchFormTap: function(e) {
@@ -227,7 +228,7 @@
       /**
        * Successful response handler After form submits.
        * this fires a 'things-form-submit-success' in this function
-       *
+       * ******
        * @param {Object} event Successful response event
        */
       _successResponseHandler: function(event) {
@@ -239,7 +240,7 @@
       /**
        * Error response handler After form submits.
        * this fires a 'things-form-submit-error' in this function
-       *
+       * ******
        * @param {Object} event Error response event
        */
       _errorResponseHandler: function(event) {

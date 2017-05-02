@@ -169,7 +169,7 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 
 			/**
 			 * 메뉴 메타데이터 변경시
-		   *
+			 *********
 			 * @param {Object} menuInfo
 			 */
 			_menuInfoChanged: function(menuInfo) {
@@ -192,6 +192,7 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			/**
 			 * ID Field를 리턴한다.
 			 * *********
+			 * @return {String} id값으로 사용할 필드명
 			 */
 			getIdField: function() {
 				return (this.menuInfo && this.menuInfo.id_field) ? this.menuInfo.id_field : 'id';
@@ -200,6 +201,7 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			/**
 			 * Title Field를 리턴한다.
 			 * ********
+			 * @return {String} title값으로 사용할 필드명
 			 */
 			getTitleField: function() {
 				return (this.menuInfo && this.menuInfo.title_field) ? this.menuInfo.title_field : 'name';
@@ -207,7 +209,7 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 
 			/**
 			 * 조회 데이터 변경시
-			 *
+			 * ********
 			 * @param {Object} lastResponse
 			 */
 			_responseChanged: function(lastResponse) {
@@ -219,6 +221,7 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			 * reload grid data
 			 * 결국 서치 폼에서 다시 검색한다.
 			 * *******
+			 * @param {Object} grid
 			 */
 			refreshGridData: function(grid) {
 				this.$['search-form'].submitMyForm();
@@ -231,7 +234,6 @@ Things Reource Content는 검색 폼, 그리드가 기본으로 표시되고 그
 			 */
 			initializeContent: function() {
 			}
-
 		});
 	</script>
 </dom-module>

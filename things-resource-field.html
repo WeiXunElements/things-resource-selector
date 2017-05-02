@@ -47,7 +47,9 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
 
   <template>
     <input id="id-value-field" is="iron-input" name="[[submitName]]" bind-value="[[idValue]]" hidden>
+
     <label>[[label]]</label>
+
     <input is="iron-input"
             id="input"
             value="[[displayValue]]"
@@ -56,9 +58,11 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
             bind-value="[[idValue]]"
             error-message$="[[errorMessage]]"
             auto-validate$="[[autoValidate]]"
-            required$="[[required]]">
+            required$="[[required]]"></input>
+
     <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear" hidden="[[readOnly]]">
     </paper-icon-button>
+
     <iron-icon prefix on-tap="openResourceSelector" hidden="[[readOnly]]"></iron-icon>
   </template>
 
@@ -67,7 +71,6 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
       is: "things-resource-field",
 
       properties: {
-
         /**
          * Form Load시에 서버에서 받은 데이터와 things-resource-field값과 매핑하기 위한 필드명.
          * 예를 들어 특정 resource에 creator_id가 있다면 서버에서 해당 resource를 조회하면 creator 데이터에 { id : '10', name : '홍길동' } 형식으로 넘어온다.
@@ -128,12 +131,12 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
         },
 
         /**
-        * Resource Type - Entity or Menu
-        * 1) Entity : Entity 설정에 의한 Selector 화면 구성
-        * 2) Menu : Menu 설정에 의한 Selector 화면 구성
-        * ******
-        * @type {String}
-        */
+         * Resource Type - Entity or Menu
+         * 1) Entity : Entity 설정에 의한 Selector 화면 구성
+         * 2) Menu : Menu 설정에 의한 Selector 화면 구성
+         * ******
+         * @type {String}
+         */
         resourceType: {
           type: String,
           value: 'Entity'
@@ -199,6 +202,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
           type: Boolean,
           value: false
         },
+
         /**
          * input field에 반드시 값이 포함되어야 함을 결정 합니다.
          * ******
@@ -208,6 +212,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
           type: Boolean,
           value: false
         },
+
         /**
          * 자동 validation check 활성화 여부
          * *****
@@ -217,6 +222,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
           type: Boolean,
           value: false
         },
+
         /**
          * validate 함수를 통해 return 되는 값으로 초기화 하는 변수
          * *******
@@ -226,6 +232,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
           type: Boolean,
           value: true
         },
+
         /**
          * validation check를 통해 isValid의 값이 false일때 화면에 나타나는 errorMessage
          * ******
@@ -240,12 +247,21 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
       behaviors: [
         Things.ResourceSelectorBehavior
       ],
-      _onIdValueChanged: function(idValue){
-        if(idValue==null ||idValue=='') this.value={};
-      },
+
       /**
-       * value값이 변경될 경우
-       *
+       * idValue값이 변경된 이 후
+       *********
+       * @param {Object} idValue
+       */
+      _onIdValueChanged: function(idValue) {
+        if(idValue == null || idValue == '') {
+          this.value = {};
+        }
+      },
+
+      /**
+       * value값이 변경된 이 후
+       *********
        * @param {Object} value
        */
       _valueChanged: function(value) {
@@ -256,37 +272,41 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
           this.idValue = null;
           this.displayValue = '';
         }
+
         this.validate();
       },
+
       /**
        * related-field에 따라 정보를 파싱하여 form sierialize된 데이터로 설정하기 전에 발생하는 이벤트
        *
        * @event things-'[[inputFieldName]]'-related-field-configured
        * @param value sierialize된 Object
        */
-      
+
       /**
        * Resource Selector로 related_field(참조필드)의 값을 form serialize된 오브젝트에 넣어서 받아 온다.
        ********
        * @param {String} value
        */
-      setParentFormData: function(value){
-        var evt = this.fire('things-'+[[this.name]]+'-related-field-configured',value,{ cancelable: true });
+      setParentFormData: function(value) {
+        var evtName = 'things-' + this.name + '-related-field-configured';
+        var evt = this.fire(evtName, value, { cancelable: true });
 
         if (!evt.defaultPrevented) {
           var commform = this.$['id-value-field'].form;
-          var resourceForm={};
+          var resourceForm = {};
 
-          if(commform){
+          if(commform) {
             resourceForm = commform.parentNode;
           }
 
-          if(resourceForm.localName=='things-form'||
-             resourceForm.localName=='things-resource-form'){
+          if(resourceForm.localName == 'things-form' ||
+             resourceForm.localName == 'things-resource-form') {
             this.$['id-value-field'].form.parentNode.setFormData(value);
           }
         }
       },
+
       /**
        * Resource Selector로 부터 id, display 값을 설정한다.
        ********
@@ -302,6 +322,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
       /**
        * 설정된 값을 리턴
        * ********
+       * @return {String} 값을 리턴
        */
       getValue: function() {
         return this.value;
@@ -328,6 +349,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
       /**
        * Resource Selector의 Container 폼을 찾아 리턴
        * ********
+       * @param {Object} element
        */
       findOwnerForm: function(element) {
         if(!element.parentElement) {
@@ -342,6 +364,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
           }
         }
       },
+
       /**
        * 값을 리셋
        * ********
@@ -352,6 +375,7 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
         obj[this.resourceTitleField] = null;
         this.value = obj;
       },
+
       /**
        * 수동 validation check function
        * ********

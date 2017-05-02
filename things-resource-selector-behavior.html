@@ -15,17 +15,19 @@ window.Things = window.Things || {};
  * @demo demo/index.html
  */
 Things.ResourceSelectorBehavior = {
-  properties:{
-/**
- * index
- * ******
- * @type {String}
- */
+
+  properties: {
+    /**
+     * index
+     * ******
+     * @type {String}
+    */
     tabIndex: {
       type: String,
-      value: "-1"
+      value: '-1'
     }
   },
+
   /**
    * Open resource selector - 그리드 컬럼에서 사용
    ********
@@ -47,6 +49,7 @@ Things.ResourceSelectorBehavior = {
    ********
    * @param {Object} ownerElement ResourceSelectorContent를 호출한 FormField Element
    * @param {Boolean} modal modal로 오픈할 지 여부
+   * @param {Boolean} ownerForm ResourceSelector를 오픈한 부모 폼
    */
   openResourceSelectorByForm: function(ownerElement, modal, ownerForm) {
     var selector = this._createResourceContent(ownerElement, ownerForm, ownerElement.name, ownerElement.resourceType, ownerElement.resourceName, ownerElement.initialParams, ownerElement.bindFields);
@@ -60,6 +63,7 @@ Things.ResourceSelectorBehavior = {
    ********
    * @param {Object} ownerElement ResourceSelector를 호출한 (폼 필드나 그리드 컬럼) 측에서 해당 데이터를 변경시키기 위해서 넘겨준다. bindFields가 설정된 경우는 반드시 설정해야 한다.
    * @param {Object} ownerContainer ownerElement의 부모 container - Form or Grid
+   * @param {Object} ownerField 부모 container의 필드 명
    * @param {String} resourceType ResourceSelector의 종류 (Menu / Entity). Menu 설정을 바탕으로 ResourceSelector를 구성할 것인지 Entity 설정을 바탕으로 할 것인지 설정
    * @param {String} resourceName resourceType이 Menu로 선택되어 있다면 Menu 명, resourceType이 Entity로 선택되어 있다면 Entity 명
    * @param {String} initialParams ResourceSelector에 전달할 초기 파라미터. {ParamName1}:{ParamValue1},{ParamName2}:{ParamValue2}, .... 형식의 String 값
@@ -81,11 +85,12 @@ Things.ResourceSelectorBehavior = {
 
   /**
    * Resource Selector Dialog
+   ********
+   * @return {Object} Dialog Manager
    */
   _getResourceSelectorDialog: function() {
     return app.$['dialog-manager'];
   }
-
 };
 
 </script>

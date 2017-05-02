@@ -140,6 +140,8 @@
 
       /**
        * Object 값이 변경될 경우
+       * *******
+       * @param {Object} objValue
        */
       _objValueChanged: function(objValue) {
         if(objValue) {
@@ -152,6 +154,7 @@
       /**
        * Object Value를 리턴한다.
        * *******
+       * @return {Object} objValue
        */
       getObjValue: function() {
         return this.objValue;
@@ -160,7 +163,6 @@
       /**
        * Object Value를 설정한다.
        * *******
-       *
        * @param {Object} objValue
        */
       setObjValue: function(objValue) {
@@ -179,6 +181,7 @@
       /**
        * Resource Selector의 Container 폼을 찾아 리턴
        * *******
+       * @param {Object} element
        */
       findOwnerForm: function(element) {
         if(!element.parentElement) {
