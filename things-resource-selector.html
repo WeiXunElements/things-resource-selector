@@ -285,11 +285,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
         if (!evt.defaultPrevented) {
           var parentForm = this.$['id-value-field'].form;
-          var resourceForm = {};
-
-          if(parentForm) {
-            resourceForm = parentForm.parentNode;
-          }
+          var resourceForm = parentForm ? parentForm.parentNode : {};
 
           if(resourceForm.localName == 'things-form' || resourceForm.localName == 'things-resource-form') {
             parentForm.form.parentNode.setFormData(value);
@@ -298,29 +294,54 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
       },
 
       /**
-       * Resource Selector로 부터 id, display 값을 설정한다.
+       * Resource Selector로 부터 id, display, objValue 값을 설정한다.
        ********
-       * @param {String} idValue  id 값
+       * @param {String} idValue id 값
        * @param {String} displayValue 표시를 위한 display 값
        * @param {Object} objValue 선택된 resource object 값
        */
       setResourceValue: function(idValue, displayValue, objValue) {
         if(this.confirmOnSelect) {
-          this.openConfirmMsg({
-            type : 'info',
-            title : '[' + displayValue + '] ' + Things.DataGlobal.t('text.Sure to X', { x : Things.DataGlobal.t('button.select') }),
-            showCancelButton: true,
-            closeOnConfirm : true
-          }, function() {
-            this.value = idValue;
-            this.display = displayValue;
-            this.setObjValue(objValue);
-          }.bind(this));
+          setTimeout(function() {
+            this._confirmAndSetResourceValue(idValue, displayValue, objValue);
+          }.bind(this), 500);
         } else {
-          this.value = idValue;
-          this.display = displayValue;
-          this.setObjValue(objValue);
+          this.setValues(idValue, displayValue, objValue);
         }
+      },
+
+      /**
+       * 확인 메시지 박스를 띄우면서 Resource Selector로 부터 id, display, objValue 값을 설정
+       ********
+       * @param {String} idValue  id 값
+       * @param {String} displayValue 표시를 위한 display 값
+       * @param {Object} objValue 선택된 resource object 값
+       */
+      _confirmAndSetResourceValue: function(idValue, displayValue, objValue) {
+        this.openConfirmMsg({
+          type : 'info',
+          title : Things.DataGlobal.t('tooltip.select'),
+          text : '[' + displayValue + '] ' + Things.DataGlobal.t('text.Sure to X', { x : Things.DataGlobal.t('button.select') }),
+          showCancelButton: true,
+          closeOnCancel: true,
+          allowEscapeKey: false,
+          allowOutsideClick: false
+        }, function() {
+          this.setValues(idValue, displayValue, objValue);
+        }.bind(this));
+      },
+
+      /**
+       * id, display, objValue 값을 설정
+       ********
+       * @param {String} idValue  id 값
+       * @param {String} displayValue 표시를 위한 display 값
+       * @param {Object} objValue 선택된 resource object 값
+       */
+      setValues: function(idValue, displayValue, objValue) {
+        this.value = idValue;
+        this.display = displayValue;
+        this.setObjValue(objValue);
       },
 
       /**

@@ -57,7 +57,9 @@
 				limit="{{limit}}"
 				data="[[items]]"
 				total-count="[[itemCount]]"
-				fixed-column-count="0">
+				fixed-column-count="0"
+				prevent-multi-click-event
+				paginatable>
 			</things-resource-grid>
 		</div>
 	</template>
@@ -413,6 +415,8 @@
 				}
 
 				this._bindObjectFields(selectedResource, ownerData);
+
+				// Close Dialog
 				this.closeResourceSelectorDialog();
 			},
 
