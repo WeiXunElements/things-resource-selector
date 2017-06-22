@@ -167,8 +167,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
          * @type {String}
          */
         resourceIdField: {
-          type: String,
-          value: 'id'
+          type: String
         },
 
         /**
@@ -179,8 +178,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
          * @type {Stirng}
          */
         resourceTitleField: {
-          type: String,
-          value: 'name'
+          type: String
         },
 
         /**
@@ -257,14 +255,34 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
       ],
 
       /**
+       * ID Field를 리턴한다.
+       * *******
+       * @return {String} id 값으로 사용될 필드명
+       */
+      getIdField: function() {
+        return this.resourceIdField ? this.resourceIdField : 'id';
+      },
+
+      /**
+       * Title Field를 리턴한다.
+       * ********
+       * @return {String} title 값으로 사용될 필드명
+       */
+      getTitleField: function() {
+        return this.resourceTitleField ? this.resourceTitleField : 'name';
+      },
+
+      /**
        * Object 값이 변경된 이 후
        **********
-       * @param {Object} objValue 선택된 값
+       * @param {Object} objValue ResourceSelector 다이얼로그에서 선택된 값
        */
       _objValueChanged: function(objValue) {
         if(objValue) {
-          this.value = objValue[this.resourceIdField];
-          this.display = objValue[this.resourceTitleField];
+          if(!this.value || this._idFieldValue(objValue) != this.value) {
+            this.value = this._idFieldValue(objValue);
+            this.display = this._displayFieldValue(objValue);
+          }
 
         } else {
           this.value = null;
@@ -272,6 +290,24 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         }
 
         this.validate();
+      },
+
+      /**
+       * objValue에서 id 필드값을 추출한다.
+       **********
+       * @param {Object} objValue ResourceSelector 다이얼로그에서 선택된 값
+       */
+      _idFieldValue: function(objValue) {
+        return objValue[this.getIdField()];
+      },
+
+      /**
+       * objValue에서 display 필드값을 추출한다.
+       **********
+       * @param {Object} objValue ResourceSelector 다이얼로그에서 선택된 값
+       */
+      _displayFieldValue: function(objValue) {
+        return objValue[this.getTitleField()];
       },
 
       /**
@@ -396,8 +432,8 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        */
       clearValue: function() {
         var obj = {};
-        obj[this.resourceIdField] = null;
-        obj[this.resourceTitleField] = null;
+        obj[this.getIdField()] = null;
+        obj[this.getTitleField()] = null;
         this.objValue = obj;
       },
 
