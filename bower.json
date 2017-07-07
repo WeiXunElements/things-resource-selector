@@ -1,6 +1,6 @@
 {
   "name": "things-resource-selector",
-  "version": "v2.0.7",
+  "version": "v2.2.0",
   "authors": [
     "Hatio Lab. <heartyoh@hatiolab.com>"
   ],
@@ -11,8 +11,8 @@
     "seed"
   ],
   "main": "things-resource-selector.html",
-  "license": "http://polymer.github.io/LICENSE.txt",
-  "homepage": "https://github.com/ThingsElements/things-resource-selector",
+  "license": "http://license.hatiolab.com/EULA",
+  "homepage": "http://elements.hatiolab.com/",
   "ignore": [
     "/.*",
     "/test/"
