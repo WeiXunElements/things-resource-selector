@@ -325,7 +325,9 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * @param {Object} ownerData
 			 */
 			resetSearchParams: function(ownerData) {
-				var searchParams = null;
+				if(!this.initialParams) return;
+
+				var searchParams = this.initialParams;
 				var initParamArr = this.initialParams.split(',');
 
 				for(var i = 0 ; i < initParamArr.length ; i++) {
@@ -341,16 +343,17 @@ Copyright © HatioLab Inc. All rights reserved.
 							varRealName = varRealName.substr(0, varRealName.lastIndexOf('_id'));
 							varData = ownerData[varRealName] || '';
 							if(varData) varData = varData.id || '';
-							searchParams = this.initialParams.replace(varName, varData);
+							searchParams = searchParams.replace(varName, varData);
 
 						} else {
-							searchParams = this.initialParams.replace(varName, varData);
+							searchParams = searchParams.replace(varName, varData);
 						}
 					}
 				}
 
-				if(searchParams != null)
+				if(searchParams) {
 					this.$['search-form'].initialParams = searchParams;
+				}
 			},
 
 			/**
@@ -495,7 +498,7 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * 사용자가 선택한 레코드에서 Resource Value (Object)를 리턴
 			 *********
 			 * @param {Object} selectedResource 현재 선택한 레코드 값
-			 * @param {Object} objToChange Owner Grid의 선택된 레코드의 필드 Object 값  
+			 * @param {Object} objToChange Owner Grid의 선택된 레코드의 필드 Object 값
 			 * @param {String} idField id 값으로 사용할 필드명
 			 * @param {String} titleField title 값으로 사용할 필드명
 			 * @param {String} descriptionField description 값으로 사용할 필드명

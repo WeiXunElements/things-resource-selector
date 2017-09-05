@@ -327,7 +327,9 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * @param {Object} ownerData
 			 */
 			resetSearchParams: function(ownerData) {
-				var searchParams = null;
+				if(!this.initialParams) return;
+
+				var searchParams = this.initialParams;
 				var initParamArr = this.initialParams.split(',');
 
 				for(var i = 0 ; i < initParamArr.length ; i++) {
@@ -343,16 +345,17 @@ Copyright © HatioLab Inc. All rights reserved.
 							varRealName = varRealName.substr(0, varRealName.lastIndexOf('_id'));
 							varData = ownerData[varRealName] || '';
 							if(varData) varData = varData.id || '';
-							searchParams = this.initialParams.replace(varName, varData);
+							searchParams = searchParams.replace(varName, varData);
 
 						} else {
-							searchParams = this.initialParams.replace(varName, varData);
+							searchParams = searchParams.replace(varName, varData);
 						}
 					}
 				}
 
-				if(searchParams != null)
+				if(searchParams) {
 					this.$['search-form'].initialParams = searchParams;
+				}
 			},
 
 			/**
