@@ -320,6 +320,14 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
       setResourceValue: function(idValue, displayValue) {
         this.idValue = idValue;
         this.displayValue = displayValue;
+
+        var event = new CustomEvent('selector-value-selected', {
+          detail: { submitName: this.submitName, value: idValue, display: displayValue },
+          bubbles: true
+        })
+
+        this.dispatchEvent(event);
+        
         this.validate();
       },
 
