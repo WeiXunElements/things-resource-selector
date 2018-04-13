@@ -60,10 +60,10 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
     <input is="iron-input" bind-value="{{display}}" readonly tabindex="[[tabIndex]]" error-message$="[[errorMessage]]" auto-validate$="[[autoValidate]]"
       required$="[[required]]"></input>
 
-    <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear" hidden="[[hideClearButton]]">
+    <paper-icon-button hidden$="[[readonly]]" suffix on-tap="clearValue" icon="clear" alt="clear" title="clear" hidden="[[hideClearButton]]">
     </paper-icon-button>
 
-    <iron-icon prefix on-tap="openResourceSelector"></iron-icon>
+    <iron-icon hidden$="[[readonly]]" prefix on-tap="openResourceSelector"></iron-icon>
   </template>
 
   <script type="text/javascript">
@@ -246,6 +246,11 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         errorMessage: {
           type: String,
           value: 'Invalid input'
+        },
+
+        readonly: {
+          type: Boolean,
+          value: false
         }
 
         /**
