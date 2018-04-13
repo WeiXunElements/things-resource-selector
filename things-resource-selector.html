@@ -28,39 +28,37 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
 <dom-module id="things-resource-selector">
   <style>
-    label{
+    label {
       @apply(--things-label);
     }
-    input{
+
+    input {
       @apply(--things-input);
-      width:calc(65% - 37px);
+      width: calc(65% - 37px);
     }
-    paper-icon-button{
+
+    paper-icon-button {
       @apply(--things-small-icon);
-      margin-right:7px;margin-left:-27px;
-      opacity:.4;
-      position:relative;
-      top:-2px;
+      margin-right: 7px;
+      margin-left: -27px;
+      opacity: .4;
+      position: relative;
+      top: -2px;
     }
-    iron-icon{
+
+    iron-icon {
       @apply(--things-picker-button);
-      background:url(/images/icon-resource-select.png) 50% 3px no-repeat var(--paper-blue-grey-300);
+      background: url(/images/icon-resource-select.png) 50% 3px no-repeat var(--paper-blue-grey-300);
     }
   </style>
 
   <template>
-    <input is="iron-input" name="[[name]]" bind-value="{{value}}" hidden>
+    <input name="[[name]]" bind-value="{{value}}" hidden>
 
     <label>[[label]]</label>
 
-    <input is="iron-input"
-            bind-value="{{display}}"
-            readonly
-            tabindex="[[tabIndex]]"
-            id="input"
-            error-message$="[[errorMessage]]"
-            auto-validate$="[[autoValidate]]"
-            required$="[[required]]"></input>
+    <input is="iron-input" bind-value="{{display}}" readonly tabindex="[[tabIndex]]" error-message$="[[errorMessage]]" auto-validate$="[[autoValidate]]"
+      required$="[[required]]"></input>
 
     <paper-icon-button suffix on-tap="clearValue" icon="clear" alt="clear" title="clear" hidden="[[hideClearButton]]">
     </paper-icon-button>
@@ -78,7 +76,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
          * ******
          * @type {String}
          */
-        name : {
+        name: {
           type: String
         },
 
@@ -89,7 +87,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
          */
         objValue: {
           type: Object,
-          notify:true,
+          notify: true,
           observer: '_objValueChanged'
         },
 
@@ -143,6 +141,11 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
         resourceName: {
           type: String
         },
+
+        resourceUrl: String,
+        contentModel: Object,
+        contentColumns: Object,
+        contentConfig: Object,
 
         /**
          * Resource Selector를 띄우기 위해 필요한 기본 파라미터
@@ -263,7 +266,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * *******
        * @return {String} id 값으로 사용될 필드명
        */
-      getIdField: function() {
+      getIdField: function () {
         return this.resourceIdField ? this.resourceIdField : 'id';
       },
 
@@ -272,7 +275,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * ********
        * @return {String} title 값으로 사용될 필드명
        */
-      getTitleField: function() {
+      getTitleField: function () {
         return this.resourceTitleField ? this.resourceTitleField : 'name';
       },
 
@@ -281,9 +284,9 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        **********
        * @param {Object} objValue ResourceSelector 다이얼로그에서 선택된 값
        */
-      _objValueChanged: function(objValue) {
-        if(objValue) {
-          if(!this.value || this._idFieldValue(objValue) != this.value) {
+      _objValueChanged: function (objValue) {
+        if (objValue) {
+          if (!this.value || this._idFieldValue(objValue) != this.value) {
             this.value = this._idFieldValue(objValue);
             this.display = this._displayFieldValue(objValue);
           }
@@ -301,7 +304,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        **********
        * @param {Object} objValue ResourceSelector 다이얼로그에서 선택된 값
        */
-      _idFieldValue: function(objValue) {
+      _idFieldValue: function (objValue) {
         return objValue[this.getIdField()];
       },
 
@@ -310,7 +313,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        **********
        * @param {Object} objValue ResourceSelector 다이얼로그에서 선택된 값
        */
-      _displayFieldValue: function(objValue) {
+      _displayFieldValue: function (objValue) {
         return objValue[this.getTitleField()];
       },
 
@@ -319,7 +322,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        ********
        * @param {String} value
        */
-      setParentFormData: function(value) {
+      setParentFormData: function (value) {
         var evtName = 'things-' + this.name + '-related-field-configured';
         var evt = this.fire(evtName, value, { cancelable: true });
 
@@ -327,7 +330,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
           var parentForm = this.$['id-value-field'].form;
           var resourceForm = parentForm ? parentForm.parentNode : {};
 
-          if(resourceForm.localName == 'things-form' || resourceForm.localName == 'things-resource-form') {
+          if (resourceForm.localName == 'things-form' || resourceForm.localName == 'things-resource-form') {
             parentForm.form.parentNode.setFormData(value);
           }
         }
@@ -340,9 +343,9 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * @param {String} displayValue 표시를 위한 display 값
        * @param {Object} objValue 선택된 resource object 값
        */
-      setResourceValue: function(idValue, displayValue, objValue) {
-        if(this.confirmOnSelect) {
-          setTimeout(function() {
+      setResourceValue: function (idValue, displayValue, objValue) {
+        if (this.confirmOnSelect) {
+          setTimeout(function () {
             this._confirmAndSetResourceValue(idValue, displayValue, objValue);
           }.bind(this), 500);
         } else {
@@ -357,16 +360,16 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * @param {String} displayValue 표시를 위한 display 값
        * @param {Object} objValue 선택된 resource object 값
        */
-      _confirmAndSetResourceValue: function(idValue, displayValue, objValue) {
+      _confirmAndSetResourceValue: function (idValue, displayValue, objValue) {
         this.openConfirmMsg({
-          type : 'info',
-          title : Things.DataGlobal.t('tooltip.select'),
-          text : '[' + displayValue + '] ' + Things.DataGlobal.t('text.Sure to X', { x : Things.DataGlobal.t('button.select') }),
+          type: 'info',
+          title: Things.DataGlobal.t('tooltip.select'),
+          text: '[' + displayValue + '] ' + Things.DataGlobal.t('text.Sure to X', { x: Things.DataGlobal.t('button.select') }),
           showCancelButton: true,
           closeOnCancel: true,
           allowEscapeKey: false,
           allowOutsideClick: false
-        }, function() {
+        }, function () {
           this.setValues(idValue, displayValue, objValue);
         }.bind(this));
       },
@@ -378,7 +381,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * @param {String} displayValue 표시를 위한 display 값
        * @param {Object} objValue 선택된 resource object 값
        */
-      setValues: function(idValue, displayValue, objValue) {
+      setValues: function (idValue, displayValue, objValue) {
         this.value = idValue;
         this.display = displayValue;
         this.setObjValue(objValue);
@@ -389,7 +392,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * *******
        * @return {Object} 리소스 셀렉터에서 선택한 레코드 (Object) 값
        */
-      getObjValue: function() {
+      getObjValue: function () {
         return this.objValue;
       },
 
@@ -398,7 +401,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        ********
        * @param {Object} objValue
        */
-      setObjValue: function(objValue) {
+      setObjValue: function (objValue) {
         this.objValue = objValue;
       },
 
@@ -406,7 +409,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * Open Resource Selector
        * *******
        */
-      openResourceSelector: function() {
+      openResourceSelector: function () {
         var form = this.findOwnerForm(this);
         this.openResourceSelectorByForm(this, true, form);
       },
@@ -416,13 +419,13 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * *******
        * @param {Object} element
        */
-      findOwnerForm: function(element) {
-        if(!element.parentElement) {
+      findOwnerForm: function (element) {
+        if (!element.parentElement) {
           return null;
         } else {
-          if(element.parentElement.localName == 'form' ||
-             element.parentElement.localName == 'things-form' ||
-             element.parentElement.localName == 'things-search-form') {
+          if (element.parentElement.localName == 'form' ||
+            element.parentElement.localName == 'things-form' ||
+            element.parentElement.localName == 'things-search-form') {
             return element.parentElement;
           } else {
             return this.findOwnerForm(element.parentElement);
@@ -434,7 +437,7 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * 값을 리셋
        * *******
        */
-      clearValue: function() {
+      clearValue: function () {
         var obj = {};
         obj[this.getIdField()] = null;
         obj[this.getTitleField()] = null;
@@ -445,8 +448,8 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
        * 수동 validation check function
        * ********
        */
-      validate: function() {
-        this.isValid = this.$.input.validate();
+      validate: function () {
+        this.isValid = this.querySelector('input[is=iron-input]').validate();
       }
     });
   </script>
