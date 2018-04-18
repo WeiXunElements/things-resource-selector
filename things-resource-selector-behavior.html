@@ -41,7 +41,7 @@ Copyright © HatioLab Inc. All rights reserved.
      * @param {Boolean} modal modal로 오픈할 지 여부
      */
     openResourceSelectorByGrid: function (parentGrid, parentGridRowIdx, selectorConfig, modal) {
-      var selector = this._createResourceContent(parentGrid, parentGrid, selectorConfig.ownerField, selectorConfig.resourceType, selectorConfig.resourceName, selectorConfig.initialParams, selectorConfig.bindFields);
+      var selector = this._createResourceContent(parentGrid, parentGrid, selectorConfig);
       selector.parentGridRowIdx = parentGridRowIdx;
       if (selectorConfig.valueField) selector.valueField = selectorConfig.valueField;
       var event = { view: selector, modal: modal };
@@ -74,20 +74,30 @@ Copyright © HatioLab Inc. All rights reserved.
      * @param {String} bindFields ResourceSelector에서 선택한 값을 기본값(id, title필드 값) 외에 ownerResource의 다른 필드에 설정하고자 할 때 사용. ','구분자로 구분한다.
      * @return {Object} things-resource-selector-content element
      */
-    _createResourceContent: function (ownerElement, ownerContainer) {
-      var resourceType = ownerElement.resourceType.toLowerCase();
+    _createResourceContent: function (ownerElement, ownerContainer, selectorConfig) {
+      var resourceType = (ownerElement.resourceType || selectorConfig.resourceType).toLowerCase();
+      var resourceName = ownerElement.resourceName || selectorConfig.resourceName;
+
       var content = document.createElement('things-selector-content-by-' + resourceType);
-      // content.id = "resource-selector";
       content.ownerElement = ownerElement;
       content.ownerContainer = ownerContainer;
-      content.ownerField = ownerElement.name;
-      content.initialParams = ownerElement.initialParams;
-      content.bindFields = ownerElement.bindFields;
-      content.title = Things.DataGlobal.t('menu.' + ownerElement.resourceName);
+
+      if (selectorConfig) {
+        content.ownerField = selectorConfig.ownerField;
+        content.initialParams = selectorConfig.initialParams;
+        content.bindFields = selectorConfig.bindFields;
+      } else {
+        content.ownerField = ownerElement.name;
+        content.initialParams = ownerElement.initialParams;
+        content.bindFields = ownerElement.bindFields;
+      }
+      // content.id = "resource-selector";
+
+      content.title = Things.DataGlobal.t('menu.' + resourceName);
       switch (resourceType) {
         case 'entity':
         case 'menu':
-          content.resourceName = ownerElement.resourceName;
+          content.resourceName = resourceName;
           break;
         case 'service':
           content.resourceUrl = ownerElement.resourceUrl;
