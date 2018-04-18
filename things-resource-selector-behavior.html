@@ -75,8 +75,8 @@ Copyright © HatioLab Inc. All rights reserved.
      * @return {Object} things-resource-selector-content element
      */
     _createResourceContent: function (ownerElement, ownerContainer) {
-      var resourceType = ownerElement.resourceType;
-      var content = document.createElement('things-selector-content-by-' + ownerElement.resourceType.toLowerCase());
+      var resourceType = ownerElement.resourceType.toLowerCase();
+      var content = document.createElement('things-selector-content-by-' + resourceType);
       // content.id = "resource-selector";
       content.ownerElement = ownerElement;
       content.ownerContainer = ownerContainer;
