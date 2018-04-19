@@ -7,110 +7,86 @@ Copyright © HatioLab Inc. All rights reserved.
 <link rel="import" href="./things-resource-dialog.html">
 
 <script>
-
-  window.Things = window.Things || {};
-
-  /**
-   * ResourceSelector를 오픈해주는 Behavior. ResourceSelector는 Form이나 Grid에서 오픈할 수 있다.
-   * 주의 : things-selector-content.html 파일을 import 하면 안 된다. 그럴 경우 circular reference 때문인지 behavior가 작동하지 않는다.
-   *
-   * @polymerBehavior Things.ResourceSelectorBehavior
-   *
-   * @demo demo/index.html
-   */
-  Things.ResourceSelectorBehavior = {
-
-    properties: {
-      /**
-       * index
-       * ******
-       * @type {String}
-      */
-      tabIndex: {
-        type: String,
-        value: '-1'
-      }
-    },
-
+window.Things = window.Things || {};
+/**
+ * ResourceSelector를 오픈해주는 Behavior. ResourceSelector는 Form이나 Grid에서 오픈할 수 있다.
+ * 주의 : things-selector-content.html 파일을 import 하면 안 된다. 그럴 경우 circular reference 때문인지 behavior가 작동하지 않는다.
+ *
+ * @polymerBehavior Things.ResourceSelectorBehavior
+ *
+ * @demo demo/index.html
+ */
+Things.ResourceSelectorBehavior = {
+  properties: {
     /**
-     * Open resource selector - 그리드 컬럼에서 사용
-     ********
-     * @param {Object} parentGrid
-     * @param {Object} parentGridRowIdx
-     * @param {Object} selectorConfig
-     * @param {Boolean} modal modal로 오픈할 지 여부
-     */
-    openResourceSelectorByGrid: function (parentGrid, parentGridRowIdx, selectorConfig, modal) {
-      var selector = this._createResourceContent(parentGrid, parentGrid, selectorConfig.ownerField, selectorConfig.resourceType, selectorConfig.resourceName, selectorConfig.initialParams, selectorConfig.bindFields);
-      selector.parentGridRowIdx = parentGridRowIdx;
-      if (selectorConfig.valueField) selector.valueField = selectorConfig.valueField;
-      var event = { view: selector, modal: modal };
-      this.fire('things-open-popup-view', event);
-    },
-
-    /**
-     * Open resource selector - form field(things-resource-field, things-resource-selector)에서 사용
-     ********
-     * @param {Object} ownerElement ResourceSelectorContent를 호출한 FormField Element
-     * @param {Boolean} modal modal로 오픈할 지 여부
-     * @param {Boolean} ownerForm ResourceSelector를 오픈한 부모 폼
-     */
-    openResourceSelectorByForm: function (ownerElement, modal, ownerForm) {
-      var selector = this._createResourceContent(ownerElement, ownerForm);
-      var event = { view: selector, modal: modal };
-      this.fire('things-open-popup-view', event);
-    },
-
-    /**
-     * Resource Selector를 위한 Content element를 생성하여 리턴한다.
-     * Resource Selector와 연동하기 위해서는 다음과 같은 파라미터가 필요하다.
-     ********
-     * @param {Object} ownerElement ResourceSelector를 호출한 (폼 필드나 그리드 컬럼) 측에서 해당 데이터를 변경시키기 위해서 넘겨준다. bindFields가 설정된 경우는 반드시 설정해야 한다.
-     * @param {Object} ownerContainer ownerElement의 부모 container - Form or Grid
-     * @param {Object} ownerField 부모 container의 필드 명
-     * @param {String} resourceType ResourceSelector의 종류 (Menu / Entity). Menu 설정을 바탕으로 ResourceSelector를 구성할 것인지 Entity 설정을 바탕으로 할 것인지 설정
-     * @param {String} resourceName resourceType이 Menu로 선택되어 있다면 Menu 명, resourceType이 Entity로 선택되어 있다면 Entity 명
-     * @param {String} initialParams ResourceSelector에 전달할 초기 파라미터. {ParamName1}:{ParamValue1},{ParamName2}:{ParamValue2}, .... 형식의 String 값
-     * @param {String} bindFields ResourceSelector에서 선택한 값을 기본값(id, title필드 값) 외에 ownerResource의 다른 필드에 설정하고자 할 때 사용. ','구분자로 구분한다.
-     * @return {Object} things-resource-selector-content element
-     */
-    _createResourceContent: function (ownerElement, ownerContainer) {
-      var resourceType = ownerElement.resourceType.toLowerCase();
-      var content = document.createElement('things-selector-content-by-' + ownerElement.resourceType);
-      // content.id = "resource-selector";
-      content.ownerElement = ownerElement;
-      content.ownerContainer = ownerContainer;
-      content.ownerField = ownerElement.name;
-      content.initialParams = ownerElement.initialParams;
-      content.bindFields = ownerElement.bindFields;
-      content.title = Things.DataGlobal.t('menu.' + ownerElement.resourceName);
-      switch (resourceType) {
-        case 'entity':
-        case 'menu':
-          content.resourceName = ownerElement.resourceName;
-          break;
-        case 'service':
-          content.resourceUrl = ownerElement.resourceUrl;
-          content.searchFormFields = ownerElement.searchFormFields;
-          content.selectFields = ownerElement.selectFields;
-          content.gridModel = ownerElement.contentModel;
-          content.gridColumns = ownerElement.contentColumns;
-          content.gridConfig = ownerElement.contentConfig;
-          content.page = ownerElement.page;
-          content.limit = ownerElement.limit;
-          break;
-      }
-      return content;
-    },
-
-    /**
-     * Resource Selector Dialog
-     ********
-     * @return {Object} Dialog Manager
-     */
-    _getResourceSelectorDialog: function () {
-      return app.$['dialog-manager'];
+     * index
+     * ******
+     * @type {String}
+    */
+    tabIndex: {
+      type: String,
+      value: '-1'
     }
-  };
-
+  },
+  /**
+   * Open resource selector - 그리드 컬럼에서 사용
+   ********
+   * @param {Object} parentGrid
+   * @param {Object} parentGridRowIdx
+   * @param {Object} selectorConfig
+   * @param {Boolean} modal modal로 오픈할 지 여부
+   */
+  openResourceSelectorByGrid: function(parentGrid, parentGridRowIdx, selectorConfig, modal) {
+    var selector = this._createResourceContent(parentGrid, parentGrid, selectorConfig.ownerField, selectorConfig.resourceType, selectorConfig.resourceName, selectorConfig.initialParams, selectorConfig.bindFields);
+    selector.parentGridRowIdx = parentGridRowIdx;
+    if(selectorConfig.valueField) selector.valueField = selectorConfig.valueField;
+    var event = { view: selector, modal: modal };
+    this.fire('things-open-popup-view', event);
+  },
+  /**
+   * Open resource selector - form field(things-resource-field, things-resource-selector)에서 사용
+   ********
+   * @param {Object} ownerElement ResourceSelectorContent를 호출한 FormField Element
+   * @param {Boolean} modal modal로 오픈할 지 여부
+   * @param {Boolean} ownerForm ResourceSelector를 오픈한 부모 폼
+   */
+  openResourceSelectorByForm: function(ownerElement, modal, ownerForm) {
+    var selector = this._createResourceContent(ownerElement, ownerForm, ownerElement.name, ownerElement.resourceType, ownerElement.resourceName, ownerElement.initialParams, ownerElement.bindFields);
+    var event = { view: selector, modal: modal };
+    this.fire('things-open-popup-view', event);
+  },
+  /**
+   * Resource Selector를 위한 Content element를 생성하여 리턴한다.
+   * Resource Selector와 연동하기 위해서는 다음과 같은 파라미터가 필요하다.
+   ********
+   * @param {Object} ownerElement ResourceSelector를 호출한 (폼 필드나 그리드 컬럼) 측에서 해당 데이터를 변경시키기 위해서 넘겨준다. bindFields가 설정된 경우는 반드시 설정해야 한다.
+   * @param {Object} ownerContainer ownerElement의 부모 container - Form or Grid
+   * @param {Object} ownerField 부모 container의 필드 명
+   * @param {String} resourceType ResourceSelector의 종류 (Menu / Entity). Menu 설정을 바탕으로 ResourceSelector를 구성할 것인지 Entity 설정을 바탕으로 할 것인지 설정
+   * @param {String} resourceName resourceType이 Menu로 선택되어 있다면 Menu 명, resourceType이 Entity로 선택되어 있다면 Entity 명
+   * @param {String} initialParams ResourceSelector에 전달할 초기 파라미터. {ParamName1}:{ParamValue1},{ParamName2}:{ParamValue2}, .... 형식의 String 값
+   * @param {String} bindFields ResourceSelector에서 선택한 값을 기본값(id, title필드 값) 외에 ownerResource의 다른 필드에 설정하고자 할 때 사용. ','구분자로 구분한다.
+   * @return {Object} things-resource-selector-content element
+   */
+  _createResourceContent: function(ownerElement, ownerContainer, ownerField, resourceType, resourceName, initialParams, bindFields) {
+    var selector = document.createElement('things-selector-content-by-' + resourceType.toLowerCase());
+    selector.id = "resource-selector";
+    selector.ownerElement = ownerElement;
+    selector.ownerContainer = ownerContainer;
+    selector.ownerField = ownerField;
+    selector.resourceName = resourceName;
+    selector.initialParams = initialParams;
+    selector.bindFields = bindFields;
+    selector.title = Things.DataGlobal.t('menu.' + resourceName);
+    return selector;
+  },
+  /**
+   * Resource Selector Dialog
+   ********
+   * @return {Object} Dialog Manager
+   */
+  _getResourceSelectorDialog: function() {
+    return app.$['dialog-manager'];
+  }
+};
 </script>
