@@ -1,0 +1,112 @@
+{
+  "models": [
+  {
+    "fieldName": "id"
+  },
+  {
+    "fieldName": "name"
+  },
+  {
+    "fieldName": "description"
+  },
+  {
+    "fieldName": "updater",
+    "dataType": "object"
+  },
+  {
+    "fieldName": "updated_at"
+  }],
+  "columns": [
+  {
+    "name": "id",
+    "fieldName": "id",
+    "width": 0,
+    "header":
+    {
+      "text": "ID"
+    },
+    "styles":
+    {},
+    "validations": [],
+    "maxValueLength": 64
+  },
+  {
+    "name": "name",
+    "fieldName": "name",
+    "width": 200,
+    "header":
+    {
+      "text": "명칭"
+    },
+    "styles":
+    {},
+    "validations": [],
+    "editor":
+    {
+      "maxLength": 64
+    },
+    "nullable": false,
+    "maxValueLength": 64
+  },
+  {
+    "name": "description",
+    "fieldName": "description",
+    "width": 400,
+    "header":
+    {
+      "text": "설명"
+    },
+    "styles":
+    {},
+    "validations": [],
+    "editor":
+    {
+      "maxLength": 255
+    },
+    "nullable": true,
+    "maxValueLength": 255
+  },
+  {
+    "name": "updater",
+    "fieldName": "updater",
+    "width": 100,
+    "header":
+    {
+      "text": "수정자"
+    },
+    "styles":
+    {
+      "iconIndex": "resource-selector"
+    },
+    "validations": [],
+    "userData":
+    {
+      "titleField": "name",
+      "originalField": "updater_id",
+      "resourceType": "Entity",
+      "resourceName": "User",
+      "ownerField": "updater"
+    },
+    "button": "action",
+    "buttonVisibility": "always",
+    "editable": false,
+    "nullable": true,
+    "maxValueLength": 32
+  },
+  {
+    "name": "updated_at",
+    "fieldName": "updated_at",
+    "width": 135,
+    "header":
+    {
+      "text": "수정일시"
+    },
+    "styles":
+    {
+      "textAlignment": "center"
+    },
+    "validations": [],
+    "editable": false,
+    "nullable": true
+  }]
+}

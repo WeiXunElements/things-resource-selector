@@ -9,29 +9,42 @@ Copyright © HatioLab Inc. All rights reserved.
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>things-resource-dialog Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="../../things-libraries/things-libraries.html">
+    <script src="things-lic.js"></script>
+    <script src="../../things-license-checker-min/things-license-checker.min.js"></script>
     <link rel="import" href="../../paper-button/paper-button.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../things-i18n-msg/things-i18n-msg.html">
     <link rel="import" href="../../things-theme/things-xmes-theme.html">
+    <link rel="import" href="../../things-ajax/things-ajax.html">
+    <link rel="import" href="../../things-grid/things-resource-grid.html">
     <link rel="import" href="../things-resource-dialog.html">
   </head>
   <body unresolved>
-      <h3>Things Combo</h3>
-      <h4>Value에서 값을 넣으면, Display과Label에서 적용되고, Label에서도 값을 체크할 수 있다.</h4>
+      <h3>things-resource-dialog Detail View</h3>
+      <h4>Open을 하기전에 Detail View를 setup하고 오픈한다.</h4>
       <demo-snippet class="centered-demo">
         <template>
           <style is="custom-style" include="things-xmes-theme"></style>
-          <template is="dom-bind">
+          <template id="dom-bind" is="dom-bind">
             <things-i18n-msg></things-i18n-msg>
+            <things-ajax
+                auto
+                resource-url="http://127.0.0.1:8081/components/things-resource-selector/demo/entities/Role/resource_columns.json"
+                handle-as="json"
+                last-response="{{gridConfigure}}"></things-ajax>
             <things-resource-dialog></things-resource-dialog>
             <button raised onclick="openDialog()">open dialog</button>
             <script>
               function openDialog(){
                 var element = document.querySelector('things-resource-dialog');
                 var dialog = element.getDialog();
-                var view = document.createElement('input');
+                var view = document.createElement('things-resource-grid');
                 view.title = 'TEST'
+                view.model=document.querySelector('#dom-bind').gridConfigure.models;
+                view.columns = document.querySelector('#dom-bind').gridConfigure.columns;
+                view.id="detail-view"
                 element.title = view.title;
                 element.dialogSize = 'size5';
                 dialog.modal = true;
@@ -51,6 +64,10 @@ Copyright © HatioLab Inc. All rights reserved.
                 scrollable.appendChild(element.detailView);
                 dialog.open();
               }
+
+              document.addEventListener('WebComponentsReady', function(event) {
+                document.querySelector('things-ajax').set('globals.baseUrl'," ");
+              })
             </script>
           </template>
         </template>

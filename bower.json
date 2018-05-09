@@ -58,6 +58,7 @@
     "web-component-tester": "^4.0.0",
     "iron-demo-helpers": "^1.2.3",
     "paper-input": "PolymerElements/paper-input#^1.1.11",
-    "things-theme": "ThingsElements/things-theme#^0.1.103"
+    "things-theme": "ThingsElements/things-theme#^0.1.103",
+    "things-license-checker-min": "ThingsElements/things-license-checker-min#^2.5.0"
   }
 }
