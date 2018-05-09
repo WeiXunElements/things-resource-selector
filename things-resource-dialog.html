@@ -29,16 +29,19 @@ ResourceSelector를 위한 다이얼로그.
 			display: inline-block;
 			@apply(--layout-vertical)
 		}
+
 		paper-toolbar {
-			background-color:var(--things-primary-background-color);
-			height:45px;
-			margin-top:0px !important;
+			background-color: var(--things-primary-background-color);
+			height: 45px;
+			margin-top: 0px !important;
 			@apply(--things-padding-clear)
 		}
+
 		paper-toolbar::shadow #topBar {
-			height:45px;
+			height: 45px;
 			@apply(--things-padding-clear)
 		}
+
 		.size5 {
 			position: fixed;
 			top: 10%;
@@ -46,9 +49,18 @@ ResourceSelector를 위한 다이얼로그.
 			left: 15%;
 			right: 15%;
 			margin: 0px;
+			/*
+        사이즈 바뀔 수 있게 수정
+        헤더에서 위치 변경하려고 할때 크기 변하는거 방지하기 위해 width와 height 지정해주기. 
+      */
+			height: 500px;
+			width: 600px;
+			resize: both;
+			overflow: auto;
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.size4 {
 			position: fixed;
 			top: 13%;
@@ -59,6 +71,7 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.size3 {
 			position: fixed;
 			top: 16%;
@@ -69,6 +82,7 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.size2 {
 			position: fixed;
 			top: 19%;
@@ -79,6 +93,7 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.size1 {
 			position: fixed;
 			top: 22%;
@@ -89,6 +104,7 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.large {
 			position: fixed;
 			top: 10%;
@@ -99,6 +115,7 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.medium {
 			position: fixed;
 			top: 20%;
@@ -109,6 +126,7 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.small {
 			position: fixed;
 			top: 30%;
@@ -119,11 +137,13 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.buttonsGroup {
 			@apply(--layout-horizontal);
 			@apply(--layout-end-justified);
 			@apply(--layout-flex);
 		}
+
 		.scrollroot {
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
@@ -131,37 +151,38 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--things-margin-clear);
 			overflow: auto;
 		}
+
 		.scrollroot::content #detail-view {
 			@apply(--layout-flex);
 		}
+
 		.title {
-			margin-left:20px !important;
-			font-size:20px;
-			font-weight:400;
+			margin-left: 20px !important;
+			font-size: 20px;
+			font-weight: 400;
 		}
+
 		.close-btn {
 			@apply(--things-header-button);
-			background:url(/images/icon-close.png) 100% 50% no-repeat;
-			margin-right:10px;
+			background: url(/images/icon-close.png) 100% 50% no-repeat;
+			margin-right: 10px;
 		}
+
 		button:focus {
-			outline:none;
+			outline: none;
 		}
-		:host::shadow things-selector-form{
-			background:transparent;
+
+		:host::shadow things-selector-form {
+			background: transparent;
 		}
 	</style>
 
 	<template>
-		<paper-dialog
-			id='resource-dialog'
-			class$="[[dialogSize]]"
-			always-on-top
-			no-cancel-on-esc-key="[[noCancelOnEscKey]]"
-			entry-animation="scale-up-animation"
-			exit-animation="fade-out-animation">
+		<paper-dialog id='resource-dialog' class$="[[dialogSize]]" always-on-top no-cancel-on-esc-key="[[noCancelOnEscKey]]" entry-animation="scale-up-animation"
+		    exit-animation="fade-out-animation">
+			<!--헤더의 id지정-->
+			<paper-toolbar id='popupToolbar'>
 
-			<paper-toolbar>
 				<span class="title">[[title]]</span>
 				<div class="buttonsGroup">
 					<button dialog-dismiss class="close-btn"></button>
@@ -173,111 +194,156 @@ ResourceSelector를 위한 다이얼로그.
 	</template>
 
 	<script>
-	Polymer({
+		Polymer({
 
-		is: 'things-resource-dialog',
+			is: 'things-resource-dialog',
 
-		properties: {
-			/**
-			 * 다이얼로그 타이틀
-			 */
-			title: {
-				type: String
+			properties: {
+				/**
+				 * 다이얼로그 타이틀
+				 */
+				title: {
+					type: String
+				},
+
+				/**
+				 * Dialog 내에 포함될 뷰
+				 */
+				detailView: {
+					type: Object
+				},
+
+				/**
+				 * Dialog가 오픈된 후 콜백
+				 */
+				openCallback: {
+					type: Function
+				},
+
+				/**
+				 * dialog가 close된 후 콜백
+				 */
+				closeCallback: {
+					type: Function
+				},
+
+				/**
+				 * 다이얼로그 활성화 여부
+				 */
+				active: {
+					type: Boolean,
+					value: false
+				},
+
+				/**
+				 * 중첩되는 다이얼로그가 생길수록
+				 * 다이얼로그의 위치 및 크기를 변경 시키기 위한 변수
+				 */
+				dialogSize: {
+					type: String,
+					value: 'size1'
+				},
+
+				/**
+				 * Set to true to disable canceling the overlay with the ESC key.
+				 * True로 설정시 cancel dialog에서 ESC key로 꺼지지 않음
+				 * @type {Boolean}
+				 */
+				noCancelOnEscKey: {
+					type: Boolean,
+					value: false
+				},
+				// 팝업창 이동 좌표
+				pos1: Number,
+				pos2: Number,
+				pos3: Number,
+				pos4: Number,
+			},
+
+			listeners: {
+				'resource-dialog.iron-overlay-opened': '_openHandler',
+				'resource-dialog.iron-overlay-closed': '_closeHandler'
+
 			},
 
 			/**
-			 * Dialog 내에 포함될 뷰
+			 * 다이얼로그가 오픈된 경우 핸들러
+			 * *******
 			 */
-			detailView: {
-				type: Object
+			_openHandler: function (e) {
+				if (e.target.id == 'resource-dialog') {
+					this.active = true;
+
+					if (this.openCallback) {
+						this.openCallback.apply(this.detailView);
+					}
+
+					this.title = this.detailView.title;
+				}
 			},
 
 			/**
-			 * Dialog가 오픈된 후 콜백
+			 * 다이얼로그가 클로즈 된 경우 핸들러
+			 * *******
+			 * @param {Object} e
 			 */
-			openCallback: {
-				type: Function
+			_closeHandler: function (e) {
+				if (e.target.id == 'resource-dialog') {
+					this.active = false
+
+					if (this.closeCallback) {
+						this.closeCallback();
+					}
+				}
 			},
 
 			/**
-			 * dialog가 close된 후 콜백
+			 * 리소스 다이얼로그를 리턴
+			 * *******
+			 * @return {Object} Resource Dialog
 			 */
-			closeCallback: {
-				type: Function
+			getDialog: function () {
+				return this.$['resource-dialog'];
 			},
 
-			/**
-			 * 다이얼로그 활성화 여부
-			 */
-			active: {
-				type: Boolean,
-				value: false
-			},
-
-			/**
-			 * 중첩되는 다이얼로그가 생길수록
-			 * 다이얼로그의 위치 및 크기를 변경 시키기 위한 변수
-			 */
-			dialogSize: {
-				type: String,
-				value: 'size1'
-			},
-
-			/**
-			 * Set to true to disable canceling the overlay with the ESC key.
-			 * True로 설정시 cancel dialog에서 ESC key로 꺼지지 않음
-			 * @type {Boolean}
-			 */
-			noCancelOnEscKey: {
-				type: Boolean,
-				value: false
-			}
-		},
-
-		listeners: {
-			'resource-dialog.iron-overlay-opened' : '_openHandler',
-			'resource-dialog.iron-overlay-closed' : '_closeHandler'
-		},
-
-		/**
-		 * 다이얼로그가 오픈된 경우 핸들러
-		 * *******
-		 */
-		_openHandler: function(e) {
-			if(e.target.id == 'resource-dialog') {
-				this.active = true;
-
-				if(this.openCallback) {
-					this.openCallback.apply(this.detailView);
+			//여기서부터 맨 아래까지 바뀐 소스
+			dragElement: function (elmnt) {
+				var pos1 = 0,
+					pos2 = 0,
+					pos3 = 0,
+					pos4 = 0;
+				if (this.$.popupToolbar) {
+					this.listen(this.$.popupToolbar, 'mousedown', 'dragMouseDown');
+				} else {
+					this.listen(elmnt, 'mousedown', 'dragMouseDown');
 				}
 
-				this.title = this.detailView.title;
+			},
+			dragMouseDown: function (e) {
+				this.pos3 = e.clientX;
+				this.pos4 = e.clientY;
+				this.listen(document, 'mouseup', 'closeDragElement');
+				this.listen(document, 'mousemove', 'elementDrag');
+
+			},
+			elementDrag: function (e) {
+				this.pos1 = this.pos3 - e.clientX;
+				this.pos2 = this.pos4 - e.clientY;
+				this.pos3 = e.clientX;
+				this.pos4 = e.clientY;
+				var elmnt = this.$['resource-dialog'];
+
+				elmnt.style.top = (elmnt.offsetTop - this.pos2) + "px";
+				elmnt.style.left = (elmnt.offsetLeft - this.pos1) + "px";
+			},
+			closeDragElement: function () {
+				this.unlisten(document, 'mouseup', 'closeDragElement');
+				this.unlisten(document, 'mousemove', 'elementDrag');
+			},
+			attached: function () {
+				this.dragElement(this.$['resource-dialog']);
 			}
-		},
 
-		/**
-		 * 다이얼로그가 클로즈 된 경우 핸들러
-		 * *******
-		 * @param {Object} e
-		 */
-		_closeHandler: function(e) {
-			if(e.target.id == 'resource-dialog') {
-				this.active	= false
-
-				if(this.closeCallback) {
-					this.closeCallback();
-				}
-			}
-		},
-
-		/**
-		 * 리소스 다이얼로그를 리턴
-		 * *******
-		 * @return {Object} Resource Dialog
-		 */
-		getDialog: function() {
-			return this.$['resource-dialog'];
-		}
-	});
+		});
 	</script>
 </dom-module>
