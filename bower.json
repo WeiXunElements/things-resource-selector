@@ -50,12 +50,14 @@
     "things-global-behavior": "ThingsElements/things-global-behavior#master",
     "things-fullscreen": "ThingsElements/things-fullscreen#master",
     "things-msg-box-behavior": "ThingsElements/things-msg-box-behavior#master",
-    "things-spinner": "ThingsElements/things-spinner#master"
+    "things-spinner": "ThingsElements/things-spinner#master",
+    "paper-scroll-header-panel": "^2.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
-    "iron-form": "^1.0.16",
     "web-component-tester": "^4.0.0",
-    "things-setting": "ThingsElements/things-setting#master"
+    "iron-demo-helpers": "^1.2.3",
+    "paper-input": "PolymerElements/paper-input#^1.1.11",
+    "things-theme": "ThingsElements/things-theme#^0.1.103"
   }
 }
