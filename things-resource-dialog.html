@@ -319,7 +319,12 @@ ResourceSelector를 위한 다이얼로그.
 			getDialog: function () {
 				return this.$['resource-dialog'];
 			},
-
+			
+			/**
+			 * 팝업창 움직이게 하기 위해 attached때 실행되는 메소드
+			 * *******
+			 * @param {Object} elmnt
+			 */
 			_dragElement: function (elmnt) {
 				var pos1 = 0,
 					pos2 = 0,
@@ -331,13 +336,24 @@ ResourceSelector를 위한 다이얼로그.
 					this.listen(elmnt, 'mousedown', '_dragMouseDown');
 				}
 			},
+			
+			/**
+			 *  클릭이 끝나면 _closeDragElement로, 움직이면 _elementDrag로 분기해줌
+			 * *******
+			 * @param {Object} e
+			 */
 			_dragMouseDown: function (e) {
 				this.pos3 = e.clientX;
 				this.pos4 = e.clientY;
 				this.listen(document, 'mouseup', '_closeDragElement');
 				this.listen(document, 'mousemove', '_elementDrag');
-
 			},
+			
+			/**
+			 * 마우스의 위치에 따라 팝업창 배치하는 메소드
+			 * *******
+			 * @param {Object} e
+			 */
 			_elementDrag: function (e) {
 				this.pos1 = this.pos3 - e.clientX;
 				this.pos2 = this.pos4 - e.clientY;
@@ -348,6 +364,10 @@ ResourceSelector를 위한 다이얼로그.
 				elmnt.style.top = (elmnt.offsetTop - this.pos2) + "px";
 				elmnt.style.left = (elmnt.offsetLeft - this.pos1) + "px";
 			},
+
+			/**
+			 * 클릭이 끝날 때, 기능을 종료하기 위해 사용되는 함수		
+			 */
 			_closeDragElement: function () {
 				this.unlisten(document, 'mouseup', '_closeDragElement');
 				this.unlisten(document, 'mousemove', '_elementDrag');
