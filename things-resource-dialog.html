@@ -49,14 +49,10 @@ ResourceSelector를 위한 다이얼로그.
 			left: 15%;
 			right: 15%;
 			margin: 0px;
-			/*
-        사이즈 바뀔 수 있게 수정
-        헤더에서 위치 변경하려고 할때 크기 변하는거 방지하기 위해 width와 height 지정해주기. 
-      */
 			height: 500px;
 			width: 600px;
-			resize: both;
-			overflow: auto;
+			min-width: 400px;
+			min-height: 400px;
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
@@ -253,11 +249,29 @@ ResourceSelector를 위한 다이얼로그.
 					type: Boolean,
 					value: false
 				},
-				// 팝업창 이동 좌표
+				/**
+				 * 팝업창 이동시 X 좌표로 사용되는 변수
+				 */
 				pos1: Number,
+				/**
+				 * 팝업창 이동시 Y 좌표로 사용되는 변수
+				 */
 				pos2: Number,
+				/**
+				 * 팝업창 이동시 X 좌표를 구하기 위해 사용되는 변수
+				 */
 				pos3: Number,
+				/**
+				 * 팝업창 이동시 Y 좌표를 구하기 위해 사용되는 변수
+				 */
 				pos4: Number,
+				/**
+				 * resize 여부를 결정하는 변수
+				 */
+				resizeValue: {
+					type: Boolean,
+					value: true
+				}
 			},
 
 			listeners: {
@@ -306,27 +320,25 @@ ResourceSelector를 위한 다이얼로그.
 				return this.$['resource-dialog'];
 			},
 
-			//여기서부터 맨 아래까지 바뀐 소스
-			dragElement: function (elmnt) {
+			_dragElement: function (elmnt) {
 				var pos1 = 0,
 					pos2 = 0,
 					pos3 = 0,
 					pos4 = 0;
 				if (this.$.popupToolbar) {
-					this.listen(this.$.popupToolbar, 'mousedown', 'dragMouseDown');
+					this.listen(this.$.popupToolbar, 'mousedown', '_dragMouseDown');
 				} else {
-					this.listen(elmnt, 'mousedown', 'dragMouseDown');
+					this.listen(elmnt, 'mousedown', '_dragMouseDown');
 				}
-
 			},
-			dragMouseDown: function (e) {
+			_dragMouseDown: function (e) {
 				this.pos3 = e.clientX;
 				this.pos4 = e.clientY;
-				this.listen(document, 'mouseup', 'closeDragElement');
-				this.listen(document, 'mousemove', 'elementDrag');
+				this.listen(document, 'mouseup', '_closeDragElement');
+				this.listen(document, 'mousemove', '_elementDrag');
 
 			},
-			elementDrag: function (e) {
+			_elementDrag: function (e) {
 				this.pos1 = this.pos3 - e.clientX;
 				this.pos2 = this.pos4 - e.clientY;
 				this.pos3 = e.clientX;
@@ -336,12 +348,21 @@ ResourceSelector를 위한 다이얼로그.
 				elmnt.style.top = (elmnt.offsetTop - this.pos2) + "px";
 				elmnt.style.left = (elmnt.offsetLeft - this.pos1) + "px";
 			},
-			closeDragElement: function () {
-				this.unlisten(document, 'mouseup', 'closeDragElement');
-				this.unlisten(document, 'mousemove', 'elementDrag');
+			_closeDragElement: function () {
+				this.unlisten(document, 'mouseup', '_closeDragElement');
+				this.unlisten(document, 'mousemove', '_elementDrag');
 			},
 			attached: function () {
-				this.dragElement(this.$['resource-dialog']);
+				this._dragElement(this.$['resource-dialog']);
+
+				if (this.resizeValue == true) {
+					this.$['resource-dialog'].style.resize = 'both';
+					this.$['resource-dialog'].style.overflow = 'auto';
+				} else {
+					this.$['resource-dialog'].style.resize = 'none';
+					this.$['resource-dialog'].style.overflow = 'visible';
+
+				}
 			}
 
 		});
