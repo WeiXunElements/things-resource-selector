@@ -29,7 +29,15 @@ ResourceSelector를 위한 다이얼로그.
 			display: inline-block;
 			@apply(--layout-vertical)
 		}
-
+		:host #resource-dialog {
+			resize: none;
+			overflow: visible;
+		}
+		:host([resizeable]) #resource-dialog{
+			resize: both;
+			overflow: auto;
+			/*cursor: se-resize;*/
+		}
 		paper-toolbar {
 			background-color: var(--things-primary-background-color);
 			height: 45px;
@@ -43,14 +51,14 @@ ResourceSelector를 위한 다이얼로그.
 		}
 
 		.size5 {
+			height: 80%;
+			width: 70%;
 			position: fixed;
 			top: 10%;
 			bottom: 10%;
 			left: 15%;
 			right: 15%;
 			margin: 0px;
-			height: 500px;
-			width: 600px;
 			min-width: 400px;
 			min-height: 400px;
 			@apply(--layout-flex);
@@ -58,6 +66,8 @@ ResourceSelector를 위한 다이얼로그.
 		}
 
 		.size4 {
+			height: 74%;
+			width: 70%;
 			position: fixed;
 			top: 13%;
 			bottom: 13%;
@@ -69,6 +79,8 @@ ResourceSelector를 위한 다이얼로그.
 		}
 
 		.size3 {
+			height: 74%;
+			width: 70%;
 			position: fixed;
 			top: 16%;
 			bottom: 10%;
@@ -80,6 +92,8 @@ ResourceSelector를 위한 다이얼로그.
 		}
 
 		.size2 {
+			height: 74%;
+			width: 70%;
 			position: fixed;
 			top: 19%;
 			bottom: 7%;
@@ -91,6 +105,8 @@ ResourceSelector를 위한 다이얼로그.
 		}
 
 		.size1 {
+			height: 74%;
+			width: 70%;
 			position: fixed;
 			top: 22%;
 			bottom: 4%;
@@ -102,6 +118,8 @@ ResourceSelector를 위한 다이얼로그.
 		}
 
 		.large {
+			height: 80%;
+			width: 70%;
 			position: fixed;
 			top: 10%;
 			bottom: 10%;
@@ -113,6 +131,8 @@ ResourceSelector를 위한 다이얼로그.
 		}
 
 		.medium {
+			height: 60%;
+			width: 50%;
 			position: fixed;
 			top: 20%;
 			bottom: 20%;
@@ -124,6 +144,8 @@ ResourceSelector를 위한 다이얼로그.
 		}
 
 		.small {
+			height: 40%;
+			width: 30%;
 			position: fixed;
 			top: 30%;
 			bottom: 30%;
@@ -268,9 +290,9 @@ ResourceSelector를 위한 다이얼로그.
 				/**
 				 * resize 여부를 결정하는 변수
 				 */
-				resizeValue: {
+				resizeable: {
 					type: Boolean,
-					value: true
+					value: false
 				}
 			},
 
@@ -355,6 +377,8 @@ ResourceSelector를 위한 다이얼로그.
 			 * @param {Object} e
 			 */
 			_elementDrag: function (e) {
+				e.stopPropagation();
+				e.preventDefault();
 				this.pos1 = this.pos3 - e.clientX;
 				this.pos2 = this.pos4 - e.clientY;
 				this.pos3 = e.clientX;
@@ -363,6 +387,7 @@ ResourceSelector를 위한 다이얼로그.
 
 				elmnt.style.top = (elmnt.offsetTop - this.pos2) + "px";
 				elmnt.style.left = (elmnt.offsetLeft - this.pos1) + "px";
+				return false;
 			},
 
 			/**
@@ -375,14 +400,14 @@ ResourceSelector를 위한 다이얼로그.
 			attached: function () {
 				this._dragElement(this.$['resource-dialog']);
 
-				if (this.resizeValue == true) {
-					this.$['resource-dialog'].style.resize = 'both';
-					this.$['resource-dialog'].style.overflow = 'auto';
-				} else {
-					this.$['resource-dialog'].style.resize = 'none';
-					this.$['resource-dialog'].style.overflow = 'visible';
+				// if (this.resizeable == true) {
+				// 	this.$['resource-dialog'].style.resize = 'both';
+				// 	this.$['resource-dialog'].style.overflow = 'auto';
+				// } else {
+				// 	this.$['resource-dialog'].style.resize = 'none';
+				// 	this.$['resource-dialog'].style.overflow = 'visible';
 
-				}
+				// }
 			}
 
 		});
