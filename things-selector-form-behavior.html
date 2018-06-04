@@ -398,7 +398,24 @@ Things.SelectorFormBehaviorImpl = {
 		var elements = this.getFormElements();
 		for(var i = 0 ; i < elements.length ; i++) {
 			var element = elements[i];
-			element.value = resource ? resource[element.name] : null;
+			var val = resource ? resource[element.name] : null;
+			this.setFieldData(element, val, resource);
+		}
+	},
+
+	/**
+	 * 폼 필드에 값 설정
+	 ********
+	 * @param {Object} element
+	 * @param {Object} value
+	 */
+	setFieldData: function(element, value) {
+		if(value === undefined || element.localName == 'things-stamp') {
+			return;
+		} else if(element.localName == 'things-resource-selector' || element.localName == 'things-image-selector') {
+			element.objValue = { id: value };
+		} else {
+			element.value = value;
 		}
 	}
 };
