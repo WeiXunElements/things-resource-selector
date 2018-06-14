@@ -1,6 +1,6 @@
 {
   "name": "things-resource-selector",
-  "version": "v2.2.9",
+  "version": "v2.2.10",
   "authors": [
     "Hatio Lab. <heartyoh@hatiolab.com>"
   ],
@@ -50,12 +50,19 @@
     "things-global-behavior": "ThingsElements/things-global-behavior#master",
     "things-fullscreen": "ThingsElements/things-fullscreen#master",
     "things-msg-box-behavior": "ThingsElements/things-msg-box-behavior#master",
-    "things-spinner": "ThingsElements/things-spinner#master"
+    "things-spinner": "ThingsElements/things-spinner#master",
+    "paper-scroll-header-panel": "^2.0.0",
+    "things-grid-behavior": "ThingsElements/things-grid-behavior#^2.2.12"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
-    "iron-form": "^1.0.16",
     "web-component-tester": "^4.0.0",
-    "things-setting": "ThingsElements/things-setting#master"
+    "iron-demo-helpers": "^1.2.3",
+    "paper-input": "PolymerElements/paper-input#^1.1.11",
+    "things-theme": "ThingsElements/things-theme#^0.1.103",
+    "things-license-checker-min": "ThingsElements/things-license-checker-min#^2.5.0",
+    "things-code-editor": "ThingsElements/things-code-editor#^2.2.0",
+    "things-splitter": "ThingsElements/things-splitter",
+    "iron-signals": "^1.0.3"
   }
 }
