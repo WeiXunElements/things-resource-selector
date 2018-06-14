@@ -1,3 +1,4 @@
+
 <!--
 @license
 Copyright © HatioLab Inc. All rights reserved.
@@ -10,7 +11,7 @@ Copyright © HatioLab Inc. All rights reserved.
 <link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../paper-scroll-header-panel/paper-scroll-header-panel.html">
 <link rel="import" href="../paper-toolbar/paper-toolbar.html">
-
+<link rel="import" href="../things-dialog-resize-behavior/things-dialog-resize-behavior.html">
 <!--
 ResourceSelector를 위한 다이얼로그.
 애플리케이션에 단 하나만 존재하고 다이얼로그가 오픈 될 때 마다 화면 구성을 다시하여 오픈한다.
@@ -29,27 +30,16 @@ ResourceSelector를 위한 다이얼로그.
 			display: inline-block;
 			@apply(--layout-vertical)
 		}
-		:host #resource-dialog {
-			resize: none;
-			overflow: visible;
-		}
-		:host([resizeable]) #resource-dialog{
-			resize: both;
-			overflow: auto;
-			/*cursor: se-resize;*/
-		}
 		paper-toolbar {
-			background-color: var(--things-primary-background-color);
-			height: 45px;
-			margin-top: 0px !important;
+			background-color:var(--things-primary-background-color);
+			height:45px;
+			margin-top:0px !important;
 			@apply(--things-padding-clear)
 		}
-
 		paper-toolbar::shadow #topBar {
-			height: 45px;
+			height:45px;
 			@apply(--things-padding-clear)
 		}
-
 		.size5 {
 			height: 80%;
 			width: 70%;
@@ -155,13 +145,11 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
-
 		.buttonsGroup {
 			@apply(--layout-horizontal);
 			@apply(--layout-end-justified);
 			@apply(--layout-flex);
 		}
-
 		.scrollroot {
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
@@ -169,38 +157,37 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--things-margin-clear);
 			overflow: auto;
 		}
-
 		.scrollroot::content #detail-view {
 			@apply(--layout-flex);
 		}
-
 		.title {
-			margin-left: 20px !important;
-			font-size: 20px;
-			font-weight: 400;
+			margin-left:20px !important;
+			font-size:20px;
+			font-weight:400;
 		}
-
 		.close-btn {
 			@apply(--things-header-button);
-			background: url(/images/icon-close.png) 100% 50% no-repeat;
-			margin-right: 10px;
+			background:url(/images/icon-close.png) 100% 50% no-repeat;
+			margin-right:10px;
 		}
-
 		button:focus {
-			outline: none;
+			outline:none;
 		}
-
-		:host::shadow things-selector-form {
-			background: transparent;
+		:host::shadow things-selector-form{
+			background:transparent;
 		}
 	</style>
 
 	<template>
-		<paper-dialog id='resource-dialog' class$="[[dialogSize]]" always-on-top no-cancel-on-esc-key="[[noCancelOnEscKey]]" entry-animation="scale-up-animation"
-		    exit-animation="fade-out-animation">
-			<!--헤더의 id지정-->
-			<paper-toolbar id='popupToolbar'>
+		<paper-dialog
+			id='resource-dialog'
+			class$="[[dialogSize]]"
+			always-on-top
+			no-cancel-on-esc-key="[[noCancelOnEscKey]]"
+			entry-animation="scale-up-animation"
+			exit-animation="fade-out-animation">
 
+			<paper-toolbar id="popup-toolbar">
 				<span class="title">[[title]]</span>
 				<div class="buttonsGroup">
 					<button dialog-dismiss class="close-btn"></button>
@@ -212,204 +199,123 @@ ResourceSelector를 위한 다이얼로그.
 	</template>
 
 	<script>
-		Polymer({
+	Polymer({
 
-			is: 'things-resource-dialog',
+		is: 'things-resource-dialog',
 
-			properties: {
-				/**
-				 * 다이얼로그 타이틀
-				 */
-				title: {
-					type: String
-				},
-
-				/**
-				 * Dialog 내에 포함될 뷰
-				 */
-				detailView: {
-					type: Object
-				},
-
-				/**
-				 * Dialog가 오픈된 후 콜백
-				 */
-				openCallback: {
-					type: Function
-				},
-
-				/**
-				 * dialog가 close된 후 콜백
-				 */
-				closeCallback: {
-					type: Function
-				},
-
-				/**
-				 * 다이얼로그 활성화 여부
-				 */
-				active: {
-					type: Boolean,
-					value: false
-				},
-
-				/**
-				 * 중첩되는 다이얼로그가 생길수록
-				 * 다이얼로그의 위치 및 크기를 변경 시키기 위한 변수
-				 */
-				dialogSize: {
-					type: String,
-					value: 'size1'
-				},
-
-				/**
-				 * Set to true to disable canceling the overlay with the ESC key.
-				 * True로 설정시 cancel dialog에서 ESC key로 꺼지지 않음
-				 * @type {Boolean}
-				 */
-				noCancelOnEscKey: {
-					type: Boolean,
-					value: false
-				},
-				/**
-				 * 팝업창 이동시 X 좌표로 사용되는 변수
-				 */
-				pos1: Number,
-				/**
-				 * 팝업창 이동시 Y 좌표로 사용되는 변수
-				 */
-				pos2: Number,
-				/**
-				 * 팝업창 이동시 X 좌표를 구하기 위해 사용되는 변수
-				 */
-				pos3: Number,
-				/**
-				 * 팝업창 이동시 Y 좌표를 구하기 위해 사용되는 변수
-				 */
-				pos4: Number,
-				/**
-				 * resize 여부를 결정하는 변수
-				 */
-				resizeable: {
-					type: Boolean,
-					value: false
-				}
-			},
-
-			listeners: {
-				'resource-dialog.iron-overlay-opened': '_openHandler',
-				'resource-dialog.iron-overlay-closed': '_closeHandler'
-
+		properties: {
+			/**
+			 * 다이얼로그 타이틀
+			 */
+			title: {
+				type: String
 			},
 
 			/**
-			 * 다이얼로그가 오픈된 경우 핸들러
-			 * *******
+			 * Dialog 내에 포함될 뷰
 			 */
-			_openHandler: function (e) {
-				if (e.target.id == 'resource-dialog') {
-					this.active = true;
-
-					if (this.openCallback) {
-						this.openCallback.apply(this.detailView);
-					}
-
-					this.title = this.detailView.title;
-				}
+			detailView: {
+				type: Object
 			},
 
 			/**
-			 * 다이얼로그가 클로즈 된 경우 핸들러
-			 * *******
-			 * @param {Object} e
+			 * Dialog가 오픈된 후 콜백
 			 */
-			_closeHandler: function (e) {
-				if (e.target.id == 'resource-dialog') {
-					this.active = false
-
-					if (this.closeCallback) {
-						this.closeCallback();
-					}
-				}
+			openCallback: {
+				type: Function
 			},
 
 			/**
-			 * 리소스 다이얼로그를 리턴
-			 * *******
-			 * @return {Object} Resource Dialog
+			 * dialog가 close된 후 콜백
 			 */
-			getDialog: function () {
-				return this.$['resource-dialog'];
-			},
-			
-			/**
-			 * 팝업창 움직이게 하기 위해 attached때 실행되는 메소드
-			 * *******
-			 * @param {Object} elmnt
-			 */
-			_dragElement: function (elmnt) {
-				var pos1 = 0,
-					pos2 = 0,
-					pos3 = 0,
-					pos4 = 0;
-				if (this.$.popupToolbar) {
-					this.listen(this.$.popupToolbar, 'mousedown', '_dragMouseDown');
-				} else {
-					this.listen(elmnt, 'mousedown', '_dragMouseDown');
-				}
-			},
-			
-			/**
-			 *  클릭이 끝나면 _closeDragElement로, 움직이면 _elementDrag로 분기해줌
-			 * *******
-			 * @param {Object} e
-			 */
-			_dragMouseDown: function (e) {
-				this.pos3 = e.clientX;
-				this.pos4 = e.clientY;
-				this.listen(document, 'mouseup', '_closeDragElement');
-				this.listen(document, 'mousemove', '_elementDrag');
-			},
-			
-			/**
-			 * 마우스의 위치에 따라 팝업창 배치하는 메소드
-			 * *******
-			 * @param {Object} e
-			 */
-			_elementDrag: function (e) {
-				e.stopPropagation();
-				e.preventDefault();
-				this.pos1 = this.pos3 - e.clientX;
-				this.pos2 = this.pos4 - e.clientY;
-				this.pos3 = e.clientX;
-				this.pos4 = e.clientY;
-				var elmnt = this.$['resource-dialog'];
-
-				elmnt.style.top = (elmnt.offsetTop - this.pos2) + "px";
-				elmnt.style.left = (elmnt.offsetLeft - this.pos1) + "px";
-				return false;
+			closeCallback: {
+				type: Function
 			},
 
 			/**
-			 * 클릭이 끝날 때, 기능을 종료하기 위해 사용되는 함수		
+			 * 다이얼로그 활성화 여부
 			 */
-			_closeDragElement: function () {
-				this.unlisten(document, 'mouseup', '_closeDragElement');
-				this.unlisten(document, 'mousemove', '_elementDrag');
+			active: {
+				type: Boolean,
+				value: false
 			},
-			attached: function () {
-				this._dragElement(this.$['resource-dialog']);
 
-				// if (this.resizeable == true) {
-				// 	this.$['resource-dialog'].style.resize = 'both';
-				// 	this.$['resource-dialog'].style.overflow = 'auto';
-				// } else {
-				// 	this.$['resource-dialog'].style.resize = 'none';
-				// 	this.$['resource-dialog'].style.overflow = 'visible';
+			/**
+			 * 중첩되는 다이얼로그가 생길수록
+			 * 다이얼로그의 위치 및 크기를 변경 시키기 위한 변수
+			 */
+			dialogSize: {
+				type: String,
+				value: 'size1'
+			},
 
-				// }
+			/**
+			 * Set to true to disable canceling the overlay with the ESC key.
+			 * True로 설정시 cancel dialog에서 ESC key로 꺼지지 않음
+			 * @type {Boolean}
+			 */
+			noCancelOnEscKey: {
+				type: Boolean,
+				value: false
+			},
+			_dialogId:{
+				type: String,
+				value: 'resource-dialog'
+			},
+			_dragTarget:{
+				type: String,
+				value:'popup-toolbar'
 			}
+		},
 
-		});
+		behaviors: [ 
+			Things.DialogResizeBehavior
+		],
+
+		listeners: {
+			'resource-dialog.iron-overlay-opened' : '_openHandler',
+			'resource-dialog.iron-overlay-closed' : '_closeHandler'
+		},
+
+		/**
+		 * 다이얼로그가 오픈된 경우 핸들러
+		 * *******
+		 */
+		_openHandler: function(e) {
+			if(e.target.id == this._dialogId) {
+				this.active = true;
+
+				if(this.openCallback) {
+					this.openCallback.apply(this.detailView);
+				}
+
+				this.title = this.detailView.title;
+			}
+		},
+
+		/**
+		 * 다이얼로그가 클로즈 된 경우 핸들러
+		 * *******
+		 * @param {Object} e
+		 */
+		_closeHandler: function(e) {
+			if(e.target.id == this._dialogId) {
+				this.active	= false
+
+				if(this.closeCallback) {
+					this.closeCallback();
+				}
+			}
+		},
+
+		/**
+		 * 리소스 다이얼로그를 리턴
+		 * *******
+		 * @return {Object} Resource Dialog
+		 */
+		getDialog: function() {
+			return this.$[this._dialogId];
+		}
+	});
 	</script>
 </dom-module>
