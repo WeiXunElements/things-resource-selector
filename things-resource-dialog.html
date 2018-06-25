@@ -1,3 +1,4 @@
+
 <!--
 @license
 Copyright © HatioLab Inc. All rights reserved.
@@ -10,7 +11,7 @@ Copyright © HatioLab Inc. All rights reserved.
 <link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../paper-scroll-header-panel/paper-scroll-header-panel.html">
 <link rel="import" href="../paper-toolbar/paper-toolbar.html">
-
+<link rel="import" href="../things-dialog-resize-behavior/things-dialog-resize-behavior.html">
 <!--
 ResourceSelector를 위한 다이얼로그.
 애플리케이션에 단 하나만 존재하고 다이얼로그가 오픈 될 때 마다 화면 구성을 다시하여 오픈한다.
@@ -40,16 +41,23 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--things-padding-clear)
 		}
 		.size5 {
+			height: 80%;
+			width: 70%;
 			position: fixed;
 			top: 10%;
 			bottom: 10%;
 			left: 15%;
 			right: 15%;
 			margin: 0px;
+			min-width: 400px;
+			min-height: 400px;
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.size4 {
+			height: 74%;
+			width: 70%;
 			position: fixed;
 			top: 13%;
 			bottom: 13%;
@@ -59,7 +67,10 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.size3 {
+			height: 74%;
+			width: 70%;
 			position: fixed;
 			top: 16%;
 			bottom: 10%;
@@ -69,7 +80,10 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.size2 {
+			height: 74%;
+			width: 70%;
 			position: fixed;
 			top: 19%;
 			bottom: 7%;
@@ -79,7 +93,10 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.size1 {
+			height: 74%;
+			width: 70%;
 			position: fixed;
 			top: 22%;
 			bottom: 4%;
@@ -89,7 +106,10 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.large {
+			height: 80%;
+			width: 70%;
 			position: fixed;
 			top: 10%;
 			bottom: 10%;
@@ -99,7 +119,10 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.medium {
+			height: 60%;
+			width: 50%;
 			position: fixed;
 			top: 20%;
 			bottom: 20%;
@@ -109,7 +132,10 @@ ResourceSelector를 위한 다이얼로그.
 			@apply(--layout-flex);
 			@apply(--layout-vertical);
 		}
+
 		.small {
+			height: 40%;
+			width: 30%;
 			position: fixed;
 			top: 30%;
 			bottom: 30%;
@@ -161,7 +187,7 @@ ResourceSelector를 위한 다이얼로그.
 			entry-animation="scale-up-animation"
 			exit-animation="fade-out-animation">
 
-			<paper-toolbar>
+			<paper-toolbar id="popup-toolbar">
 				<span class="title">[[title]]</span>
 				<div class="buttonsGroup">
 					<button dialog-dismiss class="close-btn"></button>
@@ -231,8 +257,20 @@ ResourceSelector를 위한 다이얼로그.
 			noCancelOnEscKey: {
 				type: Boolean,
 				value: false
+			},
+			_dialogId:{
+				type: String,
+				value: 'resource-dialog'
+			},
+			_dragTarget:{
+				type: String,
+				value:'popup-toolbar'
 			}
 		},
+
+		behaviors: [ 
+			Things.DialogResizeBehavior
+		],
 
 		listeners: {
 			'resource-dialog.iron-overlay-opened' : '_openHandler',
@@ -244,7 +282,7 @@ ResourceSelector를 위한 다이얼로그.
 		 * *******
 		 */
 		_openHandler: function(e) {
-			if(e.target.id == 'resource-dialog') {
+			if(e.target.id == this._dialogId) {
 				this.active = true;
 
 				if(this.openCallback) {
@@ -261,7 +299,7 @@ ResourceSelector를 위한 다이얼로그.
 		 * @param {Object} e
 		 */
 		_closeHandler: function(e) {
-			if(e.target.id == 'resource-dialog') {
+			if(e.target.id == this._dialogId) {
 				this.active	= false
 
 				if(this.closeCallback) {
@@ -276,7 +314,7 @@ ResourceSelector를 위한 다이얼로그.
 		 * @return {Object} Resource Dialog
 		 */
 		getDialog: function() {
-			return this.$['resource-dialog'];
+			return this.$[this._dialogId];
 		}
 	});
 	</script>

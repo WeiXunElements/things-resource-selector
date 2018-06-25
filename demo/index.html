@@ -4,86 +4,107 @@ Copyright © HatioLab Inc. All rights reserved.
 -->
 <!doctype html>
 <html>
+
 <head>
-
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
-
-  <title>things-resource-dialog demo</title>
-
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-
-    <link rel="import" href="../../polymer/polymer.html">
-  <link rel="import" href="../../paper-input/paper-input.html">
-  <link rel="import" href="../../paper-styles/color.html">
-  <link rel="import" href="../../paper-styles/demo-pages.html">
-  <link rel="import" href="../../paper-toast/paper-toast.html">
-
-    <link rel="import" href="../../things-ajax/things-ajax.html">
-  <link rel="import" href="../../things-button/things-button.html">
-  <link rel="import" href="../../things-spinner/things-spinner.html">
-  <link rel="import" href="../../things-setting/things-setting.html">
-
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>things-resource-dialog Demo</title>
+  <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+  <link rel="import" href="../../things-libraries/things-libraries.html">
+  <script src="things-lic.js"></script>
+  <script src="../../things-license-checker-min/things-license-checker.min.js"></script>
+  <link rel="import" href="../../paper-button/paper-button.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../things-i18n-msg/things-i18n-msg.html">
+  <link rel="import" href="../../things-theme/things-xmes-theme.html">
+  <link rel="import" href="../../things-ajax/things-ajax.html">
+  <link rel="import" href="../../things-grid/things-resource-grid.html">
   <link rel="import" href="../things-resource-dialog.html">
-
-  <link rel="stylesheet" href="../../paper-styles/demo.css">
-
-  <style is="custom-style">
-
-    .output {
-      margin-top: 20px;
-      word-wrap: break-word;
-      @apply(--paper-font-common-code);
-    }
-    form > paper-button {
-      width: 45%;
-      margin-top: 20px;
-    }
-    form > paper-button:not([disabled]) {
-      background: var(--paper-light-blue-500);
-      color: white;
-    }
-    button {
-      margin-top: 20px;
-    }
-    paper-spinner {
-      width: 14px;
-      height: 14px;
-      margin-right: 20px;
-    }
-    paper-dropdown-menu {
-      display: block;
-    }
-    demo-snippet {
-      --demo-snippet-code: {
-        max-height: 300px;
-      };
-    }
-
-  </style>
-
+  <link rel="import" href="../../things-code-editor/things-code-editor.html">
+  <link rel="import" href="../../things-splitter/things-splitter.html">
 </head>
+
 <body unresolved>
-
-  <dom-module id="sample-resource-dialog">
+  <h3>things-resource-dialog Detail View</h3>
+  <h4>Open을 하기전에 Detail View를 setup하고 오픈한다.</h4>
+  <demo-snippet class="centered-demo">
     <template>
-      <things-resource-dialog></things-resource-dialog>
-    </template>
+      <style is="custom-style" include="things-xmes-theme"></style>
+      <template id="dom-bind" is="dom-bind">
+        <things-i18n-msg></things-i18n-msg>
+        <things-ajax auto resource-url="http://127.0.0.1:8081/components/things-resource-selector/demo/entities/Role/resource_columns.json" handle-as="json" last-response="{{gridConfigure}}"></things-ajax>
+        <things-resource-dialog resizeable></things-resource-dialog>
+        <button raised onclick="openDialog()">open dialog</button>
+        <script>
+        function openDialog() {
+          var element = document.querySelector('things-resource-dialog');
+          var dialog = element.getDialog();
+          var view = document.createElement('two-elements');
+          view.title = 'TEST';
+          view.model = document.querySelector('#dom-bind').gridConfigure.models;
+          view.columns = document.querySelector('#dom-bind').gridConfigure.columns;
+          view.id = "detail-view";
+          element.title = view.title;
+          element.dialogSize = 'small';
+          dialog.modal = true;
 
+          var scrollable = element.$.scrollroot;
+          if (element.detailView) {
+            try {
+              scrollable.removeChild(element.detailView);
+            } catch (e) {
+              console.log(e);
+            }
+          }
+          element.detailView = view;
+
+          element.openCallback = null;
+          element.closeCallback = null;
+
+          scrollable.appendChild(view);
+
+          dialog.open();
+        }
+
+        document.addEventListener('WebComponentsReady', function(event) {
+          document.querySelector('things-ajax').set('globals.baseUrl', " ");
+        })
+        </script>
+      </template>
+    </template>
+  </demo-snippet>
+  <dom-module id="two-elements">
+    <style type="text/css">
+    :host {
+      display: block;
+      @apply(--layout-vertical);
+    }
+
+    .container {
+      height: 80%;
+      @apply(--layout-vertical);
+    }
+    .editor {
+      height: 100px;
+    }
+    .flex-editor {
+      @apply(--layout-flex);
+    }
+    </style>
+    <template>
+      <things-editor-script class="editor" theme="ace/theme/monokai" mode="ace/mode/markdown" fontsize="12px" tabsize="2"  value="{{value}}">
+      </things-editor-script>
+      <things-splitter direction="up"></things-splitter>
+      <things-editor-script class="flex-editor" theme="ace/theme/monokai" mode="ace/mode/markdown" fontsize="12px" tabsize="2"  value="{{value}}">
+      </things-editor-script>
+    </template>
     <script>
-      Polymer({
-        is: "sample-resource-dialog",
-      });  
+    Polymer({
+      is: 'two-elements'
+    });
     </script>
   </dom-module>
-
-  <template is="dom-bind" id="app">
-    <section>
-      <h4>Things Resource Dialog</h4>
-      <sample-resource-dialog></sample-resource-dialog>
-    </section>    
-  </template>
-
 </body>
+
 </html>
