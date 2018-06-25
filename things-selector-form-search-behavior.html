@@ -8,202 +8,243 @@ Copyright © HatioLab Inc. All rights reserved.
 <link rel="import" href="./things-selector-form-behavior.html">
 
 <script>
-
-window.Things = window.Things || {};
-
-/**
- * 검색 폼 동작을 정의하는 Behavior
- * 이 Behavior를 사용하려면 function submitMyForm()와 properties 중에 formFields 반드시 존재하여야 한다.
- * searchForm은 조회를 위한 submitForm 기능이고 formFields는 폼 구성을 위한 Form Field Meta 정보이다.
- *
- * @polymerBehavior Things.SelectorFormSearchBehavior
- */
-Things.SelectorFormSearchBehaviorImpl = {
-
-  properties: {
+    window.Things = window.Things || {};
 
     /**
-     * form이 active 상태인지 여부. active 상태인 경우에만 form submit이 가능하다.
-     * ******
-     * @type {Boolean}
+     * 검색 폼 동작을 정의하는 Behavior
+     * 이 Behavior를 사용하려면 function submitMyForm()와 properties 중에 formFields 반드시 존재하여야 한다.
+     * searchForm은 조회를 위한 submitForm 기능이고 formFields는 폼 구성을 위한 Form Field Meta 정보이다.
+     *
+     * @polymerBehavior Things.SelectorFormSearchBehavior
      */
-    active: {
-      type: Boolean
-    },
+    Things.SelectorFormSearchBehaviorImpl = {
 
-    /**
-     * 값이 필요없는 operator
-     * ******
-     * @type {Array}
-     */
-    nonValueOpers: {
-      type: Array,
-      value: ['is_null', 'is_not_null', 'is_true', 'is_not_true', 'is_false', 'is_not_false', 'is_present', 'is_blank']
-    },
+        properties: {
 
-    /**
-     * 검색시 파라미터 유형 : RESOURCE / PLAIN
-     * RESOURCE : 리소스 쿼리인 경우 검색 파라미터가 query = "[{'name' : 'searchField', 'operator' : 'eq', 'value' : 'value'}]" 형식으로 넘어간다.
-     * PLAIN : 검색 파라미터가 Key / Value 형식으로 넘어간다.
-     * ******
-     * @type {String}
-     */
-    paramType: {
-      type: String,
-      value: 'RESOURCE'
-    },
+            /**
+             * form이 active 상태인지 여부. active 상태인 경우에만 form submit이 가능하다.
+             * ******
+             * @type {Boolean}
+             */
+            active: {
+                type: Boolean
+            },
 
-    /**
-     * Resource Selector 창이 실행되면서 바로 반영되어야 할 파라미터들을 지정한다.
-     * Resource Selector가 실행된 후 바로 서비스 호출을 하게 되는데 이 때 initialParams가 서비스 호출 파라미터에 반영된다.
-     * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},...
-     * ******
-     * @type {String}
-     */
-    initialParams: {
-      type: String
-    }
+            /**
+             * 값이 필요없는 operator
+             * ******
+             * @type {Array}
+             */
+            nonValueOpers: {
+                type: Array,
+                value: ['is_null', 'is_not_null', 'is_true', 'is_not_true', 'is_false', 'is_not_false', 'is_present', 'is_blank']
+            },
 
-    /**
-     * Fires before handle parameters before form submit
-     * Form Submit 하기 전에 발생하는 이벤트.
-     * paramType이 'RESOURCE'라면 이 시점에 파라미터를 서버 서비스 스펙과 맞추기 위해 파라미터를 조작한다.
-     * 여기서 조작하는 파라미터 형식과 다르게 파라미터를 핸들링하고 싶다면 event.preventDefault()를 호출하여
-     * 이벤트 전파를 멈추고 Submit을 위한 정보를 조작한다.
-     ********
-     * @event things-form-pre-submit
-    /**
-     * Fires when the successful response is arrived after submit
-     ********
-     * @event things-form-submit-success
-     */
-    /**
-     * Fires when the error response is arrived after submit
-     ********
-     * @event things-form-submit-error
-     */
-  },
+            /**
+             * 검색시 파라미터 유형 : RESOURCE / PLAIN
+             * RESOURCE : 리소스 쿼리인 경우 검색 파라미터가 query = "[{'name' : 'searchField', 'operator' : 'eq', 'value' : 'value'}]" 형식으로 넘어간다.
+             * PLAIN : 검색 파라미터가 Key / Value 형식으로 넘어간다.
+             * ******
+             * @type {String}
+             */
+            paramType: {
+                type: String,
+                value: 'RESOURCE'
+            },
 
-  observers: [
-    '_pageChanged(page)'
-  ],
+            /**
+             * Resource Selector 창이 실행되면서 바로 반영되어야 할 파라미터들을 지정한다.
+             * Resource Selector가 실행된 후 바로 서비스 호출을 하게 되는데 이 때 initialParams가 서비스 호출 파라미터에 반영된다.
+             * Format : {Parameter Name1}:{Parameter Value1},{Parameter Name2}:{Parameter Value2},...
+             * ******
+             * @type {String}
+             */
+            initialParams: {
+                type: String
+            }
 
-  /**
-   * 현재 페이지가 변경되었을 때 액션
-   * 페이지가 변경된 경우 해당 페이지로 다시 검색한다.
-   ********
-   * @param {Number} page 현재 페이지
-   */
-  _pageChanged: function(page) {
-    if(this.active && page > 0) {
-      this.submitMyForm();
-    }
-  },
+            /**
+             * Fires before handle parameters before form submit
+             * Form Submit 하기 전에 발생하는 이벤트.
+             * paramType이 'RESOURCE'라면 이 시점에 파라미터를 서버 서비스 스펙과 맞추기 위해 파라미터를 조작한다.
+             * 여기서 조작하는 파라미터 형식과 다르게 파라미터를 핸들링하고 싶다면 event.preventDefault()를 호출하여
+             * 이벤트 전파를 멈추고 Submit을 위한 정보를 조작한다.
+             ********
+             * @event things-form-pre-submit
+            /**
+             * Fires when the successful response is arrived after submit
+             ********
+             * @event things-form-submit-success
+             */
+            /**
+             * Fires when the error response is arrived after submit
+             ********
+             * @event things-form-submit-error
+             */
+        },
 
-  /**
-   * paramType이 'RESOURCE'일 경우에 Search Parameters인 queryFields를 초기화하고
-   * 파라미터 정보로 부터 다시 queryFields를 설정한다.
-   ********
-   * @param {Object} params
-   */
-  _resetResourceSearchParams: function(params) {
-    this.queryFields = [];
-    if(!params) return;
+        observers: [
+            '_pageChanged(page)'
+        ],
 
-    for(prop in params) {
-      var fieldModels = this.formFields.filter(function(formField) { return formField.name == prop });
+        /**
+         * 현재 페이지가 변경되었을 때 액션
+         * 페이지가 변경된 경우 해당 페이지로 다시 검색한다.
+         ********
+         * @param {Number} page 현재 페이지
+         */
+        _pageChanged: function(page) {
+            if (this.active && page > 0) {
+                this.submitMyForm();
+            }
+        },
 
-      if(!fieldModels || fieldModels == 0) {
-        // reference-query인 경우 체크
-        fieldModels = this.formFields.filter(function(formField) {
-          return formField.type == 'reference-query' && formField.userData.searchName == prop;
-        });
-      }
+        /**
+         * paramType이 'RESOURCE'일 경우에 Search Parameters인 queryFields를 초기화하고
+         * 파라미터 정보로 부터 다시 queryFields를 설정한다.
+         ********
+         * @param {Object} params
+         */
+        _resetResourceSearchParams: function(params) {
+            this.queryFields = [];
+            if (!params) return;
 
-      if (fieldModels && fieldModels.length > 0) {
-        var fieldModel = fieldModels[0];
-        var operator = fieldModel.op;
+            for (prop in params) {
+                var fieldModels = this.formFields.filter(function(formField) {
+                    return formField.name == prop
+                });
 
-        if(params[prop] || this.nonValueOpers.includes(operator)) {
-          this.queryFields.push({ name : prop, operator : operator, value : params[prop] });
+                if (!fieldModels || fieldModels == 0) {
+                    // reference-query인 경우 체크
+                    fieldModels = this.formFields.filter(function(formField) {
+                        return formField.type == 'reference-query' && formField.userData.searchName == prop;
+                    });
+                }
+
+                if (fieldModels && fieldModels.length > 0) {
+                    var fieldModel = fieldModels[0];
+                    var operator = fieldModel.op;
+
+                    if (params[prop] || this.nonValueOpers.includes(operator)) {
+                        this.queryFields.push({
+                            name: prop,
+                            operator: operator,
+                            value: params[prop]
+                        });
+                    }
+                }
+            }
+        },
+
+        /**
+         * 조회 전에 초기 파라미터를 파싱하여 폼에 데이터를 입력 해준다.
+         ********
+         */
+        _bindInitialParams: function() {
+            if (!this.initialParams) return;
+
+            var searchParams = this.serializeMyForm();
+            var isSearchParamsEmpty = true;
+            for (var property in searchParams) {
+                if (searchParams[property]) {
+                    isSearchParamsEmpty = false;
+                    break;
+                }
+            }
+
+            if (isSearchParamsEmpty) {
+                var queryParamArr = this.initialParams.split(',');
+                for (var i = 0; i < queryParamArr.length; i++) {
+                    var queryParamStr = queryParamArr[i];
+                    var paramArr = queryParamStr.split('=');
+
+                    if (paramArr[1])
+                        searchParams[paramArr[0]] = paramArr[1];
+                }
+            } else {
+                var queryParamArr = this.initialParams.split(',');
+                var elements = this.getFormElements();
+                var newQueryParam = '';
+                for (var queryParam of queryParamArr) {
+                    var paramArr = queryParam.split('=');
+
+                    for (var element of elements) {
+                        if (paramArr == element.name && element.value) {
+                            if (element.tagName.toLowerCase() == 'things-resource-selector') {
+                                searchParams[element.name] = element.objValue;
+                            } else {
+                                searchParams[element.name] = element.value;
+                            }
+
+                            if (newQueryParam) {
+                                newQueryParam += ',';
+                            }
+
+                            newQueryParam += element.name + '=' + searchParams[element.name];
+                        }
+                    }
+                }
+
+                this.initialParams = newQueryParam;
+            }
+
+
+            this.setFormData(searchParams);
+        },
+
+        /**
+         * Submit 전에 전처리 핸들
+         * Pagination을 사용하는 경우에 page, limit 정보를 파라미터에 추가한다.
+         * *******
+         * @param {Object} event
+         */
+        handleBeforeSubmit: function(event) {
+            var form = event.srcElement;
+            var evt = this.fire('things-form-pre-submit', form, {
+                cancelable: true
+            });
+            if (evt.defaultPrevented) return;
+
+            var user = this.get('globals.user');
+            if (user) {
+                form.request.headers['X-Locale'] = this.get('globals.locale') ? this.get('globals.locale') : 'en-US';
+                form.request.headers['X-Domain-Id'] = this.get('globals.user').domain_id;
+            }
+
+            form.request.params || {};
+
+            if (this.paramType == 'RESOURCE') {
+                this._resetResourceSearchParams(form.request.params);
+                form.request.params = this.handleRequestParams();
+
+            } else if (this.paramType == 'DIY') {
+                form.request.params = this.handleDiyRequestParams(form.request.params);
+            }
+        },
+
+        /**
+         * Successful response handler After form submits.
+         * this fires a 'things-form-submit-success' in this function
+         *******
+         * @param {Object} errorResponse Successful Response
+         */
+        handleSuccessResponse: function(errorResponse) {
+            this.fire('things-form-submit-success', errorResponse);
+        },
+
+        /**
+         * Error response handler After form submits.
+         * this fires a 'things-form-submit-error' in this function
+         *********
+         * @param {Object} sucessResponse Error Response
+         */
+        handleErrorResponse: function(sucessResponse) {
+            this.fire('things-form-submit-error', sucessResponse);
         }
-      }
-    }
-  },
+    };
 
-  /**
-   * 조회 전에 초기 파라미터를 파싱하여 폼에 데이터를 입력 해준다.
-   ********
-   */
-  _bindInitialParams: function() {
-    if(!this.initialParams) return;
-
-    var searchParams = this.serializeMyForm();
-    var queryParamArr = this.initialParams.split(',');
-
-    for(var i = 0 ; i < queryParamArr.length ; i++) {
-      var queryParamStr = queryParamArr[i];
-      var paramArr = queryParamStr.split('=');
-
-      if(paramArr[1])
-        searchParams[paramArr[0]] = paramArr[1];
-    }
-
-    this.setFormData(searchParams);
-  },
-
-  /**
-   * Submit 전에 전처리 핸들
-   * Pagination을 사용하는 경우에 page, limit 정보를 파라미터에 추가한다.
-   * *******
-   * @param {Object} event
-   */
-  handleBeforeSubmit: function(event) {
-    var form = event.srcElement;
-    var evt = this.fire('things-form-pre-submit', form, { cancelable : true });
-    if(evt.defaultPrevented) return;
-
-    var user = this.get('globals.user');
-    if(user) {
-      form.request.headers['X-Locale'] = this.get('globals.locale') ? this.get('globals.locale') : 'en-US';
-      form.request.headers['X-Domain-Id'] = this.get('globals.user').domain_id;
-    }
-
-    form.request.params || {};
-
-    if(this.paramType == 'RESOURCE') {
-      this._resetResourceSearchParams(form.request.params);
-      form.request.params = this.handleRequestParams();
-
-    } else if(this.paramType == 'DIY') {
-      form.request.params = this.handleDiyRequestParams(form.request.params);
-    }
-  },
-
-  /**
-   * Successful response handler After form submits.
-   * this fires a 'things-form-submit-success' in this function
-   *******
-   * @param {Object} errorResponse Successful Response
-   */
-  handleSuccessResponse: function(errorResponse) {
-    this.fire('things-form-submit-success', errorResponse);
-  },
-
-  /**
-   * Error response handler After form submits.
-   * this fires a 'things-form-submit-error' in this function
-   *********
-   * @param {Object} sucessResponse Error Response
-   */
-  handleErrorResponse: function(sucessResponse) {
-    this.fire('things-form-submit-error', sucessResponse);
-  }
-};
-
-Things.SelectorFormSearchBehavior = [
-  Things.SelectorFormSearchBehaviorImpl,
-  Things.ResourceSearchBehavior
-];
-
+    Things.SelectorFormSearchBehavior = [
+        Things.SelectorFormSearchBehaviorImpl,
+        Things.ResourceSearchBehavior
+    ];
 </script>
