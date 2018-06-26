@@ -204,6 +204,18 @@ Copyright © HatioLab Inc. All rights reserved.
                             checkBar: false
                         }
                     }
+                },
+                /**
+                 * 选取数据后想要处理的逻辑，默认在things-selector-behavior配置此函数
+                 * ******
+                 * @params {Object} 如果选取源是Grid传递原Grid的GridRow Object和selectedRecord, 如果选取源是Form传递selectedRecord
+                 * @type {Function}
+                 */
+                selectedEventCallback:{
+                    type: Object,
+                    value: function(){
+                        return function(eventDetailObj){}
+                    }
                 }
             },
 
@@ -374,7 +386,11 @@ Copyright © HatioLab Inc. All rights reserved.
             _selectRecordByForm: function(event) {
                 var selectedResource = event.detail;
                 var ownerData = this.findOwnerData();
-
+                var evt = this.selectedEventCallback(selectedResource);
+                if (evt.defaultPrevented) {
+                    this.closeResourceSelectorDialog();
+                    return ;
+                }
                 // resource format selector인 경우 Object 값으로 설정한다.
                 if (this.ownerElement.localName == 'things-resource-format-selector') {
                     this.ownerElement.setObjValue(selectedResource);
@@ -444,6 +460,11 @@ Copyright © HatioLab Inc. All rights reserved.
 
                 if (row && row.dataIndex() >= 0) {
                     var rowObj = row.getRowObject();
+                    var evt = this.selectedEventCallback({ rowObj: rowObj, resource : selectedResource });
+                    if (evt.defaultPrevented) {
+                        this.closeResourceSelectorDialog();
+                        return ;
+                    }
                     var objToChange = rowObj[this.ownerField];
 
                     if (this.valueField) {
@@ -457,10 +478,6 @@ Copyright © HatioLab Inc. All rights reserved.
 
                     // Bind Fields 정보로 Grid 데이터 변경
                     this._bindObjectFields(selectedResource, rowObj);
-                    this.fire('things-resource-selector-selected', {
-                        rowObj: rowObj,
-                        resource: selectedResource
-                    });
 
                     // 부모 그리드 Refresh
                     dataSet.updateRow(this.parentGridRowIdx, rowObj);
