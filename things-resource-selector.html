@@ -50,6 +50,12 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
             @apply(--things-picker-button);
             background: url(/images/icon-resource-select.png) 50% 3px no-repeat var(--paper-blue-grey-300);
         }
+        paper-icon-button[readonly]{
+            opacity:0.1;
+        }
+        iron-icon[readonly]{
+            opacity:0.4;
+        }
     </style>
 
     <template>
@@ -58,12 +64,12 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
     <label>[[label]]</label>
 
     <input is="iron-input" bind-value="{{display}}" readonly tabindex="[[tabIndex]]" error-message$="[[errorMessage]]" auto-validate$="[[autoValidate]]"
-      required$="[[required]]"></input>
+      required$="[[required]]" disabled$="[[readonly]]"></input>
 
-    <paper-icon-button hidden$="[[readonly]]" suffix on-tap="clearValue" icon="clear" alt="clear" title="clear" hidden="[[hideClearButton]]">
+    <paper-icon-button readonly$="[[readonly]]" suffix on-tap="clearValue" icon="clear" alt="clear" title="clear" hidden="[[hideClearButton]]">
     </paper-icon-button>
 
-    <iron-icon hidden$="[[readonly]]" prefix on-tap="openResourceSelector"></iron-icon>
+    <iron-icon readonly$="[[readonly]]" prefix on-tap="openResourceSelector"></iron-icon>
   </template>
 
     <script type="text/javascript">
@@ -419,6 +425,9 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
              * *******
              */
             openResourceSelector: function() {
+                if(this.readonly){
+                    return ;
+                }
                 var form = this.findOwnerForm(this);
                 this.openResourceSelectorByForm(this, true, form);
             },
@@ -447,6 +456,9 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
              * *******
              */
             clearValue: function() {
+                if(this.readonly){
+                    return ;
+                }
                 var obj = {};
                 obj[this.getIdField()] = null;
                 obj[this.getTitleField()] = null;
