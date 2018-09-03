@@ -120,6 +120,13 @@ Copyright © HatioLab Inc. All rights reserved.
      */
     _getResourceSelectorDialog: function () {
       return app.$['dialog-manager'];
+    },
+    /**
+     * 수동 validation check function
+     * ********
+     */
+    validate: function() {
+        this.isValid = this.querySelector('input[is=iron-input]').validate();
     }
   };
 
