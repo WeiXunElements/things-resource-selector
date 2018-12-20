@@ -354,8 +354,13 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
        * ********
        */
       openResourceSelector: function() {
-        var ownerForm = this.findOwnerForm(this);
-        this.openResourceSelectorByForm(this, true, ownerForm);
+		var ownerForm = this.findOwnerForm(this);
+        var evt = this.fire('things-resource-selector-open-dialog', ownerForm, {
+            cancelable: true
+        });
+		if (!evt.defaultPrevented) {
+			this.openResourceSelectorByForm(this, true, ownerForm);
+		}
       },
 
       /**

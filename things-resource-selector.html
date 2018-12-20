@@ -426,10 +426,16 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
              */
             openResourceSelector: function() {
                 if(this.readonly){
-                    return ;
+                    return;
                 }
+
                 var form = this.findOwnerForm(this);
-                this.openResourceSelectorByForm(this, true, form);
+                var evt = this.fire('things-resource-selector-open-dialog', form, {
+                    cancelable: true
+                });
+                if (!evt.defaultPrevented) {
+                    this.openResourceSelectorByForm(this, true, form);
+                }
             },
 
             /**
