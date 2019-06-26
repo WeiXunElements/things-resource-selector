@@ -411,23 +411,31 @@ Copyright © HatioLab Inc. All rights reserved.
          * @param {Object} value
          */
         setFieldData: function(element, value) {
+            // if (value === undefined || element.localName == 'things-stamp') {
+            //     return;
+            // } else if (element.localName == 'things-resource-selector' || element.localName == 'things-image-selector') {
+            //     try {
+            //         element.objValue = this.findResourceData(element.resourceName, value);
+            //     } catch (e) {
+            //         element.objValue = {
+            //             id: value,
+            //             name: value
+            //         };
+            //     }
+            //     if (!element.objValue) {
+            //         element.objValue = {
+            //             id: value,
+            //             name: value
+            //         };
+            //     }
+            // } else {
+            //     element.value = value;
+            // }
+
             if (value === undefined || element.localName == 'things-stamp') {
                 return;
-            } else if (element.localName == 'things-resource-selector' || element.localName == 'things-image-selector') {
-                try {
-                    element.objValue = this.findResourceData(element.resourceName, value);
-                } catch (e) {
-                    element.objValue = {
-                        id: value,
-                        name: value
-                    };
-                }
-                if (!element.objValue) {
-                    element.objValue = {
-                        id: value,
-                        name: value
-                    };
-                }
+            } else if(element.localName == 'things-resource-selector' || element.localName == 'things-image-selector') {
+                element.objValue = { id: value };
             } else {
                 element.value = value;
             }
