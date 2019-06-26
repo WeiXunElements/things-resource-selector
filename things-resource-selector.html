@@ -63,8 +63,8 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
 
     <label>[[label]]</label>
 
-    <input is="iron-input" bind-value="{{display}}" readonly tabindex="[[tabIndex]]" error-message$="[[errorMessage]]" auto-validate$="[[autoValidate]]"
-      required$="[[required]]" disabled$="[[readonly]]"></input>
+    <input is="iron-input" id="name-value-field" bind-value="{{display}}" readonly$="[[!readonlyNameInput]]" tabindex="[[tabIndex]]" error-message$="[[errorMessage]]" auto-validate$="[[autoValidate]]"
+      required$="[[required]]" disabled$="[[readonly]]" on-keypress="onNameInputKeypress"></input>
 
     <paper-icon-button readonly$="[[readonly]]" suffix on-tap="clearValue" icon="clear" alt="clear" title="clear" hidden="[[hideClearButton]]">
     </paper-icon-button>
@@ -255,6 +255,11 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
                 },
 
                 readonly: {
+                    type: Boolean,
+                    value: false
+                },
+
+                readonlyNameInput: {
                     type: Boolean,
                     value: false
                 }
@@ -477,6 +482,30 @@ Resource Selector. 서버에 저장되어 있는 리소스 정보를 조회하�
              */
             validate: function() {
                 this.isValid = this.querySelector('input[is=iron-input]').validate();
+            },
+
+            /**
+             * Name value input field enter event
+             * ********
+             */
+            onNameInputKeypress: function(event) {
+                let code = event.keyCode;
+                if (code == 13) {
+                    this.fire('things-enter-resource-selector-input', event.detail, { cancelable: true });
+                }
+            },
+
+            /**
+             * Focus method
+             * ********
+             */
+            focus: function(isSelect) {
+                if (!this.$['name-value-field'].readonly) {
+                    this.$['name-value-field'].focus();
+                    if (isSelect) {
+                        this.$['name-value-field'].select();
+                    }
+                }
             }
         });
     </script>
