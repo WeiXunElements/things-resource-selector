@@ -264,8 +264,8 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * @param {Object} entity
 			 */
 			_entityChanged: function(entity) {
-				if(entity) {
-					this.title = entity.title;
+				if (entity && !this.title) {
+					this.title = Things.DataGlobal.t('menu.' + this.resourceName);
 				}
 			},
 
