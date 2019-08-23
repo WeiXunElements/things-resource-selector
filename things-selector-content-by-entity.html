@@ -31,40 +31,18 @@ Copyright © HatioLab Inc. All rights reserved.
 		</style>
 
 		<div class="layout vertical flex">
-			<things-ajax
-				auto
-				id="resource-meta"
-				method="GET"
-				resource-url="[[entityMetaUrl]]"
+			<things-ajax auto id="resource-meta" method="GET" resource-url="[[entityMetaUrl]]"
 				last-response="{{metaData}}">
 			</things-ajax>
 
-			<things-selector-form
-				id="search-form"
-				initial-params ="[[initialParams]]"
-				form-fields="[[searchFormFields]]"
-				select-fields="[[selectFields]]"
-				sort-fields="[[sortFields]]"
-				action-url="[[resourceUrl]]"
-				page="{{page}}"
-				limit="[[limit]]"
-				param-type="RESOURCE"
-				last-response="{{lastResponse}}">
+			<things-selector-form id="search-form" initial-params="[[initialParams]]" form-fields="[[searchFormFields]]"
+				select-fields="[[selectFields]]" sort-fields="[[sortFields]]" action-url="[[resourceUrl]]"
+				page="{{page}}" limit="[[limit]]" param-type="RESOURCE" last-response="{{lastResponse}}">
 			</things-selector-form>
 
-			<things-resource-grid
-				id="grid"
-				model="[[gridModel]]"
-				columns="[[gridColumns]]"
-				config="[[gridConfig]]"
-				buttons="[[buttons]]"
-				current-page="{{page}}"
-				limit="{{limit}}"
-				data="[[items]]"
-				total-count="[[itemCount]]"
-				fixed-column-count="0"
-				prevent-multi-click-event
-				paginatable>
+			<things-resource-grid id="grid" model="[[gridModel]]" columns="[[gridColumns]]" config="[[gridConfig]]"
+				buttons="[[buttons]]" current-page="{{page}}" limit="{{limit}}" data="[[items]]"
+				total-count="[[itemCount]]" fixed-column-count="0" prevent-multi-click-event paginatable>
 			</things-resource-grid>
 		</div>
 	</template>
@@ -234,23 +212,23 @@ Copyright © HatioLab Inc. All rights reserved.
 						}
 					}
 				},
-                /**
-                 * 选取数据后想要处理的逻辑，默认在things-selector-behavior配置此函数
-                 * ******
-                 * @params {Object} 如果选取源是Grid传递原Grid的GridRow Object和selectedRecord, 如果选取源是Form传递selectedRecord
-                 * @type {Function}
-                 */
-                selectedEventCallback:{
-                    type: Object,
-                    value: function(){
-                        return function(eventDetailObj){}
-                    }
-                }
+				/**
+				 * 选取数据后想要处理的逻辑，默认在things-selector-behavior配置此函数
+				 * ******
+				 * @params {Object} 如果选取源是Grid传递原Grid的GridRow Object和selectedRecord, 如果选取源是Form传递selectedRecord
+				 * @type {Function}
+				 */
+				selectedEventCallback: {
+					type: Object,
+					value: function () {
+						return function (eventDetailObj) {}
+					}
+				}
 			},
 
-			listeners : {
-				'grid.things-grid-configured' : 'refreshGridData',
-				'grid.things-grid-row-data-select' : 'selectRecord'
+			listeners: {
+				'grid.things-grid-configured': 'refreshGridData',
+				'grid.things-grid-row-data-select': 'selectRecord'
 			},
 
 			observers: [
@@ -263,7 +241,7 @@ Copyright © HatioLab Inc. All rights reserved.
 			 *********
 			 * @param {Object} entity
 			 */
-			_entityChanged: function(entity) {
+			_entityChanged: function (entity) {
 				if (entity && !this.title) {
 					this.title = Things.DataGlobal.t('menu.' + this.resourceName);
 				}
@@ -274,9 +252,9 @@ Copyright © HatioLab Inc. All rights reserved.
 			 *********
 			 * @param {Object} ownerElement
 			 */
-			_ownerElementChanged: function(ownerElement) {
+			_ownerElementChanged: function (ownerElement) {
 				var elementName = ownerElement.localName;
-				if(!elementName) {
+				if (!elementName) {
 					this.ownerType = 'Grid';
 				} else {
 					this.ownerType = 'Form';
@@ -288,9 +266,10 @@ Copyright © HatioLab Inc. All rights reserved.
 			 *********
 			 * @param {Object} lastResponse
 			 */
-			_responseChanged: function(lastResponse) {
+			_responseChanged: function (lastResponse) {
 				this.items = lastResponse[this.itemsProp] ? lastResponse[this.itemsProp] : lastResponse;
-				this.itemCount = lastResponse[this.totalProp] ? lastResponse[this.totalProp] : lastResponse.length;
+				this.itemCount = lastResponse[this.totalProp] ? lastResponse[this.totalProp] : lastResponse
+				.length;
 			},
 
 			/**
@@ -298,7 +277,7 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * *******
 			 * @return {String} id 값으로 사용될 필드명
 			 */
-			getIdField: function() {
+			getIdField: function () {
 				return (this.entity && this.entity.id_field) ? this.entity.id_field : 'id';
 			},
 
@@ -307,7 +286,7 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * ********
 			 * @return {String} title 값으로 사용될 필드명
 			 */
-			getTitleField: function() {
+			getTitleField: function () {
 				return (this.entity && this.entity.title_field) ? this.entity.title_field : 'name';
 			},
 
@@ -316,8 +295,9 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * ********
 			 * @return {String} description 값으로 사용될 필드명
 			 */
-			getDescriptionField: function() {
-				return (this.entity && this.entity.description_field) ? this.entity.description_field : 'description';
+			getDescriptionField: function () {
+				return (this.entity && this.entity.description_field) ? this.entity.description_field :
+					'description';
 			},
 
 			/**
@@ -325,7 +305,7 @@ Copyright © HatioLab Inc. All rights reserved.
 			 **********
 			 * @param {Object} grid
 			 */
-			refreshGridData: function(grid) {
+			refreshGridData: function (grid) {
 				this.preprocessInitialParams();
 				this.$['search-form'].submitMyForm();
 			},
@@ -336,10 +316,10 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * container가 그리드라면 그리드의 해당 row에서 initialParams의 변수명에 해당하는 이름으로 데이터를 찾아 initialParams를 구성한다.
 			 * ********
 			 */
-			preprocessInitialParams: function() {
-				if(this.initialParams && this.initialParams.indexOf('$') > 1) {
+			preprocessInitialParams: function () {
+				if (this.initialParams && this.initialParams.indexOf('$') > 1) {
 					var ownerData = this.findOwnerData();
-					if(ownerData) {
+					if (ownerData) {
 						this.resetSearchParams(ownerData);
 					}
 				}
@@ -350,25 +330,25 @@ Copyright © HatioLab Inc. All rights reserved.
 			 **********
 			 * @param {Object} ownerData
 			 */
-			resetSearchParams: function(ownerData) {
-				if(!this.initialParams) return;
+			resetSearchParams: function (ownerData) {
+				if (!this.initialParams) return;
 
 				var searchParams = this.initialParams;
 				var initParamArr = this.initialParams.split(',');
 
-				for(var i = 0 ; i < initParamArr.length ; i++) {
+				for (var i = 0; i < initParamArr.length; i++) {
 					var initParam = initParamArr[i];
 					var paramArr = initParam.split('=');
 					var varName = paramArr[1];
 
-					if(varName[0] == '$') {
+					if (varName[0] == '$') {
 						var varRealName = varName.substr(1);
 						var varData = ownerData[varRealName] || '';
 
-						if(!varData && varRealName.indexOf('_id') > 0) {
+						if (!varData && varRealName.indexOf('_id') > 0) {
 							varRealName = varRealName.substr(0, varRealName.lastIndexOf('_id'));
 							varData = ownerData[varRealName] || '';
-							if(varData) varData = varData.id || '';
+							if (varData) varData = varData.id || '';
 							searchParams = searchParams.replace(varName, varData);
 
 						} else {
@@ -377,7 +357,7 @@ Copyright © HatioLab Inc. All rights reserved.
 					}
 				}
 
-				if(searchParams) {
+				if (searchParams) {
 					this.$['search-form'].initialParams = searchParams;
 				}
 			},
@@ -386,17 +366,17 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * Owner Data를 찾아 리턴
 			 * ********
 			 */
-			findOwnerData: function() {
-				if(this.ownerType == 'Form') {
-					if(this.ownerContainer) {
+			findOwnerData: function () {
+				if (this.ownerType == 'Form') {
+					if (this.ownerContainer) {
 						return this.ownerContainer.serialize ?
-									 this.ownerContainer.serialize() :
-									 (this.ownerContainer.serializeMyForm ? this.ownerContainer.serializeMyForm() : null);
+							this.ownerContainer.serialize() :
+							(this.ownerContainer.serializeMyForm ? this.ownerContainer.serializeMyForm() : null);
 					} else {
 						return null;
 					}
 
-				} else if(this.ownerType == 'Grid') {
+				} else if (this.ownerType == 'Grid') {
 					var row = this.ownerElement.focusedRow();
 					return (row && row.dataIndex() >= 0) ? row.getRowObject() : null;
 
@@ -410,11 +390,11 @@ Copyright © HatioLab Inc. All rights reserved.
 			 *********
 			 * @param {Object} event
 			 */
-			selectRecord: function(event) {
-				if(this.ownerType == 'Form') {
+			selectRecord: function (event) {
+				if (this.ownerType == 'Form') {
 					this._selectRecordByForm(event);
 
-				} else if(this.ownerType == 'Grid') {
+				} else if (this.ownerType == 'Grid') {
 					this._selectRecordByGrid(event);
 				}
 			},
@@ -424,27 +404,25 @@ Copyright © HatioLab Inc. All rights reserved.
 			 *********
 			 * @param {Object} event
 			 */
-			_selectRecordByForm: function(event) {
+			_selectRecordByForm: function (event) {
 				var selectedResource = event.detail;
 				var ownerData = this.findOwnerData();
 				var evt = this.selectedEventCallback(selectedResource);
-                if (evt.defaultPrevented) {
-                	this.closeResourceSelectorDialog();
-                	return ;
-                }
+				if (evt.defaultPrevented) {
+					this.closeResourceSelectorDialog();
+					return;
+				}
 				// resource format selector인 경우 Object 값으로 설정한다.
-				if(this.ownerElement.localName == 'things-resource-format-selector') {
+				if (this.ownerElement.localName == 'things-resource-format-selector') {
 					this.ownerElement.setObjValue(selectedResource);
 
-				// Container에서 필요한 대표 컬럼 및 선택한 값을 설정한다.
+					// Container에서 필요한 대표 컬럼 및 선택한 값을 설정한다.
 				} else {
-					if(!this.ownerElement.resourceIdField) {
+					if (!this.ownerElement.resourceIdField) {
 						this.ownerElement.resourceIdField = this.getIdField();
 					}
 
-					if(!this.ownerElement.resourceTitleField) {
-						this.ownerElement.resourceTitleField = this.getTitleField();
-					}
+					this.ownerElement.resourceTitleField = this.getTitleField();
 
 					var idValue = selectedResource[this.ownerElement.resourceIdField];
 					var displayValue = selectedResource[this.ownerElement.resourceTitleField];
@@ -461,14 +439,15 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * @param {Object} sourceData
 			 * @param {Object} targetData
 			 */
-			_bindObjectFields: function(sourceData, targetData) {
-				if(this.bindFields) {
+			_bindObjectFields: function (sourceData, targetData) {
+				if (this.bindFields) {
 					var binders = this.bindFields.split(',');
-					for(var i = 0 ; i < binders.length ; i++) {
+					for (var i = 0; i < binders.length; i++) {
 						var binder = binders[i];
-						var fromField = binder, toField = binder;
+						var fromField = binder,
+							toField = binder;
 
-						if(binder.indexOf('=') > 0) {
+						if (binder.indexOf('=') > 0) {
 							var binderArr = binder.split('=');
 							toField = binderArr[0], fromField = binderArr[1];
 						}
@@ -477,7 +456,7 @@ Copyright © HatioLab Inc. All rights reserved.
 					}
 				}
 
-				if(this.ownerType == 'Form' && this.bindFields) {
+				if (this.ownerType == 'Form' && this.bindFields) {
 					this.ownerElement.setParentFormData(targetData);
 				}
 			},
@@ -487,7 +466,7 @@ Copyright © HatioLab Inc. All rights reserved.
 			 *********
 			 * @param {Object} event
 			 */
-			_selectRecordByGrid: function(event) {
+			_selectRecordByGrid: function (event) {
 				var selectedResource = event.detail;
 				// 메뉴에서 설정한 idField와 titleField로 event.detail내의 값을 추출한 뒤 object로 구성하여 그리드의 row 데이터 중에 업데이트 할 필드로 업데이트한다.
 				var parentGrid = this.ownerElement;
@@ -497,19 +476,23 @@ Copyright © HatioLab Inc. All rights reserved.
 				var row = parentGrid.focusedRow();
 				var dataSet = parentGrid.dataSource();
 
-				if(row && row.dataIndex() >= 0) {
+				if (row && row.dataIndex() >= 0) {
 					var rowObj = row.getRowObject();
-					var evt = this.selectedEventCallback({ rowObj: rowObj, resource : selectedResource });
-	                if (evt.defaultPrevented) {
-	                	this.closeResourceSelectorDialog();
-	                	return ;
-	                }
+					var evt = this.selectedEventCallback({
+						rowObj: rowObj,
+						resource: selectedResource
+					});
+					if (evt.defaultPrevented) {
+						this.closeResourceSelectorDialog();
+						return;
+					}
 					var objToChange = rowObj[this.ownerField];
 
-					if(this.valueField) {
+					if (this.valueField) {
 						objToChange = this._getSingleValueOfSelectedRecord(selectedResource, this.valueField);
 					} else {
-						objToChange = this._getResourceValueOfSelectedRecord(selectedResource, objToChange, idField, titleField, descriptionField);
+						objToChange = this._getResourceValueOfSelectedRecord(selectedResource, objToChange,
+							idField, titleField, descriptionField);
 					}
 
 					// Grid의 ownerField 데이터 변경
@@ -537,20 +520,21 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * @param {String} descriptionField description 값으로 사용할 필드명
 			 * @return {Object} 선택된 레코드의 값
 			 */
-			_getResourceValueOfSelectedRecord: function(selectedResource, objToChange, idField, titleField, descriptionField) {
-				if(typeof(objToChange) === 'undefined' || objToChange === null) {
+			_getResourceValueOfSelectedRecord: function (selectedResource, objToChange, idField, titleField,
+				descriptionField) {
+				if (typeof (objToChange) === 'undefined' || objToChange === null) {
 					objToChange = {};
 				}
 
-				if(typeof(objToChange) == 'object') {
+				if (typeof (objToChange) == 'object') {
 					objToChange[idField] = selectedResource[idField];
 					objToChange[titleField] = selectedResource[titleField];
 					objToChange[descriptionField] = selectedResource[descriptionField];
 
-				} else if(typeof(objToChange) == 'string') {
+				} else if (typeof (objToChange) == 'string') {
 					objToChange = selectedResource[titleField];
 
-				} else if(typeof(objToChange) == 'number') {
+				} else if (typeof (objToChange) == 'number') {
 					objToChange = selectedResource[idField];
 				}
 
@@ -564,7 +548,7 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * @param {String} valueField
 			 * @return {String} 선택된 레코드의 valueField에 해당하는 값
 			 */
-			_getSingleValueOfSelectedRecord: function(selectedResource, valueField) {
+			_getSingleValueOfSelectedRecord: function (selectedResource, valueField) {
 				return selectedResource[valueField];
 			},
 
@@ -572,7 +556,7 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * Close Resource Selector Dialog
 			 * *******
 			 */
-			closeResourceSelectorDialog: function() {
+			closeResourceSelectorDialog: function () {
 				this.fire('things-dialog-close');
 			},
 
@@ -581,11 +565,11 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * ********
 			 * @param {Object} element
 			 */
-			findOwnerDialog: function(element) {
-				if(!element.parentElement) {
+			findOwnerDialog: function (element) {
+				if (!element.parentElement) {
 					return null;
 				} else {
-					if(element.parentElement.localName == 'things-resource-dialog') {
+					if (element.parentElement.localName == 'things-resource-dialog') {
 						return element.parentElement;
 					} else {
 						return this.findOwnerDialog(element.parentElement);
