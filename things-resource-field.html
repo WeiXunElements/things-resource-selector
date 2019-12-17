@@ -327,10 +327,12 @@ Resource field. 서버에 저장되어 있는 리소스 정보를 조회하여 i
              ********
              * @param {String} idValue
              * @param {String} displayValue
+             * @param {Object} selectedResource
              */
-            setResourceValue: function (idValue, displayValue) {
+            setResourceValue: function (idValue, displayValue, selectedResource) {
                 this.idValue = idValue;
                 this.displayValue = displayValue;
+                this.setValue(selectedResource);
 
                 var event = new CustomEvent('selector-value-selected', {
                     detail: {
