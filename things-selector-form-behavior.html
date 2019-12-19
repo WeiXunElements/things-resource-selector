@@ -336,6 +336,9 @@ Copyright © HatioLab Inc. All rights reserved.
             }
 
             if (!newElement) return null;
+            if(!newElement.value) {
+                this.setFieldData(newElement, element.default);
+            }
             newElement.setAttribute('class', 'flex style-scope things-form');
             return newElement;
         },
@@ -411,31 +414,12 @@ Copyright © HatioLab Inc. All rights reserved.
          * @param {Object} value
          */
         setFieldData: function(element, value) {
-            // if (value === undefined || element.localName == 'things-stamp') {
-            //     return;
-            // } else if (element.localName == 'things-resource-selector' || element.localName == 'things-image-selector') {
-            //     try {
-            //         element.objValue = this.findResourceData(element.resourceName, value);
-            //     } catch (e) {
-            //         element.objValue = {
-            //             id: value,
-            //             name: value
-            //         };
-            //     }
-            //     if (!element.objValue) {
-            //         element.objValue = {
-            //             id: value,
-            //             name: value
-            //         };
-            //     }
-            // } else {
-            //     element.value = value;
-            // }
-
-            if (value === undefined || element.localName == 'things-stamp') {
+            if(value === undefined || element.localName == 'things-stamp') {
                 return;
             } else if(element.localName == 'things-resource-selector' || element.localName == 'things-image-selector') {
-                element.objValue = { id: value };
+                element.objValue = value;
+            } else if (element.localName == 'things-tristate-checkbox') {
+                element.state = value === 'true' || value === true ? 'on' : 'off';
             } else {
                 element.value = value;
             }
