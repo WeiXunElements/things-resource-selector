@@ -307,7 +307,7 @@ Copyright © HatioLab Inc. All rights reserved.
 			 */
 			refreshGridData: function (grid) {
 				// active필드를 빌려서 초기조회를 방지
-				if (this.metaData.active)
+				if (!this.metaData.active)
 					return;
 
 				this.preprocessInitialParams();
