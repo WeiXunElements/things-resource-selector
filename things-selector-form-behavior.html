@@ -417,7 +417,7 @@ Copyright © HatioLab Inc. All rights reserved.
             if(value === undefined || element.localName == 'things-stamp') {
                 return;
             } else if(element.localName == 'things-resource-selector' || element.localName == 'things-image-selector') {
-                element.objValue = value;
+                element.objValue = typeof value === 'string' ? { id: value } : value;
             } else if (element.localName == 'things-tristate-checkbox') {
                 element.state = value === 'true' || value === true ? 'on' : 'off';
             } else {
