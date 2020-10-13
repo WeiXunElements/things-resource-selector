@@ -422,11 +422,11 @@ Copyright © HatioLab Inc. All rights reserved.
 
 					// Container에서 필요한 대표 컬럼 및 선택한 값을 설정한다.
 				} else {
-					if (!this.ownerElement.resourceIdField) {
+					if (!this.ownerElement.resourceIdField)
 						this.ownerElement.resourceIdField = this.getIdField();
-					}
 
-					this.ownerElement.resourceTitleField = this.getTitleField();
+					if (!this.ownerElement.resourceTitleField || this.ownerElement.resourceTitleField == '')
+						this.ownerElement.resourceTitleField = this.getTitleField();
 
 					var idValue = selectedResource[this.ownerElement.resourceIdField];
 					var displayValue = selectedResource[this.ownerElement.resourceTitleField];

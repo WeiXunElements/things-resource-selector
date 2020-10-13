@@ -165,21 +165,26 @@ Copyright © HatioLab Inc. All rights reserved.
                 var queryParamArr = this.initialParams.split(',');
                 var elements = this.getFormElements();
                 var newQueryParam = '';
-                for (var queryParam of queryParamArr) {
-                    var paramArr = queryParam.split('=');
+                for (const queryParam of queryParamArr) {
+                    const paramArr = queryParam.split('=');
 
-                    for (var element of elements) {
-                        if (paramArr == element.name && element.value) {
-                            if (element.tagName.toLowerCase() == 'things-resource-selector') {
-                                searchParams[element.name] = element.objValue;
-                            } else {
-                                searchParams[element.name] = element.value;
+                    for (const element of elements) {
+                        const name = paramArr[0],
+                            value = paramArr[1];
+                        if (name === element.name) {
+                            if (value) {
+                                searchParams[element.name] = value;
+                            } else if (element.value) {
+                                if (element.tagName.toLowerCase() === 'things-resource-selector') {
+                                    searchParams[element.name] = element.objValue;
+                                } else {
+                                    searchParams[element.name] = element.value;
+                                }
                             }
 
                             if (newQueryParam) {
                                 newQueryParam += ',';
                             }
-
                             newQueryParam += element.name + '=' + searchParams[element.name];
                         }
                     }
