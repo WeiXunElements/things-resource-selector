@@ -306,11 +306,11 @@ Copyright © HatioLab Inc. All rights reserved.
 			 * @param {Object} grid
 			 */
 			refreshGridData: function (grid) {
+				this.preprocessInitialParams();
+
 				// active필드를 빌려서 초기조회를 방지
 				if (!this.metaData.active)
 					return;
-
-				this.preprocessInitialParams();
 				this.$['search-form'].submitMyForm();
 			},
 
