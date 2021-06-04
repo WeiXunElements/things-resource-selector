@@ -1,8 +1,8 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
 <!--
   참조 Resource의 다른 필드를 검색 조건에 포함(Join Query)하기 위한 쿼리 필드
@@ -11,25 +11,24 @@ Copyright © HatioLab Inc. All rights reserved.
 <dom-module id="things-reference-query">
   <style>
     label {
-      @apply(--things-label);
+      @apply (--things-label);
     }
     input {
-      @apply(--things-input);
-      width:65%;
+      @apply (--things-input);
+      width: 65%;
     }
     input:focus {
-      outline:none;
+      outline: none;
     }
   </style>
 
   <template>
     <label>[[label]]</label>
-    <input is="iron-input" name="[[name]]" bind-value="[[value]]" tabindex$="[[tabIndex]]">
+    <input is="iron-input" name="[[name]]" bind-value="[[value]]" tabindex$="[[tabIndex]]" />
   </template>
 
   <script type="text/javascript">
     Polymer({
-
       is: "things-reference-query",
 
       properties: {
@@ -38,9 +37,9 @@ Copyright © HatioLab Inc. All rights reserved.
          * ********
          * @type {String}
          */
-        name : {
+        name: {
           type: String,
-          computed: '_computeName(refName, fieldName)'
+          computed: "_computeName(refName, fieldName)",
         },
 
         /**
@@ -49,7 +48,7 @@ Copyright © HatioLab Inc. All rights reserved.
          * @type {String}
          */
         label: {
-          type: String
+          type: String,
         },
 
         /**
@@ -58,7 +57,7 @@ Copyright © HatioLab Inc. All rights reserved.
          * @type {String}
          */
         value: {
-          type: String
+          type: String,
         },
 
         /**
@@ -68,7 +67,7 @@ Copyright © HatioLab Inc. All rights reserved.
          * @type {String}
          */
         refName: {
-          type: String
+          type: String,
         },
 
         /**
@@ -78,7 +77,7 @@ Copyright © HatioLab Inc. All rights reserved.
          * @type {String}
          */
         fieldName: {
-          type: String
+          type: String,
         },
 
         /**
@@ -86,9 +85,9 @@ Copyright © HatioLab Inc. All rights reserved.
          * *******
          * @type {String}
          */
-        tabIndex :{
-          type: String
-        }
+        tabIndex: {
+          type: String,
+        },
       },
 
       /**
@@ -98,9 +97,9 @@ Copyright © HatioLab Inc. All rights reserved.
        * @param {string} fieldName
        * @return {string}
        */
-      _computeName: function(refName, fieldName) {
-        if(refName && refName.length > 0 && fieldName && fieldName.length > 0) {
-          return refName + '.' + fieldName;
+      _computeName: function (refName, fieldName) {
+        if (refName && refName.length > 0 && fieldName && fieldName.length > 0) {
+          return refName + "." + fieldName;
         } else {
           return null;
         }
@@ -111,9 +110,9 @@ Copyright © HatioLab Inc. All rights reserved.
        * *******
        * @return {string}
        */
-      getValue: function() {
+      getValue: function () {
         return this.value;
-      }
+      },
     });
   </script>
 </dom-module>

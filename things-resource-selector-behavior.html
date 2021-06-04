@@ -1,13 +1,12 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="./things-resource-dialog.html">
+<link rel="import" href="./things-resource-dialog.html" />
 
 <script>
-
   window.Things = window.Things || {};
 
   /**
@@ -19,17 +18,16 @@ Copyright © HatioLab Inc. All rights reserved.
    * @demo demo/index.html
    */
   Things.ResourceSelectorBehavior = {
-
     properties: {
       /**
        * index
        * ******
        * @type {String}
-      */
+       */
       tabIndex: {
         type: String,
-        value: '-1'
-      }
+        value: "-1",
+      },
     },
 
     /**
@@ -43,13 +41,13 @@ Copyright © HatioLab Inc. All rights reserved.
     openResourceSelectorByGrid: function (parentGrid, parentGridRowIdx, selectorConfig, modal) {
       var selector = this._createResourceContent(parentGrid, parentGrid, selectorConfig);
       var self = this;
-      selector.selectedEventCallback = function(selectedResource){
-        return self.fire('things-resource-selector-selected', selectedResource,{ cancelable: true });
-      }
+      selector.selectedEventCallback = function (selectedResource) {
+        return self.fire("things-resource-selector-selected", selectedResource, { cancelable: true });
+      };
       selector.parentGridRowIdx = parentGridRowIdx;
       if (selectorConfig.valueField) selector.valueField = selectorConfig.valueField;
       var event = { view: selector, modal: modal };
-      this.fire('things-open-popup-view', event);
+      this.fire("things-open-popup-view", event);
     },
 
     /**
@@ -62,11 +60,11 @@ Copyright © HatioLab Inc. All rights reserved.
     openResourceSelectorByForm: function (ownerElement, modal, ownerForm) {
       var selector = this._createResourceContent(ownerElement, ownerForm);
       var self = this;
-      selector.selectedEventCallback = function(selectedResource){
-        return self.fire('things-resource-selector-selected', selectedResource,{ cancelable: true });
-      }
+      selector.selectedEventCallback = function (selectedResource) {
+        return self.fire("things-resource-selector-selected", selectedResource, { cancelable: true });
+      };
       var event = { view: selector, modal: modal };
-      this.fire('things-open-popup-view', event);
+      this.fire("things-open-popup-view", event);
     },
 
     /**
@@ -86,7 +84,7 @@ Copyright © HatioLab Inc. All rights reserved.
       var resourceType = (ownerElement.resourceType || selectorConfig.resourceType).toLowerCase();
       var resourceName = ownerElement.resourceName || selectorConfig.resourceName;
 
-      var content = document.createElement('things-selector-content-by-' + resourceType);
+      var content = document.createElement("things-selector-content-by-" + resourceType);
       content.ownerElement = ownerElement;
       content.ownerContainer = ownerContainer;
 
@@ -101,13 +99,13 @@ Copyright © HatioLab Inc. All rights reserved.
       }
       // content.id = "resource-selector";
 
-      content.title = Things.DataGlobal.t('menu.' + resourceName);
+      content.title = Things.DataGlobal.t("menu." + resourceName);
       switch (resourceType) {
-        case 'entity':
-        case 'menu':
+        case "entity":
+        case "menu":
           content.resourceName = resourceName;
           break;
-        case 'service':
+        case "service":
           content.resourceUrl = ownerElement.resourceUrl;
           content.searchFormFields = ownerElement.searchFormFields;
           content.selectFields = ownerElement.selectFields;
@@ -127,8 +125,7 @@ Copyright © HatioLab Inc. All rights reserved.
      * @return {Object} Dialog Manager
      */
     _getResourceSelectorDialog: function () {
-      return app.$['dialog-manager'];
-    }
+      return app.$["dialog-manager"];
+    },
   };
-
 </script>

@@ -1,110 +1,127 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<!doctype html>
+<!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes" />
+    <title>things-resource-dialog Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="../../things-libraries/things-libraries.html" />
+    <script src="things-lic.js"></script>
+    <script src="../../things-license-checker-min/things-license-checker.min.js"></script>
+    <link rel="import" href="../../paper-button/paper-button.html" />
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html" />
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html" />
+    <link rel="import" href="../../things-i18n-msg/things-i18n-msg.html" />
+    <link rel="import" href="../../things-theme/things-xmes-theme.html" />
+    <link rel="import" href="../../things-ajax/things-ajax.html" />
+    <link rel="import" href="../../things-grid/things-resource-grid.html" />
+    <link rel="import" href="../things-resource-dialog.html" />
+    <link rel="import" href="../../things-code-editor/things-code-editor.html" />
+    <link rel="import" href="../../things-splitter/things-splitter.html" />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-  <title>things-resource-dialog Demo</title>
-  <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
-  <link rel="import" href="../../things-libraries/things-libraries.html">
-  <script src="things-lic.js"></script>
-  <script src="../../things-license-checker-min/things-license-checker.min.js"></script>
-  <link rel="import" href="../../paper-button/paper-button.html">
-  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-  <link rel="import" href="../../things-i18n-msg/things-i18n-msg.html">
-  <link rel="import" href="../../things-theme/things-xmes-theme.html">
-  <link rel="import" href="../../things-ajax/things-ajax.html">
-  <link rel="import" href="../../things-grid/things-resource-grid.html">
-  <link rel="import" href="../things-resource-dialog.html">
-  <link rel="import" href="../../things-code-editor/things-code-editor.html">
-  <link rel="import" href="../../things-splitter/things-splitter.html">
-</head>
+  <body unresolved>
+    <h3>things-resource-dialog Detail View</h3>
+    <h4>Open을 하기전에 Detail View를 setup하고 오픈한다.</h4>
+    <demo-snippet class="centered-demo">
+      <template>
+        <style is="custom-style" include="things-xmes-theme"></style>
+        <template id="dom-bind" is="dom-bind">
+          <things-i18n-msg></things-i18n-msg>
+          <things-ajax
+            auto
+            resource-url="http://127.0.0.1:8081/components/things-resource-selector/demo/entities/Role/resource_columns.json"
+            handle-as="json"
+            last-response="{{gridConfigure}}"
+          ></things-ajax>
+          <things-resource-dialog resizeable></things-resource-dialog>
+          <button raised onclick="openDialog()">open dialog</button>
+          <script>
+            function openDialog() {
+              var element = document.querySelector("things-resource-dialog");
+              var dialog = element.getDialog();
+              var view = document.createElement("two-elements");
+              view.title = "TEST";
+              view.model = document.querySelector("#dom-bind").gridConfigure.models;
+              view.columns = document.querySelector("#dom-bind").gridConfigure.columns;
+              view.id = "detail-view";
+              element.title = view.title;
+              element.dialogSize = "small";
+              dialog.modal = true;
 
-<body unresolved>
-  <h3>things-resource-dialog Detail View</h3>
-  <h4>Open을 하기전에 Detail View를 setup하고 오픈한다.</h4>
-  <demo-snippet class="centered-demo">
-    <template>
-      <style is="custom-style" include="things-xmes-theme"></style>
-      <template id="dom-bind" is="dom-bind">
-        <things-i18n-msg></things-i18n-msg>
-        <things-ajax auto resource-url="http://127.0.0.1:8081/components/things-resource-selector/demo/entities/Role/resource_columns.json" handle-as="json" last-response="{{gridConfigure}}"></things-ajax>
-        <things-resource-dialog resizeable></things-resource-dialog>
-        <button raised onclick="openDialog()">open dialog</button>
-        <script>
-        function openDialog() {
-          var element = document.querySelector('things-resource-dialog');
-          var dialog = element.getDialog();
-          var view = document.createElement('two-elements');
-          view.title = 'TEST';
-          view.model = document.querySelector('#dom-bind').gridConfigure.models;
-          view.columns = document.querySelector('#dom-bind').gridConfigure.columns;
-          view.id = "detail-view";
-          element.title = view.title;
-          element.dialogSize = 'small';
-          dialog.modal = true;
+              var scrollable = element.$.scrollroot;
+              if (element.detailView) {
+                try {
+                  scrollable.removeChild(element.detailView);
+                } catch (e) {
+                  console.log(e);
+                }
+              }
+              element.detailView = view;
 
-          var scrollable = element.$.scrollroot;
-          if (element.detailView) {
-            try {
-              scrollable.removeChild(element.detailView);
-            } catch (e) {
-              console.log(e);
+              element.openCallback = null;
+              element.closeCallback = null;
+
+              scrollable.appendChild(view);
+
+              dialog.open();
             }
-          }
-          element.detailView = view;
 
-          element.openCallback = null;
-          element.closeCallback = null;
-
-          scrollable.appendChild(view);
-
-          dialog.open();
+            document.addEventListener("WebComponentsReady", function (event) {
+              document.querySelector("things-ajax").set("globals.baseUrl", " ");
+            });
+          </script>
+        </template>
+      </template>
+    </demo-snippet>
+    <dom-module id="two-elements">
+      <style type="text/css">
+        :host {
+          display: block;
+          @apply (--layout-vertical);
         }
 
-        document.addEventListener('WebComponentsReady', function(event) {
-          document.querySelector('things-ajax').set('globals.baseUrl', " ");
-        })
-        </script>
+        .container {
+          height: 80%;
+          @apply (--layout-vertical);
+        }
+        .editor {
+          height: 100px;
+        }
+        .flex-editor {
+          @apply (--layout-flex);
+        }
+      </style>
+      <template>
+        <things-editor-script
+          class="editor"
+          theme="ace/theme/monokai"
+          mode="ace/mode/markdown"
+          fontsize="12px"
+          tabsize="2"
+          value="{{value}}"
+        >
+        </things-editor-script>
+        <things-splitter direction="up"></things-splitter>
+        <things-editor-script
+          class="flex-editor"
+          theme="ace/theme/monokai"
+          mode="ace/mode/markdown"
+          fontsize="12px"
+          tabsize="2"
+          value="{{value}}"
+        >
+        </things-editor-script>
       </template>
-    </template>
-  </demo-snippet>
-  <dom-module id="two-elements">
-    <style type="text/css">
-    :host {
-      display: block;
-      @apply(--layout-vertical);
-    }
-
-    .container {
-      height: 80%;
-      @apply(--layout-vertical);
-    }
-    .editor {
-      height: 100px;
-    }
-    .flex-editor {
-      @apply(--layout-flex);
-    }
-    </style>
-    <template>
-      <things-editor-script class="editor" theme="ace/theme/monokai" mode="ace/mode/markdown" fontsize="12px" tabsize="2"  value="{{value}}">
-      </things-editor-script>
-      <things-splitter direction="up"></things-splitter>
-      <things-editor-script class="flex-editor" theme="ace/theme/monokai" mode="ace/mode/markdown" fontsize="12px" tabsize="2"  value="{{value}}">
-      </things-editor-script>
-    </template>
-    <script>
-    Polymer({
-      is: 'two-elements'
-    });
-    </script>
-  </dom-module>
-</body>
-
+      <script>
+        Polymer({
+          is: "two-elements",
+        });
+      </script>
+    </dom-module>
+  </body>
 </html>

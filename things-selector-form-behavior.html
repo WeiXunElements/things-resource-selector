@@ -1,456 +1,450 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html" />
 
-<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
-<link rel="import" href="../things-global-behavior/things-global-behavior.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html" />
+<link rel="import" href="../things-global-behavior/things-global-behavior.html" />
 
 <script>
-    window.Things = window.Things || {};
+  window.Things = window.Things || {};
+
+  /**
+   * Resource Selector용 Form Behavior
+   *
+   * @polymerBehavior Things.SelectorFormBehavior
+   */
+  Things.SelectorFormBehaviorImpl = {
+    properties: {
+      /**
+       * Meta-Data of the form elements of the form.
+       * Custom Form element can configure child elements of the form dynamically.
+       * StdSelectorFormBehavior create form element by each of this attributes
+       * *******
+       * @type {Array}
+       */
+      formFields: {
+        type: Array,
+        observer: "_formFieldsChanged",
+      },
+
+      /**
+       * Url for submit. global setting의 baseUrl이 제거된 불완전한 URL.
+       * 이 정보로는 form submit을 할 수 없고 이 url이 설정되는 순간 _computeAction이 작동하여 완전한 action url을 생성하여 action 값에 설정한다.
+       * ******
+       * @type {String}
+       */
+      actionUrl: {
+        type: String,
+        notify: true,
+      },
+
+      /**
+       * Action url for submit.
+       * This attribute is configured by base url of the global setting.
+       * ******
+       * @type {String}
+       */
+      action: {
+        type: String,
+        computed: "_computeAction(globals.baseUrl,actionUrl)",
+      },
+
+      /**
+       * HTTP Method for submit.
+       * ******
+       * @type {String}
+       */
+      method: {
+        type: String,
+      },
+
+      /**
+       * HTTP Content Type for submit.
+       * ******
+       * @type {String}
+       */
+      contentType: {
+        type: String,
+        value: "application/json",
+      },
+
+      /**
+       * HTTP 전송시 withCredentials 값 설정
+       * ******
+       * @type {Boolean}
+       */
+      withCredentials: {
+        type: Boolean,
+        value: true,
+      },
+
+      /**
+       * HTTP 전송시 Header 값 설정
+       * ******
+       * @type {Object}
+       */
+      headers: {
+        type: Object,
+      },
+
+      /**
+       * 검색 결과 데이터
+       * ******
+       * @type {Object}
+       */
+      lastResponse: {
+        type: Object,
+        notify: true,
+      },
+    },
 
     /**
-     * Resource Selector용 Form Behavior
-     *
-     * @polymerBehavior Things.SelectorFormBehavior
+     * Handler after Form element changed.
+     * Child elements of the form is reconfigured by this function.
+     * The form that extends StdSelectorFormBehavior must implement 'reconfigureMyForm' function.
+     * Logic of'reconfigureMyForm' function is creation form child elements by formFields attributes and configuration layout.
+     **********
+     * @param {Array} formFields attribute
      */
-    Things.SelectorFormBehaviorImpl = {
+    _formFieldsChanged: function (formFields) {
+      this.reconfigureMyForm();
+    },
 
-        properties: {
-            /**
-             * Meta-Data of the form elements of the form.
-             * Custom Form element can configure child elements of the form dynamically.
-             * StdSelectorFormBehavior create form element by each of this attributes
-             * *******
-             * @type {Array}
-             */
-            formFields: {
-                type: Array,
-                observer: '_formFieldsChanged'
-            },
+    /**
+     * compute action url by base url of the global settings
+     **********
+     * @param {string} baseUrl base url of the global settings
+     * @param {string} actionUrl url attribute
+     */
+    _computeAction: function (baseUrl, actionUrl) {
+      return baseUrl + "/" + actionUrl;
+    },
 
-            /**
-             * Url for submit. global setting의 baseUrl이 제거된 불완전한 URL.
-             * 이 정보로는 form submit을 할 수 없고 이 url이 설정되는 순간 _computeAction이 작동하여 완전한 action url을 생성하여 action 값에 설정한다.
-             * ******
-             * @type {String}
-             */
-            actionUrl: {
-                type: String,
-                notify: true
-            },
+    /**
+     * Bind element's attribute values by formField informations.
+     **********
+     * @param {Object} element information object from formFields
+     * @param {Object} attrs attributes
+     */
+    _bindAttributes: function (element, attrs) {
+      for (attr in attrs) {
+        element.setAttribute(attr, attrs[attr]);
+      }
 
-            /**
-             * Action url for submit.
-             * This attribute is configured by base url of the global setting.
-             * ******
-             * @type {String}
-             */
-            action: {
-                type: String,
-                computed: '_computeAction(globals.baseUrl,actionUrl)'
-            },
+      return element;
+    },
 
-            /**
-             * HTTP Method for submit.
-             * ******
-             * @type {String}
-             */
-            method: {
-                type: String
-            },
+    /**
+     * Create child element of the form by one of the formFields object
+     **********
+     * @param {Object} element of the formFields attribute
+     * @return {Object} created child element for the form
+     */
+    _createFormElement: function (element) {
+      var newElement = null;
 
-            /**
-             * HTTP Content Type for submit.
-             * ******
-             * @type {String}
-             */
-            contentType: {
-                type: String,
-                value: 'application/json'
-            },
+      switch (element.type) {
+        case "checkbox":
+          newElement = document.createElement("things-tristate-checkbox");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+          break;
 
-            /**
-             * HTTP 전송시 withCredentials 값 설정
-             * ******
-             * @type {Boolean}
-             */
-            withCredentials: {
-                type: Boolean,
-                value: true
-            },
+        case "tristate-radio":
+          newElement = document.createElement("things-tristate-radio");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+          newElement.showIgnore = element.searchForm ? true : false;
+          break;
 
-            /**
-             * HTTP 전송시 Header 값 설정
-             * ******
-             * @type {Object}
-             */
-            headers: {
-                type: Object
-            },
+        case "button":
+          newElement = document.createElement("things-button");
+          newElement = this._bindAttributes(newElement, element);
+          newElement.label = element.label;
+          break;
 
-            /**
-             * 검색 결과 데이터
-             * ******
-             * @type {Object}
-             */
-            lastResponse: {
-                type: Object,
-                notify: true
+        case "dropdown":
+          newElement = document.createElement("paper-dropdown-menu");
+          newElement = this._bindAttributes(newElement, element);
+          newChild = this._makeListBox(element.options);
+          newChild.setAttribute("class", "dropdown-content");
+          newElement.appendChild(newChild);
+          break;
+
+        case "radio":
+          newElement = document.createElement("paper-radio-group");
+          newElement = this._bindAttributes(newElement, element);
+
+          for (index in element.child) {
+            child = element[index];
+            newChild = document.createElement("paper-radio-button");
+            newChild = this._bindAttributes(newChild, child);
+            newElement.appendChild(newChild);
+          }
+          break;
+
+        case "textarea":
+          newElement = document.createElement("things-textarea");
+          newElement = this._bindAttributes(newElement, element);
+          newElement.rows = 4;
+          break;
+
+        case "code-combo":
+          newElement = document.createElement("things-code-combo");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+          newElement.setAttribute("code-name", element.codeName);
+          newElement.setAttribute("label-path", "description");
+          newElement.setAttribute("value-path", "name");
+          break;
+
+        case "resource-combo":
+          newElement = document.createElement("things-resource-combo");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+          newElement.setAttribute("resource-name", element.userData.resourceName);
+          newElement.setAttribute("resource-type", element.userData.resourceType);
+          newElement.setAttribute("value-path", element.userData.delegateColumn);
+          break;
+
+        case "resource-selector":
+          newElement = document.createElement("things-resource-selector");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+          newElement.setAttribute("resource-type", element.userData.resourceType);
+          newElement.setAttribute("resource-name", element.userData.resourceName);
+
+          if (element.userData.bindFields) newElement.setAttribute("bind-fields", element.userData.bindFields);
+
+          if (element.userData.initialParams) newElement.setAttribute("initial-params", element.userData.initialParams);
+          break;
+
+        case "resource-format-selector":
+          newElement = document.createElement("things-resource-format-selector");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+          newElement.setAttribute("resource-type", element.userData.resourceType);
+          newElement.setAttribute("resource-name", element.userData.resourceName);
+          newElement.setAttribute("value-field", element.userData.delegateColumn);
+          break;
+
+        case "resource-field":
+          newElement = document.createElement("things-resource-field");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+          newElement.setAttribute("resource-type", element.userData.resourceType);
+          newElement.setAttribute("resource-name", element.userData.resourceName);
+          newElement.setAttribute("submit-name", element.userData.submitName);
+
+          if (element.userData.bindFields) newElement.setAttribute("bind-fields", element.userData.bindFields);
+
+          if (element.userData.initialParams) newElement.setAttribute("initial-params", element.userData.initialParams);
+
+          if (element.userData.readOnly && element.userData.readOnly === true)
+            newElement.setAttribute("read-only", element.userData.readOnly);
+          break;
+
+        case "reference-query":
+          newElement = document.createElement("things-reference-query");
+          newElement.setAttribute("ref-name", element.userData.refName);
+          newElement.setAttribute("field-name", element.userData.fieldName);
+          newElement.setAttribute("label", element.label);
+          break;
+
+        case "image-selector":
+          newElement = document.createElement("things-image-selector");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+          break;
+
+        case "date-picker":
+          newElement = document.createElement("things-date-picker");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+          break;
+
+        case "ranged-date-picker":
+          newElement = document.createElement("things-date-picker");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+
+          if (element.userData) {
+            if (element.userData.min) newElement.setAttribute("min-date", element.userData.min);
+            if (element.userData.max) newElement.setAttribute("max-date", element.userData.max);
+          }
+
+          break;
+
+        case "date-from-to-picker":
+          newElement = document.createElement("things-date-from-to");
+          var format = element.userData.format ? element.userData.format : "YYYY-MM-DD";
+          newElement.setAttribute("read-format", format);
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+
+          if (element.userData) {
+            if (element.userData.min) newElement.setAttribute("selected-from-date", element.userData.min);
+            if (element.userData.max) newElement.setAttribute("selected-to-date", element.userData.max);
+
+            if (element.userData.defaultRange) {
+              var range = element.userData.defaultRange;
+              newElement.setAttribute("allow-range", range);
+              newElement.setAttribute(
+                "error-message",
+                Things.DataGlobal.t("text.invalid_date_range", {
+                  a: range,
+                })
+              );
             }
-        },
+          }
 
-        /**
-         * Handler after Form element changed.
-         * Child elements of the form is reconfigured by this function.
-         * The form that extends StdSelectorFormBehavior must implement 'reconfigureMyForm' function.
-         * Logic of'reconfigureMyForm' function is creation form child elements by formFields attributes and configuration layout.
-         **********
-         * @param {Array} formFields attribute
-         */
-        _formFieldsChanged: function(formFields) {
-            this.reconfigureMyForm();
-        },
+          break;
 
-        /**
-         * compute action url by base url of the global settings
-         **********
-         * @param {string} baseUrl base url of the global settings
-         * @param {string} actionUrl url attribute
-         */
-        _computeAction: function(baseUrl, actionUrl) {
-            return baseUrl + '/' + actionUrl;
-        },
+        case "time-picker":
+          newElement = document.createElement("things-time-picker");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
+          break;
 
-        /**
-         * Bind element's attribute values by formField informations.
-         **********
-         * @param {Object} element information object from formFields
-         * @param {Object} attrs attributes
-         */
-        _bindAttributes: function(element, attrs) {
-            for (attr in attrs) {
-                element.setAttribute(attr, attrs[attr]);
-            }
+        // user stamp & time stamp
+        case "things-stamp":
+          newElement = document.createElement("things-stamp");
+          break;
 
-            return element;
-        },
+        case "empty":
+          newElement = document.createElement("label");
+          break;
 
-        /**
-         * Create child element of the form by one of the formFields object
-         **********
-         * @param {Object} element of the formFields attribute
-         * @return {Object} created child element for the form
-         */
-        _createFormElement: function(element) {
-            var newElement = null;
+        default:
+          newElement = document.createElement("things-input-field");
+          newElement.setAttribute("name", element.name);
+          newElement.setAttribute("label", element.label);
 
-            switch (element.type) {
-                case 'checkbox':
-                    newElement = document.createElement('things-tristate-checkbox');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-                    break;
-
-                case 'tristate-radio':
-                    newElement = document.createElement('things-tristate-radio');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-                    newElement.showIgnore = element.searchForm ? true : false;
-                    break;
-
-                case 'button':
-                    newElement = document.createElement('things-button');
-                    newElement = this._bindAttributes(newElement, element);
-                    newElement.label = element.label;
-                    break;
-
-                case 'dropdown':
-                    newElement = document.createElement('paper-dropdown-menu');
-                    newElement = this._bindAttributes(newElement, element);
-                    newChild = this._makeListBox(element.options);
-                    newChild.setAttribute('class', 'dropdown-content');
-                    newElement.appendChild(newChild);
-                    break;
-
-                case 'radio':
-                    newElement = document.createElement('paper-radio-group');
-                    newElement = this._bindAttributes(newElement, element);
-
-                    for (index in element.child) {
-                        child = element[index];
-                        newChild = document.createElement('paper-radio-button');
-                        newChild = this._bindAttributes(newChild, child);
-                        newElement.appendChild(newChild);
-                    }
-                    break;
-
-                case 'textarea':
-                    newElement = document.createElement('things-textarea');
-                    newElement = this._bindAttributes(newElement, element);
-                    newElement.rows = 4;
-                    break;
-
-                case 'code-combo':
-                    newElement = document.createElement('things-code-combo');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-                    newElement.setAttribute('code-name', element.codeName);
-                    newElement.setAttribute('label-path', 'description');
-                    newElement.setAttribute('value-path', 'name');
-                    break;
-
-                case 'resource-combo':
-                    newElement = document.createElement('things-resource-combo');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-                    newElement.setAttribute('resource-name', element.userData.resourceName);
-                    newElement.setAttribute('resource-type', element.userData.resourceType);
-                    newElement.setAttribute('value-path', element.userData.delegateColumn);
-                    break;
-
-                case 'resource-selector':
-                    newElement = document.createElement('things-resource-selector');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-                    newElement.setAttribute('resource-type', element.userData.resourceType);
-                    newElement.setAttribute('resource-name', element.userData.resourceName);
-
-                    if (element.userData.bindFields)
-                        newElement.setAttribute('bind-fields', element.userData.bindFields);
-
-                    if (element.userData.initialParams)
-                        newElement.setAttribute('initial-params', element.userData.initialParams);
-                    break;
-
-                case 'resource-format-selector':
-                    newElement = document.createElement('things-resource-format-selector');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-                    newElement.setAttribute('resource-type', element.userData.resourceType);
-                    newElement.setAttribute('resource-name', element.userData.resourceName);
-                    newElement.setAttribute('value-field', element.userData.delegateColumn);
-                    break;
-
-                case 'resource-field':
-                    newElement = document.createElement('things-resource-field');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-                    newElement.setAttribute('resource-type', element.userData.resourceType);
-                    newElement.setAttribute('resource-name', element.userData.resourceName);
-                    newElement.setAttribute('submit-name', element.userData.submitName);
-
-                    if (element.userData.bindFields)
-                        newElement.setAttribute('bind-fields', element.userData.bindFields);
-
-                    if (element.userData.initialParams)
-                        newElement.setAttribute('initial-params', element.userData.initialParams);
-
-                    if (element.userData.readOnly && element.userData.readOnly === true)
-                        newElement.setAttribute('read-only', element.userData.readOnly);
-                    break;
-
-                case 'reference-query':
-                    newElement = document.createElement('things-reference-query');
-                    newElement.setAttribute('ref-name', element.userData.refName);
-                    newElement.setAttribute('field-name', element.userData.fieldName);
-                    newElement.setAttribute('label', element.label);
-                    break;
-
-                case 'image-selector':
-                    newElement = document.createElement('things-image-selector');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-                    break;
-
-                case 'date-picker':
-                    newElement = document.createElement('things-date-picker');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-                    break;
-
-                case 'ranged-date-picker':
-                    newElement = document.createElement('things-date-picker');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-
-                    if (element.userData) {
-                        if (element.userData.min) newElement.setAttribute('min-date', element.userData.min);
-                        if (element.userData.max) newElement.setAttribute('max-date', element.userData.max);
-                    }
-
-                    break;
-
-                case 'date-from-to-picker':
-                    newElement = document.createElement('things-date-from-to');
-                    var format = element.userData.format ? element.userData.format : 'YYYY-MM-DD';
-                    newElement.setAttribute('read-format', format);
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-
-                    if (element.userData) {
-                        if (element.userData.min) newElement.setAttribute('selected-from-date', element.userData.min);
-                        if (element.userData.max) newElement.setAttribute('selected-to-date', element.userData.max);
-
-                        if (element.userData.defaultRange) {
-                            var range = element.userData.defaultRange;
-                            newElement.setAttribute('allow-range', range);
-                            newElement.setAttribute('error-message', Things.DataGlobal.t('text.invalid_date_range', {
-                                a: range
-                            }));
-                        }
-                    }
-
-                    break;
-
-                case 'time-picker':
-                    newElement = document.createElement('things-time-picker');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-                    break;
-
-                    // user stamp & time stamp
-                case 'things-stamp':
-                    newElement = document.createElement('things-stamp');
-                    break;
-
-                case 'empty':
-                    newElement = document.createElement('label');
-                    break;
-
-                default:
-                    newElement = document.createElement('things-input-field');
-                    newElement.setAttribute('name', element.name);
-                    newElement.setAttribute('label', element.label);
-
-                    if (element.userData) {
-                        if (element.userData.hidden) {
-                            newElement.setAttribute('hidden', true);
-                        }
-
-                        if (element.userData.readonly) {
-                            newElement.setAttribute('readonly', true);
-                        }
-                    }
+          if (element.userData) {
+            if (element.userData.hidden) {
+              newElement.setAttribute("hidden", true);
             }
 
-            if (!newElement) return null;
-            if(!newElement.value) {
-                this.setFieldData(newElement, element.default);
+            if (element.userData.readonly) {
+              newElement.setAttribute("readonly", true);
             }
-            newElement.setAttribute('class', 'flex style-scope things-form');
-            return newElement;
-        },
+          }
+      }
 
-        /**
-         * key event - form submits when enter key is monitored
-         * *******
-         * @param {Object} event A 'KeyPressed' event
-         */
-        handleKeyPress: function(event) {
-            var code = event.keyCode;
-            if (code == 13) {
-                if (this.page == 1) this.submitMyForm();
-                else this.page = 1;
-            }
-        },
+      if (!newElement) return null;
+      if (!newElement.value) {
+        this.setFieldData(newElement, element.default);
+      }
+      newElement.setAttribute("class", "flex style-scope things-form");
+      return newElement;
+    },
 
-        /**
-         * find form by querySelector and return found form
-         * ********
-         * @return {Object}
-         */
-        getMyForm: function() {
-            return this.querySelector('form');
-        },
+    /**
+     * key event - form submits when enter key is monitored
+     * *******
+     * @param {Object} event A 'KeyPressed' event
+     */
+    handleKeyPress: function (event) {
+      var code = event.keyCode;
+      if (code == 13) {
+        if (this.page == 1) this.submitMyForm();
+        else this.page = 1;
+      }
+    },
 
-        /**
-         * Resets form
-         * ******
-         */
-        resetMyForm: function() {
-            this.getMyForm().reset();
-        },
+    /**
+     * find form by querySelector and return found form
+     * ********
+     * @return {Object}
+     */
+    getMyForm: function () {
+      return this.querySelector("form");
+    },
 
-        /**
-         * Serialize form and return serialized object.
-         * It can be used form parameters
-         * *******
-         * @return {Object} serialized object
-         */
-        serializeMyForm: function() {
-            return this.getMyForm().serialize();
-        },
+    /**
+     * Resets form
+     * ******
+     */
+    resetMyForm: function () {
+      this.getMyForm().reset();
+    },
 
-        /**
-         * 폼 내 모든 엘리먼트를 리턴한다.
-         * *******
-         * @return {Object} elements of form
-         */
-        getFormElements: function() {
-            // 여기서는 Form 내부 구조를 모르기 때문에 실제 상위 Form에서 구현
-            return null;
-        },
+    /**
+     * Serialize form and return serialized object.
+     * It can be used form parameters
+     * *******
+     * @return {Object} serialized object
+     */
+    serializeMyForm: function () {
+      return this.getMyForm().serialize();
+    },
 
-        /**
-         * Resource로 해당 Form elements에 각각 바인딩한다.
-         *******
-         * @param {Object} resource
-         */
-        setFormData: function(resource) {
-            var elements = this.getFormElements();
-            for (var i = 0; i < elements.length; i++) {
-                var element = elements[i];
-                var val = resource ? resource[element.name] : null;
-                this.setFieldData(element, val, resource);
-            }
-        },
+    /**
+     * 폼 내 모든 엘리먼트를 리턴한다.
+     * *******
+     * @return {Object} elements of form
+     */
+    getFormElements: function () {
+      // 여기서는 Form 내부 구조를 모르기 때문에 실제 상위 Form에서 구현
+      return null;
+    },
 
-        /**
-         * 폼 필드에 값 설정
-         ********
-         * @param {Object} element
-         * @param {Object} value
-         */
-        setFieldData: function(element, value) {
-            if(value === undefined || element.localName == 'things-stamp') {
-                return;
-            } else if(element.localName == 'things-resource-selector' || element.localName == 'things-image-selector') {
-                element.objValue = typeof value === 'string' ? { id: value } : value;
-            } else if (element.localName == 'things-tristate-checkbox') {
-                element.state = value === 'true' || value === true ? 'on' : 'off';
-            } else {
-                element.value = value;
-            }
-        },
+    /**
+     * Resource로 해당 Form elements에 각각 바인딩한다.
+     *******
+     * @param {Object} resource
+     */
+    setFormData: function (resource) {
+      var elements = this.getFormElements();
+      for (var i = 0; i < elements.length; i++) {
+        var element = elements[i];
+        var val = resource ? resource[element.name] : null;
+        this.setFieldData(element, val, resource);
+      }
+    },
 
-        /**
-         * resource-selector일시, 해당 데이터값을 가져옴
-         ********
-         * @param {Object} resourceName
-         * @param {Object} value
-         */
-        findResourceData: function(resourceName, value) {
-            var resAjax = document.createElement('things-ajax');
-            resAjax.resourceAction = 'find';
-            resAjax.resourceUrl = 'res_selectors';
-            resAjax.params = {
-                id: value,
-                resource_name: resourceName
-            };
-            resAjax.sync = true;
-            var request = resAjax.generateRequest();
-            if (request && request.response) {
-                var response = JSON.parse(request.response);
-                return response;
-            }
-        }
-    };
+    /**
+     * 폼 필드에 값 설정
+     ********
+     * @param {Object} element
+     * @param {Object} value
+     */
+    setFieldData: function (element, value) {
+      if (value === undefined || element.localName == "things-stamp") {
+        return;
+      } else if (element.localName == "things-resource-selector" || element.localName == "things-image-selector") {
+        element.objValue = typeof value === "string" ? { id: value } : value;
+      } else if (element.localName == "things-tristate-checkbox") {
+        element.state = value === "true" || value === true ? "on" : "off";
+      } else {
+        element.value = value;
+      }
+    },
 
-    Things.SelectorFormBehavior = [
-        'IronFormElementBehavior',
-        Things.SelectorFormBehaviorImpl,
-        Things.GlobalBehavior
-    ];
+    /**
+     * resource-selector일시, 해당 데이터값을 가져옴
+     ********
+     * @param {Object} resourceName
+     * @param {Object} value
+     */
+    findResourceData: function (resourceName, value) {
+      var resAjax = document.createElement("things-ajax");
+      resAjax.resourceAction = "find";
+      resAjax.resourceUrl = "res_selectors";
+      resAjax.params = {
+        id: value,
+        resource_name: resourceName,
+      };
+      resAjax.sync = true;
+      var request = resAjax.generateRequest();
+      if (request && request.response) {
+        var response = JSON.parse(request.response);
+        return response;
+      }
+    },
+  };
+
+  Things.SelectorFormBehavior = ["IronFormElementBehavior", Things.SelectorFormBehaviorImpl, Things.GlobalBehavior];
 </script>

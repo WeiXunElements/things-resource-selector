@@ -1,17 +1,16 @@
-
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
-<link rel="import" href="../neon-animation/animations/scale-up-animation.html">
-<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
-<link rel="import" href="../paper-dialog/paper-dialog.html">
-<link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
-<link rel="import" href="../paper-scroll-header-panel/paper-scroll-header-panel.html">
-<link rel="import" href="../paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../things-dialog-resize-behavior/things-dialog-resize-behavior.html">
+<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html" />
+<link rel="import" href="../neon-animation/animations/scale-up-animation.html" />
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html" />
+<link rel="import" href="../paper-dialog/paper-dialog.html" />
+<link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html" />
+<link rel="import" href="../paper-scroll-header-panel/paper-scroll-header-panel.html" />
+<link rel="import" href="../paper-toolbar/paper-toolbar.html" />
+<link rel="import" href="../things-dialog-resize-behavior/things-dialog-resize-behavior.html" />
 <!--
 ResourceSelector를 위한 다이얼로그.
 애플리케이션에 단 하나만 존재하고 다이얼로그가 오픈 될 때 마다 화면 구성을 다시하여 오픈한다.
@@ -25,297 +24,294 @@ ResourceSelector를 위한 다이얼로그.
 -->
 
 <dom-module id="things-resource-dialog">
-	<style>
-		:host {
-			display: inline-block;
-			@apply(--layout-vertical)
-		}
-		paper-toolbar {
-			background-color:var(--things-primary-background-color);
-			height:45px;
-			margin-top:0px !important;
-			@apply(--things-padding-clear)
-		}
-		paper-toolbar::shadow #topBar {
-			height:45px;
-			@apply(--things-padding-clear)
-		}
-		.size5 {
-			height: 80%;
-			width: 70%;
-			position: fixed;
-			top: 10%;
-			bottom: 10%;
-			left: 15%;
-			right: 15%;
-			margin: 0px;
-			min-width: 400px;
-			min-height: 400px;
-			@apply(--layout-flex);
-			@apply(--layout-vertical);
-		}
+  <style>
+    :host {
+      display: inline-block;
+      @apply (--layout-vertical);
+    }
+    paper-toolbar {
+      background-color: var(--things-primary-background-color);
+      height: 45px;
+      margin-top: 0px !important;
+      @apply (--things-padding-clear);
+    }
+    paper-toolbar::shadow #topBar {
+      height: 45px;
+      @apply (--things-padding-clear);
+    }
+    .size5 {
+      height: 80%;
+      width: 70%;
+      position: fixed;
+      top: 10%;
+      bottom: 10%;
+      left: 15%;
+      right: 15%;
+      margin: 0px;
+      min-width: 400px;
+      min-height: 400px;
+      @apply (--layout-flex);
+      @apply (--layout-vertical);
+    }
 
-		.size4 {
-			height: 74%;
-			width: 70%;
-			position: fixed;
-			top: 13%;
-			bottom: 13%;
-			left: 18%;
-			right: 12%;
-			margin: 0px;
-			@apply(--layout-flex);
-			@apply(--layout-vertical);
-		}
+    .size4 {
+      height: 74%;
+      width: 70%;
+      position: fixed;
+      top: 13%;
+      bottom: 13%;
+      left: 18%;
+      right: 12%;
+      margin: 0px;
+      @apply (--layout-flex);
+      @apply (--layout-vertical);
+    }
 
-		.size3 {
-			height: 74%;
-			width: 70%;
-			position: fixed;
-			top: 16%;
-			bottom: 10%;
-			left: 21%;
-			right: 9%;
-			margin: 0px;
-			@apply(--layout-flex);
-			@apply(--layout-vertical);
-		}
+    .size3 {
+      height: 74%;
+      width: 70%;
+      position: fixed;
+      top: 16%;
+      bottom: 10%;
+      left: 21%;
+      right: 9%;
+      margin: 0px;
+      @apply (--layout-flex);
+      @apply (--layout-vertical);
+    }
 
-		.size2 {
-			height: 74%;
-			width: 70%;
-			position: fixed;
-			top: 19%;
-			bottom: 7%;
-			left: 24%;
-			right: 6%;
-			margin: 0px;
-			@apply(--layout-flex);
-			@apply(--layout-vertical);
-		}
+    .size2 {
+      height: 74%;
+      width: 70%;
+      position: fixed;
+      top: 19%;
+      bottom: 7%;
+      left: 24%;
+      right: 6%;
+      margin: 0px;
+      @apply (--layout-flex);
+      @apply (--layout-vertical);
+    }
 
-		.size1 {
-			height: 74%;
-			width: 70%;
-			position: fixed;
-			top: 22%;
-			bottom: 4%;
-			left: 27%;
-			right: 3%;
-			margin: 0px;
-			@apply(--layout-flex);
-			@apply(--layout-vertical);
-		}
+    .size1 {
+      height: 74%;
+      width: 70%;
+      position: fixed;
+      top: 22%;
+      bottom: 4%;
+      left: 27%;
+      right: 3%;
+      margin: 0px;
+      @apply (--layout-flex);
+      @apply (--layout-vertical);
+    }
 
-		.large {
-			height: 80%;
-			width: 70%;
-			position: fixed;
-			top: 10%;
-			bottom: 10%;
-			left: 15%;
-			right: 15%;
-			margin: 0px;
-			@apply(--layout-flex);
-			@apply(--layout-vertical);
-		}
+    .large {
+      height: 80%;
+      width: 70%;
+      position: fixed;
+      top: 10%;
+      bottom: 10%;
+      left: 15%;
+      right: 15%;
+      margin: 0px;
+      @apply (--layout-flex);
+      @apply (--layout-vertical);
+    }
 
-		.medium {
-			height: 60%;
-			width: 50%;
-			position: fixed;
-			top: 20%;
-			bottom: 20%;
-			left: 25%;
-			right: 25%;
-			margin: 0px;
-			@apply(--layout-flex);
-			@apply(--layout-vertical);
-		}
+    .medium {
+      height: 60%;
+      width: 50%;
+      position: fixed;
+      top: 20%;
+      bottom: 20%;
+      left: 25%;
+      right: 25%;
+      margin: 0px;
+      @apply (--layout-flex);
+      @apply (--layout-vertical);
+    }
 
-		.small {
-			height: 40%;
-			width: 30%;
-			position: fixed;
-			top: 30%;
-			bottom: 30%;
-			left: 35%;
-			right: 35%;
-			margin: 0px;
-			@apply(--layout-flex);
-			@apply(--layout-vertical);
-		}
-		.buttonsGroup {
-			@apply(--layout-horizontal);
-			@apply(--layout-end-justified);
-			@apply(--layout-flex);
-		}
-		.scrollroot {
-			@apply(--layout-flex);
-			@apply(--layout-vertical);
-			@apply(--things-padding-clear);
-			@apply(--things-margin-clear);
-			overflow: auto;
-		}
-		.scrollroot::content #detail-view {
-			@apply(--layout-flex);
-		}
-		.title {
-			margin-left:20px !important;
-			font-size:20px;
-			font-weight:400;
-		}
-		.close-btn {
-			@apply(--things-header-button);
-			background:url(/images/icon-close.png) 100% 50% no-repeat;
-			margin-right:10px;
-		}
-		button:focus {
-			outline:none;
-		}
-		:host::shadow things-selector-form{
-			background:transparent;
-		}
-	</style>
+    .small {
+      height: 40%;
+      width: 30%;
+      position: fixed;
+      top: 30%;
+      bottom: 30%;
+      left: 35%;
+      right: 35%;
+      margin: 0px;
+      @apply (--layout-flex);
+      @apply (--layout-vertical);
+    }
+    .buttonsGroup {
+      @apply (--layout-horizontal);
+      @apply (--layout-end-justified);
+      @apply (--layout-flex);
+    }
+    .scrollroot {
+      @apply (--layout-flex);
+      @apply (--layout-vertical);
+      @apply (--things-padding-clear);
+      @apply (--things-margin-clear);
+      overflow: auto;
+    }
+    .scrollroot::content #detail-view {
+      @apply (--layout-flex);
+    }
+    .title {
+      margin-left: 20px !important;
+      font-size: 20px;
+      font-weight: 400;
+    }
+    .close-btn {
+      @apply (--things-header-button);
+      background: url(/images/icon-close.png) 100% 50% no-repeat;
+      margin-right: 10px;
+    }
+    button:focus {
+      outline: none;
+    }
+    :host::shadow things-selector-form {
+      background: transparent;
+    }
+  </style>
 
-	<template>
-		<paper-dialog
-			id='resource-dialog'
-			class$="[[dialogSize]]"
-			always-on-top
-			no-cancel-on-esc-key="[[noCancelOnEscKey]]"
-			entry-animation="scale-up-animation"
-			exit-animation="fade-out-animation">
+  <template>
+    <paper-dialog
+      id="resource-dialog"
+      class$="[[dialogSize]]"
+      always-on-top
+      no-cancel-on-esc-key="[[noCancelOnEscKey]]"
+      entry-animation="scale-up-animation"
+      exit-animation="fade-out-animation"
+    >
+      <paper-toolbar id="popup-toolbar">
+        <span class="title">[[title]]</span>
+        <div class="buttonsGroup">
+          <button dialog-dismiss class="close-btn"></button>
+        </div>
+      </paper-toolbar>
 
-			<paper-toolbar id="popup-toolbar">
-				<span class="title">[[title]]</span>
-				<div class="buttonsGroup">
-					<button dialog-dismiss class="close-btn"></button>
-				</div>
-			</paper-toolbar>
+      <div id="scrollroot" class="scrollroot"></div>
+    </paper-dialog>
+  </template>
 
-			<div id="scrollroot" class="scrollroot"></div>
-		</paper-dialog>
-	</template>
+  <script>
+    Polymer({
+      is: "things-resource-dialog",
 
-	<script>
-	Polymer({
+      properties: {
+        /**
+         * 다이얼로그 타이틀
+         */
+        title: {
+          type: String,
+        },
 
-		is: 'things-resource-dialog',
+        /**
+         * Dialog 내에 포함될 뷰
+         */
+        detailView: {
+          type: Object,
+        },
 
-		properties: {
-			/**
-			 * 다이얼로그 타이틀
-			 */
-			title: {
-				type: String
-			},
+        /**
+         * Dialog가 오픈된 후 콜백
+         */
+        openCallback: {
+          type: Function,
+        },
 
-			/**
-			 * Dialog 내에 포함될 뷰
-			 */
-			detailView: {
-				type: Object
-			},
+        /**
+         * dialog가 close된 후 콜백
+         */
+        closeCallback: {
+          type: Function,
+        },
 
-			/**
-			 * Dialog가 오픈된 후 콜백
-			 */
-			openCallback: {
-				type: Function
-			},
+        /**
+         * 다이얼로그 활성화 여부
+         */
+        active: {
+          type: Boolean,
+          value: false,
+        },
 
-			/**
-			 * dialog가 close된 후 콜백
-			 */
-			closeCallback: {
-				type: Function
-			},
+        /**
+         * 중첩되는 다이얼로그가 생길수록
+         * 다이얼로그의 위치 및 크기를 변경 시키기 위한 변수
+         */
+        dialogSize: {
+          type: String,
+          value: "size1",
+        },
 
-			/**
-			 * 다이얼로그 활성화 여부
-			 */
-			active: {
-				type: Boolean,
-				value: false
-			},
+        /**
+         * Set to true to disable canceling the overlay with the ESC key.
+         * True로 설정시 cancel dialog에서 ESC key로 꺼지지 않음
+         * @type {Boolean}
+         */
+        noCancelOnEscKey: {
+          type: Boolean,
+          value: false,
+        },
+        _dialogId: {
+          type: String,
+          value: "resource-dialog",
+        },
+        _dragTarget: {
+          type: String,
+          value: "popup-toolbar",
+        },
+      },
 
-			/**
-			 * 중첩되는 다이얼로그가 생길수록
-			 * 다이얼로그의 위치 및 크기를 변경 시키기 위한 변수
-			 */
-			dialogSize: {
-				type: String,
-				value: 'size1'
-			},
+      behaviors: [Things.DialogResizeBehavior],
 
-			/**
-			 * Set to true to disable canceling the overlay with the ESC key.
-			 * True로 설정시 cancel dialog에서 ESC key로 꺼지지 않음
-			 * @type {Boolean}
-			 */
-			noCancelOnEscKey: {
-				type: Boolean,
-				value: false
-			},
-			_dialogId:{
-				type: String,
-				value: 'resource-dialog'
-			},
-			_dragTarget:{
-				type: String,
-				value:'popup-toolbar'
-			}
-		},
+      listeners: {
+        "resource-dialog.iron-overlay-opened": "_openHandler",
+        "resource-dialog.iron-overlay-closed": "_closeHandler",
+      },
 
-		behaviors: [ 
-			Things.DialogResizeBehavior
-		],
+      /**
+       * 다이얼로그가 오픈된 경우 핸들러
+       * *******
+       */
+      _openHandler: function (e) {
+        if (e.target.id == this._dialogId) {
+          this.active = true;
 
-		listeners: {
-			'resource-dialog.iron-overlay-opened' : '_openHandler',
-			'resource-dialog.iron-overlay-closed' : '_closeHandler'
-		},
+          if (this.openCallback) {
+            this.openCallback.apply(this.detailView);
+          }
 
-		/**
-		 * 다이얼로그가 오픈된 경우 핸들러
-		 * *******
-		 */
-		_openHandler: function(e) {
-			if(e.target.id == this._dialogId) {
-				this.active = true;
+          this.title = this.detailView.title;
+        }
+      },
 
-				if(this.openCallback) {
-					this.openCallback.apply(this.detailView);
-				}
+      /**
+       * 다이얼로그가 클로즈 된 경우 핸들러
+       * *******
+       * @param {Object} e
+       */
+      _closeHandler: function (e) {
+        if (e.target.id == this._dialogId) {
+          this.active = false;
 
-				this.title = this.detailView.title;
-			}
-		},
+          if (this.closeCallback) {
+            this.closeCallback();
+          }
+        }
+      },
 
-		/**
-		 * 다이얼로그가 클로즈 된 경우 핸들러
-		 * *******
-		 * @param {Object} e
-		 */
-		_closeHandler: function(e) {
-			if(e.target.id == this._dialogId) {
-				this.active	= false
-
-				if(this.closeCallback) {
-					this.closeCallback();
-				}
-			}
-		},
-
-		/**
-		 * 리소스 다이얼로그를 리턴
-		 * *******
-		 * @return {Object} Resource Dialog
-		 */
-		getDialog: function() {
-			return this.$[this._dialogId];
-		}
-	});
-	</script>
+      /**
+       * 리소스 다이얼로그를 리턴
+       * *******
+       * @return {Object} Resource Dialog
+       */
+      getDialog: function () {
+        return this.$[this._dialogId];
+      },
+    });
+  </script>
 </dom-module>

@@ -1,20 +1,19 @@
 <!--
 @license
-Copyright © HatioLab Inc. All rights reserved.
+Copyright © 2015-2021 Shenzhen Weixun All rights reserved.
 -->
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes" />
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="../things-resource-selector.html">
+    <link rel="import" href="../things-resource-selector.html" />
   </head>
   <body>
-
     <test-fixture id="things-resource-selector-fixture">
       <template>
         <things-resource-selector>
@@ -24,42 +23,39 @@ Copyright © HatioLab Inc. All rights reserved.
     </test-fixture>
 
     <script>
-      suite('<things-resource-selector>', function() {
-
+      suite("<things-resource-selector>", function () {
         var myEl;
 
-        setup(function() {
-          myEl = fixture('things-resource-selector-fixture');
+        setup(function () {
+          myEl = fixture("things-resource-selector-fixture");
         });
 
-        test('defines the "author" property', function() {
-          assert.equal(myEl.author.name, 'Dimitri Glazkov');
-          assert.equal(myEl.author.image, 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg');
+        test('defines the "author" property', function () {
+          assert.equal(myEl.author.name, "Dimitri Glazkov");
+          assert.equal(myEl.author.image, "http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg");
         });
 
-        test('says hello', function() {
-          assert.equal(myEl.sayHello(), 'things-resource-selector says, Hello World!');
+        test("says hello", function () {
+          assert.equal(myEl.sayHello(), "things-resource-selector says, Hello World!");
 
-          var greetings = myEl.sayHello('greetings Earthlings');
-          assert.equal(greetings, 'things-resource-selector says, greetings Earthlings');
+          var greetings = myEl.sayHello("greetings Earthlings");
+          assert.equal(greetings, "things-resource-selector says, greetings Earthlings");
         });
 
-        test('fires lasers', function(done) {
-          myEl.addEventListener('things-resource-selector-lasers', function(event) {
-            assert.equal(event.detail.sound, 'Pew pew!');
+        test("fires lasers", function (done) {
+          myEl.addEventListener("things-resource-selector-lasers", function (event) {
+            assert.equal(event.detail.sound, "Pew pew!");
             done();
           });
           myEl.fireLasers();
         });
 
-        test('distributed children', function() {
+        test("distributed children", function () {
           var els = myEl.getContentChildren();
-          assert.equal(els.length, 1, 'one distributed node');
-          assert.equal(els[0], myEl.querySelector('h2'), 'content distributed correctly');
+          assert.equal(els.length, 1, "one distributed node");
+          assert.equal(els[0], myEl.querySelector("h2"), "content distributed correctly");
         });
-
       });
     </script>
-
   </body>
 </html>
